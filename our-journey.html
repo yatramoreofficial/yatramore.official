@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YatrAmore | Our Journey</title>
+    <meta name="description"
+        content="Explore the places we've visited and stayed — our honest experiences, hidden gems, and travel memories as a couple.">
+
+    <!-- Immediate Theme Application -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="YatrAmore | Our Journey">
+    <meta property="og:description" content="Every destination has a story. Explore our travel diary, hidden gems, and honest experiences.">
+    <meta property="og:image" content="Images/logo.svg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="Images/logo.svg">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="our-journey.css">
+</head>
+
+<body>
+    <!-- Navigation (rendered by components.js) -->
+    <nav id="navbar"></nav>
+
+    <!-- Page Hero -->
+    <section class="travel-hero">
+        <div class="travel-hero-content">
+            <div class="travel-hero-tag">
+                <i class="fas fa-map-marker-alt"></i> Our Journal
+            </div>
+            <h1>Our Journey</h1>
+            <p>Every place we visit leaves a mark on our hearts. Here's an honest look at the destinations we've
+                explored, the stays that surprised us, and the memories we'll carry forever.</p>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- Filter Bar -->
+    <section class="filter-bar-section">
+        <div class="container">
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="All">
+                    <i class="fas fa-globe"></i> All
+                </button>
+                <button class="filter-btn" data-filter="Italy">
+                    <i class="fas fa-pizza-slice"></i> Italy
+                </button>
+                <button class="filter-btn" data-filter="India">
+                    <i class="fas fa-pepper-hot"></i> India
+                </button>
+                <button class="filter-btn" data-filter="Europe">
+                    <i class="fas fa-landmark"></i> Europe
+                </button>
+                <button class="filter-btn" data-filter="Asia">
+                    <i class="fas fa-torii-gate"></i> Asia
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Travel Grid -->
+    <section class="travel-grid-section">
+        <div class="container">
+            <div class="travel-grid" id="travel-grid">
+                <!-- Sponsor cards injected here by script.js -->
+                <div id="sponsored-grid" style="display: contents;"></div>
+                <!-- Journey cards injected here by journeys.js -->
+            </div>
+
+            <!-- Coming Soon Notice -->
+            <div class="coming-soon-notice glass">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3>More destinations on the way</h3>
+                <p>We're always exploring. Check back soon — and follow us on all our platforms for real-time
+                    travel updates.</p>
+                <div class="coming-soon-links">
+                    <a href="https://www.instagram.com/yatramore.official" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                        <i class="fa-brands fa-instagram"></i> Instagram
+                    </a>
+                    <a href="https://www.youtube.com/@YatrAmore.Official" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                        <i class="fa-brands fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://www.facebook.com/yatramore.official" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                        <i class="fa-brands fa-facebook"></i> Facebook
+                    </a>
+                    <a href="https://www.tiktok.com/@yatramore.official" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                        <i class="fa-brands fa-tiktok"></i> TikTok
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (rendered by components.js) -->
+    <footer></footer>
+
+    <!-- Accessibility & Translation (rendered by components.js) -->
+    <div class="accessibility-container"></div>
+
+    <script src="components.js"></script>
+    <script>
+        YatrAmore.renderNav('our-journey');
+        YatrAmore.renderFooter();
+        YatrAmore.renderAccessibility();
+        YatrAmore.renderGoogleTranslate();
+    </script>
+    <script src="journeys.js"></script>
+    <script src="sponsors.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // ── Render Journey Cards from Data ──────────────────
+        (function() {
+            const grid = document.getElementById('travel-grid');
+            const sponsoredGrid = document.getElementById('sponsored-grid');
+            if (!grid || typeof JOURNEY_DATA === 'undefined') return;
+
+            // Badge icon mapping
+            const badgeIcons = {
+                'Must Visit': '<i class="fas fa-plus"></i>',
+                'Our Favourite': '<i class="fas fa-heart"></i>',
+                'Hidden Gem': '<i class="fas fa-star"></i>',
+                'Gem Explored': '<i class="fas fa-gem"></i>'
+            };
+
+            // Badge CSS class mapping
+            const badgeClasses = {
+                'love': ' experience-love',
+                'gem': ' experience-gem',
+                'default': '',
+                '': ''
+            };
+
+            const cardsHTML = JOURNEY_DATA.map(trip => {
+                const badgeHTML = trip.badge
+                    ? `<div class="card-experience-badge${badgeClasses[trip.badgeType] || ''}">${badgeIcons[trip.badge] || ''} ${trip.badge}</div>`
+                    : '';
+
+                return `
+                <article class="travel-card glass" data-category="${trip.category}">
+                    <div class="card-image-wrapper">
+                        <img src="${trip.image}" alt="${trip.title}">
+                        <div class="card-image-placeholder">
+                            <i class="fas fa-image"></i>
+                            <span>Photo coming soon</span>
+                        </div>
+                        <div class="card-badge">
+                            <i class="fas fa-map-marker-alt"></i> ${trip.category}
+                        </div>
+                        ${badgeHTML}
+                    </div>
+                    <div class="card-body">
+                        <div class="card-location">
+                            <i class="fas fa-map-pin"></i>
+                            <span>${trip.location}</span>
+                        </div>
+                        <h2 class="card-title">${trip.title}</h2>
+                        <p class="card-description">${trip.description}</p>
+                        <div class="card-meta">
+                            <div class="card-meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>${trip.date}</span>
+                            </div>
+                            <div class="card-meta-item">
+                                <i class="fas fa-moon"></i>
+                                <span>${trip.nights}</span>
+                            </div>
+                            <div class="card-meta-item">
+                                <i class="fas fa-heart"></i>
+                                <span>${trip.rating}</span>
+                            </div>
+                        </div>
+                        <div class="card-tags">
+                            ${trip.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </article>`;
+            }).join('');
+
+            // Insert after the sponsored-grid div
+            sponsoredGrid.insertAdjacentHTML('afterend', cardsHTML);
+        })();
+
+        // ── Filter Functionality ────────────────────────────
+        window.addEventListener('load', () => {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cards = document.querySelectorAll('.travel-card');
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const filter = btn.dataset.filter;
+                    cards.forEach(card => {
+                        const category = card.dataset.category || '';
+                        const isSponsor = card.getAttribute('data-is-sponsor') === 'true';
+
+                        // Sponsors ONLY show in their specific category, NOT in "All"
+                        const shouldShow = (filter === 'All' && !isSponsor) || (filter !== 'All' && category === filter);
+
+                        if (shouldShow) {
+                            card.style.animation = 'none';
+                            requestAnimationFrame(() => {
+                                card.style.animation = 'fadeInUp 0.5s ease-out forwards';
+                            });
+                            card.style.display = 'flex';
+                            card.style.opacity = '1';
+                        } else {
+                            card.style.opacity = '0';
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Hide sponsors from initial "All" view
+            const initialCards = document.querySelectorAll('.travel-card');
+            initialCards.forEach(card => {
+                const isSponsor = card.getAttribute('data-is-sponsor') === 'true';
+                if (isSponsor) {
+                    card.style.display = 'none';
+                    card.style.opacity = '0';
+                }
+            });
+
+            // Scroll reveal for cards
+            const cards = document.querySelectorAll('.travel-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('revealed');
+                        }, i * 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => observer.observe(card));
+        });
+    </script>
+</body>
+
+</html>

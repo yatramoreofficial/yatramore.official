@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YatrAmore | Our Sponsors</title>
+    <meta name="description"
+        content="Our partners and sponsored collaborations. Explore the brands and places that support the YatrAmore journey.">
+
+    <!-- Immediate Theme Application -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="YatrAmore | Our Sponsors">
+    <meta property="og:description" content="Collaborate with YatrAmore. Highlighting our valued partners, sponsored stays, and curated travel experiences.">
+    <meta property="og:image" content="Images/logo.svg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="Images/logo.svg">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="our-journey.css">
+</head>
+
+<body>
+    <!-- Navigation (rendered by components.js) -->
+    <nav id="navbar"></nav>
+
+    <!-- Page Hero -->
+    <section class="travel-hero">
+        <div class="travel-hero-content">
+            <div class="travel-hero-tag">
+                <i class="fas fa-star"></i> Featured Partners
+            </div>
+            <h1>Our Sponsors</h1>
+            <p>We collaborate with brands, stays, restaurants, and experiences that match our style and values. Explore
+                our featured partners and sponsored experiences below</p>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="travel-grid-section">
+        <div class="container">
+            <!-- Dynamic Sponsor Cards will be injected here -->
+            <div class="travel-grid centered-grid" id="sponsor-page-grid">
+                <!-- Loading State -->
+                <div id="loading-sponsors" style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--brand-brown);"></i>
+                    <p style="margin-top: 1rem; opacity: 0.7;">Loading our partners...</p>
+                </div>
+            </div>
+
+            <!-- Permanent Contact CTA (Always Visible) -->
+            <div id="sponsor-contact-cta" class="coming-soon-notice glass" style="margin-top: 2rem;">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Interested in partnering with us?</h3>
+                <p>We are open to travel, food, lifestyle, and couple-focused collaborations. Reach out to discuss
+                    details!</p>
+                <div class="coming-soon-links">
+                    <a href="index.html#contact" class="btn-main">Become a Sponsor</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (rendered by components.js) -->
+    <footer></footer>
+
+    <!-- Accessibility & Translation (rendered by components.js) -->
+    <div class="accessibility-container"></div>
+
+    <script src="components.js"></script>
+    <script>
+        YatrAmore.renderNav('sponsor');
+        YatrAmore.renderFooter();
+        YatrAmore.renderAccessibility();
+        YatrAmore.renderGoogleTranslate();
+    </script>
+    <script src="sponsors.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

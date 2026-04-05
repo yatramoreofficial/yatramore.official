@@ -8,50 +8,45 @@
     <meta name="description"
         content="Welcome to the official home of YatrAmore. Sharing our journey through Couple Vibes, Real Talks, and Hiking Diaries.">
 
+    <!-- Immediate Theme Application -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
     <!-- Open Graph for Social Sharing -->
     <meta property="og:title" content="YatrAmore | Official Website">
-    <meta property="og:description" content="Discovery our journey and connect with us on social media.">
-    <meta property="og:image" content="logo.png">
+    <meta property="og:description" content="Discover our journey, travel vibes, and connect with us on social media.">
+    <meta property="og:image" content="Images/logo.svg">
 
     <!-- Favicon / Window Icon -->
-    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/svg+xml" href="Images/logo.svg">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="container nav-content">
-            <div class="brand brand-text">
-                <img src="logo.png" alt="YatrAmore Nav Logo" class="nav-logo">
-                YatrAmore
-            </div>
-            
-            <div class="hamburger">
-                <i class="fas fa-bars"></i>
-            </div>
-
-            <div class="nav-links">
-                <a href="#home">Home</a>
-                <a href="#connect">Join Community</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation (rendered by components.js) -->
+    <nav id="navbar"></nav>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
-            <img src="logo.png" alt="YatrAmore Official Logo" id="hero-logo" class="hero-logo">
+            <img src="Images/logo.svg" alt="YatrAmore Official Logo" id="hero-logo" class="hero-logo">
 
-            <div class="hero-meaning"
-                style="max-width: 1400px; margin: 2rem auto; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); padding: 2.5rem 0;">
-                <p style="font-size: 1.25rem; color: var(--brand-brown); line-height: 1.8;">
-                    The name YatrAmore brings together two beautiful ideas: <strong>“Yatra,”</strong> a word associated
+            <div class="hero-meaning">
+                <h1>Discover <span class="brand-text">YatrAmore</span></h1>
+                <p>
+                    The name YatrAmore brings together two beautiful ideas: <strong>"Yatra,"</strong> a word associated
                     with journey or travel in Indian language tradition,
-                    and <strong>“Amore,”</strong> the Italian word for love.
+                    and <strong>"Amore,"</strong> the Italian word for love.
                     Together, it expresses a <strong>journey of love</strong> — a name that reflects travel, emotion,
                     cultural connection, and the meeting of two identities.
                 </p>
@@ -68,19 +63,19 @@
             </div>
 
             <div class="social-grid">
-                <a href="https://www.youtube.com/@YatrAmore.Official" class="social-card glass" target="_blank">
+                <a href="https://www.youtube.com/@YatrAmore.Official" class="social-card glass" target="_blank" rel="noopener noreferrer">
                     <i class="fa-brands fa-youtube"></i>
                     <span>YouTube</span>
                 </a>
-                <a href="https://www.instagram.com/yatramore.official" class="social-card glass" target="_blank">
+                <a href="https://www.instagram.com/yatramore.official" class="social-card glass" target="_blank" rel="noopener noreferrer">
                     <i class="fa-brands fa-instagram"></i>
                     <span>Instagram</span>
                 </a>
-                <a href="https://www.facebook.com/yatramore.official" class="social-card glass" target="_blank">
+                <a href="https://www.facebook.com/yatramore.official" class="social-card glass" target="_blank" rel="noopener noreferrer">
                     <i class="fa-brands fa-facebook"></i>
                     <span>Facebook</span>
                 </a>
-                <a href="https://www.tiktok.com/@yatramore.official" class="social-card glass" target="_blank">
+                <a href="https://www.tiktok.com/@yatramore.official" class="social-card glass" target="_blank" rel="noopener noreferrer">
                     <i class="fa-brands fa-tiktok"></i>
                     <span>TikTok</span>
                 </a>
@@ -89,13 +84,13 @@
     </section>
 
     <!-- About & Mission Grid Section -->
-    <section id="about" style="padding: 3rem 0;">
+    <section id="about" class="section-padded">
         <div class="container">
             <div class="about-grid">
                 <!-- About Us -->
                 <div>
                     <h2>About <span class="brand-text">Us</span></h2>
-                    <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-top: 1.5rem;">
+                    <p class="about-text">
                         YatrAmore is a <strong>cross-cultural travel and lifestyle brand</strong> built around
                         <strong>love, connection</strong>, and the joy of discovering the world together.
                         Inspired by the story of an <strong>Italian and Indian Sikh couple</strong>, YatrAmore shares
@@ -107,7 +102,7 @@
                 <!-- Our Mission -->
                 <div>
                     <h2>Our <span class="brand-text">Mission</span></h2>
-                    <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-top: 1.5rem;">
+                    <p class="about-text">
                         Our mission is to inspire people to <strong>embrace love beyond borders</strong> and to see
                         travel as a way to <strong>connect with cultures</strong>, people, and experiences on a deeper
                         level.
@@ -121,15 +116,17 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" style="padding: 3rem 0; background: var(--bg-accent);">
-        <div class="container" style="max-width: 700px;">
+    <section id="contact" class="contact-section">
+        <div class="container contact-container">
             <div class="section-title">
                 <h2>Contact <span class="brand-text">Us</span></h2>
                 <p>Have a question or want to collaborate? Send us a message below.</p>
             </div>
 
-            <form action="https://formspree.io/f/yatramore.official@gmail.com" method="POST"
-                enctype="multipart/form-data" class="contact-form glass" style="padding: 2rem;">
+            <!-- Google Apps Script: This sends messages directly to your Google Sheet -->
+            <form
+                action="#"
+                method="POST" class="contact-form glass contact-form-styled">
 
                 <div class="form-group">
                     <label for="email">Email Address</label>
@@ -150,19 +147,29 @@
                 <!-- Anti-spam -->
                 <input type="text" name="_gotcha" style="display:none">
 
-                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Send Message</button>
+                <div class="privacy-notice">
+                    We use your email, subject, and message only to reply to your enquiry. 
+                    <a href="privacy-policy.html">Read our Privacy Policy</a>.
+                </div>
+
+                <button type="submit" class="btn btn-full">Send Message</button>
             </form>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 YatrAmore. All rights reserved.</p>
-            <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.5;">Sharing the vibes, one story at a time.</p>
-        </div>
-    </footer>
+    <!-- Footer (rendered by components.js) -->
+    <footer></footer>
 
+    <!-- Accessibility & Translation (rendered by components.js) -->
+    <div class="accessibility-container"></div>
+
+    <script src="components.js"></script>
+    <script>
+        YatrAmore.renderNav('index');
+        YatrAmore.renderFooter();
+        YatrAmore.renderAccessibility();
+        YatrAmore.renderGoogleTranslate();
+    </script>
     <script src="script.js"></script>
 </body>
 

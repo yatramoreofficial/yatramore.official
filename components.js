@@ -56,15 +56,6 @@ const YatrAmore = {
 
             <div class="nav-links" id="nav-links">
                 ${navLinksHTML}
-                <div class="nav-search-wrapper">
-                    <button class="nav-search-toggle" id="nav-search-toggle" title="Search" aria-label="Search this site">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <div class="nav-search-box" id="nav-search-box">
-                        <input type="text" id="site-search" placeholder="Search page..." autocomplete="off">
-                        <div id="site-search-results" class="site-search-results"></div>
-                    </div>
-                </div>
             </div>
         </div>`;
     },
@@ -103,10 +94,7 @@ const YatrAmore = {
             <div class="menu-section">
                 <h4>Language</h4>
                 <div class="language-search-container">
-                    <div class="search-input-wrapper">
-                        <i class="fas fa-search search-icon"></i>
                         <input type="text" id="language-search" placeholder="Search language..." autocomplete="off">
-                    </div>
                     <div id="language-results" class="language-results"></div>
                 </div>
                 <div id="google_translate_element" style="display: none !important;"></div>

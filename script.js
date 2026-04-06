@@ -171,29 +171,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            fetch(form.action, {
-                method: form.method,
-                body: json,
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8", // Google Apps Script handles this best
-                }
-            }).then(response => {
-                // Google Apps Script returns a redirect (302) which resolves as opaque or ok.
-                // If it's a network-level failure, it would go to .catch instead.
-                if (!response.ok && response.type !== 'opaque' && response.type !== 'cors') {
-                    throw new Error('Submission may have failed');
-                }
-                submitBtn.innerText = "Message Sent!";
-                submitBtn.style.backgroundColor = "#4CAF50";
-                form.reset();
+            const email = formData.get('email');
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                submitBtn.innerText = "Invalid Email";
+                submitBtn.style.backgroundColor = "#f44336";
                 setTimeout(() => {
                     submitBtn.innerText = originalText;
                     submitBtn.style.backgroundColor = "";
                     submitBtn.disabled = false;
-                }, 4000);
-            }).catch(error => {
-                submitBtn.innerText = "Network Error";
-                submitBtn.style.backgroundColor = "#F44336";
+                }, 3000);
+                return;
+            }
+
+            fetch(form.action, {
+                method: form.method,
+                body: json,
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                }
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    submitBtn.innerText = "Message Sent!";
+                    submitBtn.style.backgroundColor = "#4CAF50";
+                    form.reset();
+                    localStorage.setItem('ym_form_ts', Date.now().toString());
+                    setTimeout(() => {
+                        submitBtn.innerText = originalText;
+                        submitBtn.style.backgroundColor = "";
+                        submitBtn.disabled = false;
+                    }, 4000);
+                } else {
+                    throw new Error(res.error || "Submission failed");
+                }
+            })
+            .catch(error => {
+                console.error('Submission Error:', error);
+                submitBtn.innerText = error.message === "Too many messages" ? "Try Later" : "Error!";
+                submitBtn.style.backgroundColor = "#f44336";
                 setTimeout(() => {
                     submitBtn.innerText = originalText;
                     submitBtn.style.backgroundColor = "";
@@ -611,107 +628,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     loadSponsors();
-
-    // ── Navbar Search ─────────────────────────────────
-    const searchToggle = document.getElementById('nav-search-toggle');
-    const searchBox = document.getElementById('nav-search-box');
-    const searchInput = document.getElementById('site-search');
-    const searchResults = document.getElementById('site-search-results');
-
-    if (searchToggle && searchBox) {
-        searchToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            searchBox.classList.toggle('active');
-            if (searchBox.classList.contains('active')) {
-                setTimeout(() => searchInput.focus(), 100);
-            } else {
-                searchResults.classList.remove('active');
-                searchInput.value = '';
-            }
-        });
-
-        // Global Site Index - Content Keywords Only
-        const GLOBAL_SITE_INDEX = [
-            // Home / About
-            { text: "About YatrAmore", url: "index.html#about", keywords: ["about", "story", "mission", "vision"] },
-            { text: "Italy - Our Roots", url: "index.html#about", keywords: ["italy", "italia", "europe", "roots"] },
-            { text: "India - Our Heart", url: "index.html#about", keywords: ["india", "bharat", "asia", "culture"] },
-            { text: "Connect Anywhere", url: "index.html#connect", keywords: ["connect", "community", "social", "join"] },
-            { text: "Contact Us", url: "index.html#contact", keywords: ["contact", "email", "support", "reach"] },
-            
-            // Journey
-            { text: "Travel Stories & Gallery", url: "our-journey.html", keywords: ["journey", "travel", "stories", "photos", "gallery"] },
-            { text: "Varanasi - The Sacred Ganges", url: "our-journey.html", keywords: ["varanasi", "ganges", "river", "spiritual"] },
-            { text: "Jaipur - The Pink City", url: "our-journey.html", keywords: ["jaipur", "pink city", "rajasthan", "forts"] },
-            { text: "Agra - Taj Mahal", url: "our-journey.html", keywords: ["agra", "taj mahal", "love", "monument"] },
-            { text: "Kerala Backwaters", url: "our-journey.html", keywords: ["kerala", "backwaters", "nature", "serene"] },
-            { text: "Amritsar - Golden Temple", url: "our-journey.html", keywords: ["amritsar", "golden temple", "punjab", "peace"] },
-            { text: "Leh Ladakh - High Altitude", url: "our-journey.html", keywords: ["leh", "ladakh", "mountains", "himalayas"] },
-
-            // Sponsors
-            { text: "Sponsor Us & Partnership", url: "sponsor.html", keywords: ["sponsor", "partnership", "support", "business", "tiers"] },
-
-            // Privacy
-            { text: "Privacy Policy", url: "privacy-policy.html", keywords: ["privacy", "policy", "data", "legal", "terms"] }
-        ];
-
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase().trim();
-            if (!query) {
-                searchResults.classList.remove('active');
-                return;
-            }
-
-            // Search in global index based on text and keywords
-            const matches = GLOBAL_SITE_INDEX.filter(item => 
-                item.text.toLowerCase().includes(query) || 
-                item.keywords.some(k => k.toLowerCase().includes(query))
-            ).slice(0, 8);
-
-            if (matches.length === 0) {
-                searchResults.innerHTML = `<div class="search-no-result">No results found</div>`;
-            } else {
-                searchResults.innerHTML = matches.map((m, i) =>
-                    `<div class="search-result-item" data-url="${m.url}">
-                        <span class="search-item-text">${sanitize(m.text)}</span>
-                    </div>`
-                ).join('');
-
-                searchResults.querySelectorAll('.search-result-item').forEach(el => {
-                    el.addEventListener('click', () => {
-                        const url = el.getAttribute('data-url');
-                        const [path, hash] = url.split('#');
-                        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-
-                        if (path === currentPath && hash) {
-                            const target = document.getElementById(hash);
-                            if (target) {
-                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                target.classList.add('search-highlight');
-                                setTimeout(() => target.classList.remove('search-highlight'), 3000);
-                            }
-                        } else {
-                            window.location.href = url;
-                        }
-
-                        searchBox.classList.remove('active');
-                        searchInput.value = '';
-                        searchResults.classList.remove('active');
-                    });
-                });
-            }
-            searchResults.classList.add('active');
-        });
-
-        // Close search on outside click
-        document.addEventListener('click', (e) => {
-            if (!searchBox.contains(e.target) && !searchToggle.contains(e.target)) {
-                searchBox.classList.remove('active');
-                searchResults.classList.remove('active');
-                if (searchInput) searchInput.value = '';
-            }
-        });
-    }
 
     // ── Share FAB (REMOVED as per user request) ───────
 

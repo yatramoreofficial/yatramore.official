@@ -44,6 +44,10 @@
     <link rel="stylesheet" href="../assets/style.css">
     <link rel="stylesheet" href="./our-journey.css">
 
+    <!-- Performance: Load data early -->
+    <script src="./journeys.js"></script>
+    <script src="../collaborator/collaborators.js"></script>
+
     <!-- Performance: Preload first few images for instant LCP -->
     <link rel="preload" as="image" href="../Images/Borgo.webp">
     <link rel="preload" as="image" href="../Images/Naturns.webp">
@@ -142,15 +146,14 @@
     <!-- Accessibility & Translation (rendered by components.js) -->
     <div class="accessibility-container"></div>
 
+    <!-- Scripts at the bottom for speed -->
     <script src="../assets/components.js"></script>
-    <script src="./journeys.js"></script>
-    <script src="../collaborator/collaborators.js"></script>
+    <script src="../assets/script.js?v=SECURITY_v20"></script>
     <script>
         YatrAmore.renderNav('journey');
         YatrAmore.renderFooter();
         YatrAmore.renderAccessibility();
         YatrAmore.renderGoogleTranslate();
-        YatrAmore.loadCore();
     </script>
     <script>
         // ── Render Journey Cards from Data ──────────────────

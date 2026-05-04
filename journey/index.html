@@ -149,7 +149,115 @@
     <!-- Scripts at the bottom for speed -->
     <script src="../assets/components.js"></script>
     <script src="../assets/script.js?v=SECURITY_v20"></script>
+    <script src="../collaborator/collaborators.js"></script>
     <script>
+        const JOURNEY_DATA = [
+            {
+                category: "Italy",
+                badge: "Must Visit",
+                badgeType: "default",
+                location: "Venice, Italy",
+                title: "Venice City",
+                description: "A wonderful blend of canals, gondolas, historic architecture, and vibrant culture, where San Marco Square, delicious food, and historic places make every moment feel magical and memorable.",
+                image: "../Images/Venice.webp",
+                date: "April 2025",
+                nights: "1",
+                rating: "5/5",
+                tags: ["🏛️ History", "🍕 Food", "📸 Photography"]
+            },
+            {
+                category: "Europe",
+                badge: "Our Favourite",
+                badgeType: "love",
+                location: "Crete, Greece",
+                title: "Heraklion, Matala, Elafonissi, Chania",
+                description: "Crete is a stunning island where turquoise beaches, historic towns, and relaxed charm come together beautifully, creating unforgettable moments by the sea.",
+                image: "../Images/Crete.webp",
+                date: "July 2025",
+                nights: "6",
+                rating: "5/5",
+                tags: ["🏖️ Beach", "🍺 Local Life", "📸 Panoramic"]
+            },
+            {
+                category: "Italy",
+                badge: "Must Visit",
+                badgeType: "default",
+                location: "Trentino-Alto Adige, Italy",
+                title: "Folgaria",
+                description: "A beautiful mountain destination where ski slopes, local food, and unspoiled nature come together to create a relaxing and memorable stay",
+                image: "../Images/Folgaria.webp",
+                date: "January 2025",
+                nights: "4",
+                rating: "5/5",
+                tags: ["🏔️ Nature", "⛷️ 🏂 Sports", "🍽️ Food"]
+            },
+            {
+                category: "Italy",
+                badge: "Must Visit",
+                badgeType: "default",
+                location: "Trentino-South Tyrol, Italy",
+                title: "Bolzano & Naturns",
+                description: "A wonderful blend of mountain scenery, scenic hikes, authentic food, and pure nature, making every moment feel calm and memorable.",
+                image: "../Images/Naturns.webp",
+                date: "April 2025",
+                nights: "3",
+                rating: "4/5",
+                tags: ["🏔️ Nature", "🍝 Food", "📸 Panoramic"]
+            },
+            {
+                category: "Italy",
+                badge: "Hidden Gem",
+                badgeType: "gem",
+                location: "Verona, Italy",
+                title: "Borgo Stazione Bike Inn",
+                description: "A lovely place where history, comfort, and nature blend beautifully, offering a peaceful stay with genuine hospitality and a special bike-friendly spirit.",
+                image: "../Images/Borgo.webp",
+                date: "September 2025",
+                nights: "2 nights",
+                rating: "5/5",
+                tags: ["🚴🏻‍♀️ Sports", "🧖🏻‍♀️ Wellness", "🍝 Food"]
+            },
+            {
+                category: "Italy",
+                badge: "Must Visit",
+                badgeType: "default",
+                location: "Turin, Italy",
+                title: "Turin City",
+                description: "A vibrant city where great food, rich history, and elegant city-centre landmarks come together, with highlights like the Egyptian Museum adding a truly memorable cultural touch.",
+                image: "../Images/Torino.webp",
+                date: "April 2025",
+                nights: "3",
+                rating: "5/5",
+                tags: ["🏛️ History", "🍝 Food", "📸 Photography"]
+            },
+            {
+                category: "Italy",
+                badge: "Our Favourite",
+                badgeType: "love",
+                location: "Aosta Valley, Italy",
+                title: "Courmayeur",
+                description: "A breathtaking alpine experience, combining the spectacular Skyway ascent, the beauty of the Aosta Valley, and the unique infinity table at Punta Helbronner create an unforgettable experience.",
+                image: "../Images/Monte Bianco.webp",
+                date: "November 2024",
+                nights: "4",
+                rating: "5/5",
+                tags: ["🏔️ Nature", "🍺 Local Life", "📸 Panoramic"]
+            },
+            {
+                category: "Italy",
+                badge: "Hidden Gem",
+                badgeType: "gem",
+                location: "Peio, Italy",
+                title: "National Park of Stelvio & Adamello Brenta",
+                description: "A lovely mountain escape where alpine beauty and peaceful charm shine, surrounded by the wonders of Stelvio and Adamello Brenta.",
+                image: "../Images/Pieo.webp",
+                date: "April 2025",
+                nights: "4",
+                rating: "5/5",
+                tags: ["🏔️ Nature", "🥩 Food", "🐻 Wildlife"]
+            }
+        ];
+
         YatrAmore.renderNav('journey');
         YatrAmore.renderFooter();
         YatrAmore.renderAccessibility();

@@ -186,7 +186,6 @@
                 // First 3 images get high fetch priority to land faster
                 const fetchPriority = index < 3 ? 'fetchpriority="high"' : '';
 
-                const loadingAttr = index < 3 ? '' : 'loading="lazy"';
                 const imageContent = isPlaceholder
                     ? `<div class="card-image-placeholder">
                            <i class="fas fa-camera"></i>
@@ -196,7 +195,6 @@
                     : `<img src="${trip.image.replace(/[<>"]/g, '')}" 
                             alt="${YatrAmore.sanitize(trip.title)}" 
                             decoding="async" 
-                            ${loadingAttr}
                             ${fetchPriority}>`;
 
                 return `

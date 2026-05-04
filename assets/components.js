@@ -12,7 +12,16 @@
 // Resolves the correct relative path prefix based on page depth.
 // Root pages (index.html) get '' — subfolder pages (journey/, etc.) get '../'
 const _YA_BASE = (function () {
-    const parts = window.location.pathname.split('/').filter(p => p && !p.endsWith('.html'));
+    const path = window.location.pathname;
+    const parts = path.split('/').filter(p => p && !p.endsWith('.html'));
+    
+    // GitHub Pages logic: The first part of the path is usually the repository name.
+    // If we're on github.io, we ignore the first part ('yatramore.official') to get the correct depth.
+    if (window.location.hostname.includes('github.io')) {
+        return parts.length > 1 ? '../'.repeat(parts.length - 1) : '';
+    }
+    
+    // Standard logic for root domains or local servers
     return parts.length > 0 ? '../'.repeat(parts.length) : '';
 })();
 

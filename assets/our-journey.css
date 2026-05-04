@@ -83,25 +83,42 @@
 }
 
 @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(6px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(6px);
+    }
 }
 
 @keyframes scrollDot {
-    0% { opacity: 1; top: 6px; }
-    100% { opacity: 0; top: 20px; }
+    0% {
+        opacity: 1;
+        top: 6px;
+    }
+
+    100% {
+        opacity: 0;
+        top: 20px;
+    }
 }
 
 /* ── Filter Bar ──────────────────────────────────────── */
 .filter-bar-section {
     padding: 0;
     position: sticky;
-    top: 86px; /* Match navbar height (measured: 86px) */
+    top: 86px;
+    /* Match navbar height (measured: 86px) */
     z-index: 100;
     background: rgba(253, 251, 247, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);
+    transform: translateZ(0);
+    /* Force GPU compositing layer */
 }
 
 .filter-bar {
@@ -157,18 +174,26 @@
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 2.5rem;
     margin-bottom: 4rem;
+    padding-top: 20px;
+    /* Provide headroom for upward hover zoom */
+    content-visibility: auto;
+    /* Skip rendering of off-screen cards */
+    contain-intrinsic-size: 1000px;
+    /* Placeholder size for better scrollbar stability */
 }
 
 .travel-grid.centered-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 350px)); /* Optimized for 3-column fit in 1200px container */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 350px));
+    /* Optimized for 3-column fit in 1200px container */
     justify-content: center;
     gap: 2.5rem;
 }
 
 .travel-grid.centered-grid .travel-card {
     width: 100%;
-    max-width: none; /* Let the grid handle the size for perfect matching */
+    max-width: none;
+    /* Let the grid handle the size for perfect matching */
 }
 
 /* ── Travel Card ─────────────────────────────────────── */
@@ -179,7 +204,10 @@
     border-radius: 24px;
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(30px) translateZ(0);
+    /* Add translateZ for GPU layer */
+    will-change: transform, opacity;
+    /* Hint to browser for acceleration */
     cursor: default;
 }
 
@@ -204,7 +232,8 @@
 
 .card-image-wrapper img {
     position: relative;
-    z-index: 2; /* Sit on top of placeholder */
+    z-index: 2;
+    /* Sit on top of placeholder */
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -234,7 +263,17 @@
     font-weight: 500;
     letter-spacing: 0.5px;
     transition: background 0.4s ease;
-    z-index: 1; /* Below the image if it loads */
+    z-index: 1;
+    /* Below the image if it loads */
+}
+ 
+.example-notice {
+    font-size: 0.72rem;
+    opacity: 0.5;
+    font-style: italic;
+    margin-top: -0.2rem;
+    letter-spacing: 0.3px;
+    font-weight: 400;
 }
 
 .card-image-placeholder i {
@@ -436,12 +475,30 @@
 }
 
 /* Specific Brand Hover Backgrounds for Travel Page */
-.btn-outline:hover:has(.fa-youtube) { background: #FF0000 !important; border-color: #FF0000 !important; }
-.btn-outline:hover:has(.fa-facebook) { background: #1877F2 !important; border-color: #1877F2 !important; }
-.btn-outline:hover:has(.fa-instagram) { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important; border-color: transparent !important; }
-.btn-outline:hover:has(.fa-tiktok) { background: #010101 !important; border-color: #010101 !important; }
+.btn-outline:hover:has(.fa-youtube) {
+    background: #FF0000 !important;
+    border-color: #FF0000 !important;
+}
 
-[data-theme="dark"] .btn-outline:hover:has(.fa-tiktok) { background: #333333 !important; border-color: #333333 !important; }
+.btn-outline:hover:has(.fa-facebook) {
+    background: #1877F2 !important;
+    border-color: #1877F2 !important;
+}
+
+.btn-outline:hover:has(.fa-instagram) {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+    border-color: transparent !important;
+}
+
+.btn-outline:hover:has(.fa-tiktok) {
+    background: #010101 !important;
+    border-color: #010101 !important;
+}
+
+[data-theme="dark"] .btn-outline:hover:has(.fa-tiktok) {
+    background: #333333 !important;
+    border-color: #333333 !important;
+}
 
 /* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -487,7 +544,8 @@
         overflow-x: auto;
         padding-bottom: 5px;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Hide scrollbar for cleaner look */
+        scrollbar-width: none;
+        /* Hide scrollbar for cleaner look */
     }
 
     .filter-bar::-webkit-scrollbar {
@@ -512,9 +570,10 @@
         width: 100%;
     }
 }
+
 /* ── Dark Mode Overrides ──────────────────────────────── */
 [data-theme="dark"] .travel-hero {
-    background: 
+    background:
         radial-gradient(ellipse at 20% 50%, rgba(212, 196, 176, 0.03) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 20%, rgba(18, 18, 18, 0.9) 0%, transparent 50%);
 }

@@ -4,32 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YatrAmore | Official Website</title>
+    <title>YatrAmore | Official Home</title>
     <meta name="description"
-        content="Welcome to the official home of YatrAmore. Sharing our journey through Couple Vibes, Real Talks, and Hiking Diaries.">
+        content="Discover the soulful journey of Laura & Yazavinder. Connect with our community, explore our travel diary, and join the YatrAmore family.">
+
+    <!-- High-Level Security: Content Security Policy & Bot Protection -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com; base-uri 'self'; form-action 'self';">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     <!-- Immediate Theme Application -->
     <script>
         (function () {
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            let theme = 'light';
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            } catch (e) {
+                console.warn("Theme storage access failed:", e);
+            }
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
 
     <!-- Open Graph for Social Sharing -->
-    <meta property="og:title" content="YatrAmore | Official Website">
-    <meta property="og:description" content="Discover our journey, travel vibes, and connect with us on social media.">
+    <meta property="og:title" content="YatrAmore | Official Home">
+    <meta property="og:description" content="Discover the soulful journey of Laura & Yazavinder. Travel stories, community vibes, and authentic Indian-Italian love.">
     <meta property="og:image" content="Images/logo.svg">
 
     <!-- Favicon / Window Icon -->
     <link rel="icon" type="image/svg+xml" href="Images/logo.svg">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 
 <body>
@@ -39,13 +51,14 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
-            <img src="Images/logo.svg" alt="YatrAmore Official Logo" id="hero-logo" class="hero-logo">
+            <img src="Images/logo.svg" alt="YatrAmore Official Logo" id="hero-logo" class="hero-logo" width="350"
+                height="350">
 
             <div class="hero-meaning">
                 <h1>Discover <span class="brand-text">YatrAmore</span></h1>
                 <p>
                     The name YatrAmore brings together two beautiful ideas: <strong>"Yatra,"</strong> a word associated
-                    with journey or travel in Indian language tradition,
+                    with journey or travel in Hindi and Punjabi,
                     and <strong>"Amore,"</strong> the Italian word for love.
                     Together, it expresses a <strong>journey of love</strong> — a name that reflects travel, emotion,
                     cultural connection, and the meeting of two identities.
@@ -63,21 +76,32 @@
             </div>
 
             <div class="social-grid">
-                <a href="https://www.youtube.com/@YatrAmore.Official" class="social-card glass" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.youtube.com/@YatrAmore.Official" class="social-card glass" target="_blank"
+                    rel="noopener noreferrer">
                     <i class="fa-brands fa-youtube"></i>
                     <span>YouTube</span>
                 </a>
-                <a href="https://www.instagram.com/yatramore.official" class="social-card glass" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.instagram.com/yatramore.official" class="social-card glass" target="_blank"
+                    rel="noopener noreferrer">
                     <i class="fa-brands fa-instagram"></i>
                     <span>Instagram</span>
                 </a>
-                <a href="https://www.facebook.com/yatramore.official" class="social-card glass" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.facebook.com/yatramore.official" class="social-card glass" target="_blank"
+                    rel="noopener noreferrer">
                     <i class="fa-brands fa-facebook"></i>
                     <span>Facebook</span>
                 </a>
-                <a href="https://www.tiktok.com/@yatramore.official" class="social-card glass" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.tiktok.com/@yatramore.official" class="social-card glass" target="_blank"
+                    rel="noopener noreferrer">
                     <i class="fa-brands fa-tiktok"></i>
                     <span>TikTok</span>
+                </a>
+            </div>
+
+            <!-- Family Tree Call-to-Action -->
+            <div class="family-tree-cta">
+                <a href="family/" class="family-tree-link">
+                    <i class="fas fa-seedling"></i> Join YatrAmore Family Tree
                 </a>
             </div>
         </div>
@@ -89,26 +113,34 @@
             <div class="about-grid">
                 <!-- About Us -->
                 <div>
-                    <h2>About <span class="brand-text">Us</span></h2>
+                    <h2><i class="fas fa-users"></i> About <span class="brand-text">Us</span></h2>
                     <p class="about-text">
-                        YatrAmore is a <strong>cross-cultural travel and lifestyle brand</strong> built around
-                        <strong>love, connection</strong>, and the joy of discovering the world together.
-                        Inspired by the story of an <strong>Italian and Indian Sikh couple</strong>, YatrAmore shares
-                        authentic moments of travel, culture, and everyday life,
-                        bringing two worlds together through <strong>meaningful storytelling</strong>.
+                        We are <strong>Laura and Yazavinder</strong>, the couple behind YatrAmore. Coming from
+                        <strong>Italian and Indian <a href="https://www.sikhs.org/" target="_blank"
+                                rel="noopener noreferrer">Sikh</a> backgrounds</strong>, we created this space to share
+                        our life
+                        together through culture, travel, conversations, and the everyday moments that shape our story.
+                    </p>
+                    <p class="about-text">
+                        YatrAmore is where we document our experiences honestly and personally — from discovering places
+                        and traditions to building a life between different worlds. Through it, we want to share
+                        something <strong>real, warm, and human</strong>.
                     </p>
                 </div>
 
                 <!-- Our Mission -->
                 <div>
-                    <h2>Our <span class="brand-text">Mission</span></h2>
+                    <h2><i class="fas fa-compass"></i> Our <span class="brand-text">Mission</span></h2>
                     <p class="about-text">
-                        Our mission is to inspire people to <strong>embrace love beyond borders</strong> and to see
-                        travel as a way to <strong>connect with cultures</strong>, people, and experiences on a deeper
-                        level.
-                        Through YatrAmore, we aim to <strong>celebrate authenticity</strong>, cultural exchange, and the
-                        belief that <strong>shared journeys</strong> can create understanding, warmth, and lasting
-                        memories.
+                        Our mission is to encourage openness, understanding, and appreciation for the beauty of
+                        <strong>different cultures coming together</strong>. Through YatrAmore, we hope to show that
+                        connection can grow through <strong>curiosity, respect</strong>, and the willingness to learn
+                        from one another.
+                    </p>
+                    <p class="about-text">
+                        We want our content to leave people with a sense of <strong>closeness, perspective, and
+                            positivity</strong> — whether they relate to cross-cultural relationships, love, travel, or
+                        simply the joy of discovering life through someone else’s eyes.
                     </p>
                 </div>
             </div>
@@ -124,13 +156,24 @@
             </div>
 
             <!-- Google Apps Script: This sends messages directly to your Google Sheet -->
-            <form
-                action="#"
-                method="POST" class="contact-form glass contact-form-styled">
+            <form action="javascript:void(0);" method="POST" class="contact-form glass contact-form-styled">
 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" name="email" id="email" placeholder="email@example.com" required>
+                <div class="form-group verify-group" style="display: flex; gap: 0.8rem; align-items: flex-end; flex-wrap: wrap;">
+                    <div style="flex: 1 1 250px;">
+                        <label for="email">Email Address</label>
+                        <input type="email" name="email" id="email" placeholder="email@example.com" required
+                            style="margin-bottom: 0;">
+                    </div>
+                    <button type="button" id="verify-email-btn" class="btn btn-verify-email"
+                        style="height: 48px; padding: 0 1.2rem; min-width: 80px; font-size: 0.85rem; background: var(--brand-brown); color: white; border-radius: 30px; transition: all 0.3s ease; position: relative; top: -2px;">Verify</button>
+                </div>
+
+                <!-- Verification Code (Hidden Initially) -->
+                <div id="otp-group" class="form-group" style="display: none; animation: fadeInDown 0.4s ease-out;">
+                    <label for="otp_code" style="color: var(--brand-brown); font-weight: 600;">Verification Code</label>
+                    <input type="text" name="otp_code" id="otp_code" placeholder="Enter 6-digit code" maxlength="6">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">We've sent a code to
+                        your email. (Check Spam folder)</p>
                 </div>
 
                 <div class="form-group">
@@ -144,15 +187,24 @@
                         required></textarea>
                 </div>
 
-                <!-- Anti-spam -->
-                <input type="text" name="_gotcha" style="display:none">
+                <!-- Security Tokens -->
+                <input type="hidden" name="fingerprint" id="contactFingerprint">
+                <input type="hidden" name="deviceId" id="contactDeviceId">
+                <input type="hidden" name="userAgent" id="contactUserAgent">
+                <input type="hidden" name="_gotcha" style="display:none">
 
                 <div class="privacy-notice">
-                    We use your email, subject, and message only to reply to your enquiry. 
-                    <a href="privacy-policy.html">Read our Privacy Policy</a>.
+                    We use your email, subject, and message only to reply to your enquiry.
+                    <a href="privacy/">Read our Privacy Policy</a>.
                 </div>
 
-                <button type="submit" class="btn btn-full">Send Message</button>
+                <!-- Cloudflare Turnstile CAPTCHA -->
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAC75vfDlt1Ng8f6d" data-theme="auto"
+                    style="margin-bottom: 1.5rem; display: flex; justify-content: center;"></div>
+
+                <button type="submit" id="contact-submit-btn" class="btn"
+                    style="display: block; width: fit-content; min-width: 220px; margin: 2rem auto 0; border-radius: 30px;">Send
+                    Message</button>
             </form>
         </div>
     </section>
@@ -163,14 +215,14 @@
     <!-- Accessibility & Translation (rendered by components.js) -->
     <div class="accessibility-container"></div>
 
-    <script src="components.js"></script>
+    <script src="assets/components.js"></script>
     <script>
         YatrAmore.renderNav('index');
         YatrAmore.renderFooter();
         YatrAmore.renderAccessibility();
         YatrAmore.renderGoogleTranslate();
+        YatrAmore.loadCore();
     </script>
-    <script src="script.js"></script>
 </body>
 
 </html>

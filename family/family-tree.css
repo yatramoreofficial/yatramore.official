@@ -1,0 +1,731 @@
+/* Family Tree Prototype Styles v4 - Banyan & Engraving Update */
+
+/* Hero Styling (Matched to Journal Style) */
+.travel-hero {
+    min-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 9rem 2rem 1rem;
+    position: relative;
+    background:
+        radial-gradient(ellipse at 20% 50%, var(--hero-glow-1) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, var(--hero-glow-2) 0%, transparent 50%);
+    transition: background 0.8s ease;
+}
+
+.travel-hero-content {
+    max-width: 800px;
+}
+
+.travel-hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(107, 66, 38, 0.1);
+    color: var(--brand-brown);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+}
+
+[data-theme="dark"] .travel-hero-tag {
+    background: rgba(212, 196, 176, 0.1);
+}
+
+.travel-hero h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    color: var(--brand-brown);
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+}
+
+.travel-hero p {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Join Family Form */
+.join-family-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-card {
+    padding: 1.5rem 2rem;
+    border-radius: 20px;
+}
+
+.family-join-form .rating-group {
+    margin: 2.5rem 0;
+    /* Extra space before and after rating */
+    text-align: center;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    font-size: 2.8rem;
+    color: var(--brand-brown);
+    margin-top: 1rem;
+}
+
+.star-rating i {
+    font-size: 2rem;
+    color: var(--brand-gold);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.star-rating i:hover {
+    transform: scale(1.3);
+}
+
+.star-rating i.fas {
+    color: var(--brand-gold);
+}
+
+/* Star selection handled in JS */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--brand-brown);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--text-main);
+    font-family: inherit;
+    transition: var(--transition-fast);
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+/* Tree Search Bar */
+.tree-search-container {
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+    /* Tightened gap */
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1.2rem;
+    color: var(--brand-brown);
+    opacity: 0.8;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--text-main);
+    font-family: inherit;
+    transition: var(--transition-fast);
+}
+
+[data-theme="dark"] .search-bar input {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+.search-bar input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="dark"] .search-icon {
+    color: var(--text-main);
+    opacity: 0.5;
+}
+
+.policy-link-inline {
+    color: var(--brand-brown);
+    text-decoration: underline;
+    font-weight: 500;
+    text-underline-offset: 3px;
+    transition: var(--transition-base, all 0.3s ease);
+}
+
+.policy-link-inline:hover {
+    color: var(--brand-gold, #C5B358);
+}
+
+[data-theme="dark"] .policy-link-inline {
+    color: var(--brand-gold, #C5B358);
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2.5rem;
+}
+
+[data-theme="dark"] .glass-card {
+    background: var(--glass-bg);
+}
+
+/* Tree Visualization */
+.tree-visualization-container {
+    max-width: 1200px;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    color: var(--brand-brown);
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+}
+
+.section-title p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Dynamic Bark Colors (Theme Aware) */
+:root {
+    --bark-6: #2d1a11;
+    --bark-5: #361e13;
+    --bark-4: #3d2315;
+    --bark-3: #4a2a19;
+    --bark-2: #57321e;
+    --bark-1: #633923;
+    --leaf-green: #228B22;
+    /* Forest Green */
+    --engraving-fill: rgba(0, 0, 0, 0.5);
+    --engraving-shadow: rgba(255, 255, 255, 0.2);
+    --hero-glow-1: rgba(107, 66, 38, 0.08);
+    --hero-glow-2: rgba(230, 220, 207, 0.6);
+}
+
+[data-theme="dark"] {
+    --bark-6: #4a3429;
+    --bark-5: #573d30;
+    --bark-4: #634637;
+    --bark-3: #755546;
+    --bark-2: #876556;
+    --bark-1: #987566;
+    --leaf-green: #32CD32;
+    /* Lime Green for Dark Mode visibility */
+    --engraving-fill: rgba(255, 255, 255, 0.4);
+    --engraving-shadow: rgba(0, 0, 0, 0.5);
+    --hero-glow-1: rgba(212, 196, 176, 0.04);
+    --hero-glow-2: rgba(18, 18, 18, 0.9);
+}
+
+.bark-engraving {
+    fill: var(--engraving-fill);
+    pointer-events: none;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    filter: drop-shadow(1px 1px 2px var(--engraving-shadow));
+    transition: var(--transition-slow);
+}
+
+/* Global Transition Sync */
+.tree-leaf,
+.leaf-shape-masterpiece,
+.bark-engraving,
+#tree-structure path,
+#tree-structure ellipse,
+.realistic-grass {
+    transition: var(--transition-slow);
+}
+
+.leaf-shape-masterpiece {
+    fill: var(--leaf-green);
+}
+
+.average-rating-card {
+    transition: var(--transition-base, all 0.3s ease);
+}
+
+.average-rating-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(107, 66, 38, 0.15);
+}
+
+#family-tree-svg {
+    width: 6000px;
+    height: 3000px;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow: visible;
+    /* v32: Account for fixed navbar when scrolling */
+    scroll-margin-top: 100px;
+    will-change: transform;
+    /* Hint the browser to prepare for animation */
+    shape-rendering: geometricPrecision;
+    /* Highest possible quality, balance with optimizeSpeed if needed */
+}
+
+#tree-canvas {
+    will-change: transform;
+    /* Force GPU composition */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Masterpiece Leaf Aesthetics */
+.tree-leaf {
+    cursor: pointer;
+}
+
+.tree-leaf:hover .leaf-shape-masterpiece {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
+    stroke: var(--brand-gold);
+}
+
+.leaf-shape-masterpiece {
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 0.5;
+    transition: all 0.3s ease;
+}
+
+.leaf-text-masterpiece {
+    fill: white;
+    font-weight: 700;
+    pointer-events: none;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.5px;
+}
+
+/* The Engraving / Flight Effect */
+.masterpiece-flight {
+    z-index: 1000 !important;
+}
+
+.masterpiece-flight .leaf-shape-masterpiece {
+    stroke: white;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 20px var(--brand-gold));
+}
+
+/* Mobile Performance Override for Flight - Restored to full fidelity as requested */
+@media (max-width: 768px) {
+    .masterpiece-flight .leaf-shape-masterpiece {
+        filter: drop-shadow(0 0 20px var(--brand-gold)) !important;
+        will-change: filter, transform;
+        stroke-width: 2px !important;
+    }
+}
+
+/* Form Messaging */
+.form-message {
+    margin: 1.5rem auto;
+    max-width: 680px;
+    text-align: center;
+    font-weight: 600;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    display: none;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form-styled {
+    padding: 2.5rem;
+    max-width: 900px;
+    /* Increased to support horizontal layout */
+    margin: 0 auto;
+}
+
+[data-theme="dark"] .contact-form-styled {
+    background: var(--glass-bg);
+}
+
+.btn-full.family-submit-btn-refined {
+    width: auto;
+    min-width: 250px;
+    max-width: 350px;
+    margin: 1.5rem auto 0;
+    display: block;
+}
+
+.btn-full:hover {
+    background: var(--brand-brown-dark, #4a2a19);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn-full.btn-success {
+    background: #28a745 !important;
+    color: white !important;
+    pointer-events: none;
+}
+
+/* Animations from Main Site */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-20px);
+    }
+
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+.tree-wrapper {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 2rem;
+    background: radial-gradient(circle at center, rgba(107, 66, 38, 0.05) 0%, transparent 70%);
+}
+
+[data-theme="dark"] .tree-wrapper {
+    background: radial-gradient(circle at center, rgba(160, 110, 80, 0.1) 0%, transparent 70%);
+}
+
+@media (max-width: 992px) {
+    .horizontal-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .contact-form-styled {
+        padding: 1.5rem;
+    }
+}
+
+@keyframes leafAppear {
+    from {
+        transform: scale(0) rotate(-30deg);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.tree-hero h1 {
+    font-size: 2.5rem;
+}
+
+/* High-Fidelity Realistic Grass */
+.realistic-grass {
+    fill: none;
+    stroke-linecap: round;
+    opacity: 0.85;
+    pointer-events: none;
+    transition: stroke 0.4s ease;
+}
+
+[data-theme="dark"] .realistic-grass {
+    opacity: 0.6;
+    stroke-width: 1.2;
+}
+
+.family-rating-label {
+    transition: color 0.4s ease;
+}
+
+[data-theme="dark"] .family-rating-label {
+    color: var(--text-muted) !important;
+}
+
+.horizontal-form-grid .form-group label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.privacy-policy-footer {
+    border-bottom: 1px solid rgba(107, 66, 38, 0.1);
+    padding-bottom: 0rem;
+}
+
+[data-theme="dark"] .privacy-policy-footer {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Glow Effect for Searched Leaves */
+.glow-leaf {
+    z-index: 1001 !important;
+}
+
+.glow-leaf .leaf-shape-masterpiece {
+    stroke: var(--brand-gold) !important;
+    stroke-width: 2px !important;
+    filter: drop-shadow(0 0 15px var(--brand-gold)) !important;
+    animation: leaf-glow-pulse 1s ease-in-out infinite alternate !important;
+}
+
+/* Mobile-Optimized Glow: Restored to full fidelity as requested */
+@media (max-width: 768px) {
+    .glow-leaf .leaf-shape-masterpiece {
+        filter: drop-shadow(0 0 15px var(--brand-gold)) !important;
+        stroke: #fff !important;
+        stroke-width: 2px !important;
+        animation: leaf-glow-pulse 1s ease-in-out infinite alternate !important;
+    }
+}
+
+@keyframes leaf-glow-pulse {
+    from {
+        filter: brightness(1) drop-shadow(0 0 5px var(--brand-gold));
+    }
+
+    to {
+        filter: brightness(1.7) drop-shadow(0 0 20px var(--brand-gold));
+    }
+}
+
+/* Search Filter Visibility */
+.leaf-hidden {
+    display: none !important;
+}
+
+/* ── Status Card ───────────────────────────────────── */
+.status-card {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.status-card.active {
+    display: block;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(197, 179, 88, 0.15);
+    color: #bfa55d;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.5rem 1.4rem;
+    border-radius: 50px;
+    border: 1px solid rgba(197, 179, 88, 0.3);
+    margin-bottom: 1.5rem;
+}
+
+.status-card h3 {
+    font-size: 2.2rem;
+    color: var(--brand-brown);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.status-card p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.status-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.btn-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.15rem 2.8rem;
+    background: var(--brand-brown);
+    color: white;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(107, 66, 38, 0.2);
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+[data-theme="dark"] .btn-status {
+    color: #121212 !important; /* Proper contrast for beige background */
+}
+
+.btn-status:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(107, 66, 38, 0.3);
+    background: #5C3A1E !important; /* Standardized theme brown */
+    color: #FFFFFF !important;
+}
+
+.btn-status i {
+    font-size: 1.1rem;
+}
+
+/* THE BEACON: High-intensity Flare when 'Find My' is clicked */
+/* v32: Targeting the 'use' element directly to bypass SVG symbol isolation */
+.tree-leaf.glow-leaf use {
+    filter: drop-shadow(0 0 40px #FFD700) drop-shadow(0 0 60px #fff) !important;
+    animation: majestic-flare 1s ease-in-out infinite alternate !important;
+}
+
+@keyframes majestic-flare {
+    0% {
+        filter: drop-shadow(0 0 20px #FFD700) brightness(1.2);
+        transform: scale(1.1);
+    }
+
+    100% {
+        filter: drop-shadow(0 0 70px #FFD700) brightness(1.8);
+        transform: scale(1.4);
+        /* Unmistakable flare */
+    }
+}
+
+/* Mobile Responsiveness & Tree Adaptive Scale */
+@media (max-width: 992px) {
+    .travel-hero h1 {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .travel-hero {
+        padding: 7rem 1.5rem 1rem;
+    }
+
+    .travel-hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+
+    .tree-visualization-container {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .star-rating i {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .travel-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .travel-hero p {
+        font-size: 1rem;
+    }
+
+    .star-rating {
+        gap: 0.5rem;
+    }
+
+    .star-rating i {
+        font-size: 1.8rem;
+    }
+
+    .family-submit-btn-refined {
+        width: 100%;
+        max-width: none !important;
+    }
+}
+
+/* Ensure the tree visualization is NEVER cropped on mobile */
+.family-tree-svg {
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    /* Prevents clipping of outer leaves on small screens */
+}

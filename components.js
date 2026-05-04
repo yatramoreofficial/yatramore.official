@@ -4,26 +4,9 @@
 // This file generates the navigation, footer, and accessibility widgets
 // so you only need to edit them in ONE place.
 //
-// Usage: Add <script src="../assets/components.js"></script> BEFORE your page content scripts.
+// Usage: Add <script src="components.js"></script> BEFORE your page content scripts.
 // Then call: YatrAmore.renderNav(), YatrAmore.renderFooter(), YatrAmore.renderAccessibility()
 // ============================================
-
-// ── Dynamic Base Path ──────────────────────────────────
-// Resolves the correct relative path prefix based on page depth.
-// Root pages (index.html) get '' — subfolder pages (journey/, etc.) get '../'
-const _YA_BASE = (function () {
-    const path = window.location.pathname;
-    const parts = path.split('/').filter(p => p && !p.endsWith('.html'));
-    
-    // GitHub Pages logic: The first part of the path is usually the repository name.
-    // If we're on github.io, we ignore the first part ('yatramore.official') to get the correct depth.
-    if (window.location.hostname.includes('github.io')) {
-        return parts.length > 1 ? '../'.repeat(parts.length - 1) : '';
-    }
-    
-    // Standard logic for root domains or local servers
-    return parts.length > 0 ? '../'.repeat(parts.length) : '';
-})();
 
 const YatrAmore = {
     // ── XSS Sanitization Helper ────────────────────────
@@ -40,13 +23,13 @@ const YatrAmore = {
         if (!nav) return;
 
         const links = [
-            { href: `${_YA_BASE}index.html`,          label: 'Home',         anchor: false },
-            { href: `${_YA_BASE}index.html#connect`,   label: 'Join Community', anchor: false },
-            { href: `${_YA_BASE}index.html#about`,     label: 'About',        anchor: false },
-            { href: `${_YA_BASE}journey/`,             label: 'Journey',      anchor: false },
-            { href: `${_YA_BASE}collaborator/`,        label: 'Collaborator', anchor: false },
-            { href: `${_YA_BASE}faq/`,                 label: 'FAQ',          anchor: false },
-            { href: `${_YA_BASE}index.html#contact`,   label: 'Contact',      anchor: false }
+            { href: 'index.html', label: 'Home', anchor: false },
+            { href: 'index.html#connect', label: 'Join Community', anchor: false },
+            { href: 'index.html#about', label: 'About', anchor: false },
+            { href: 'our-journey.html', label: 'Journey', anchor: false },
+            { href: 'collaborator.html', label: 'Collaborator', anchor: false },
+            { href: 'faq.html', label: 'FAQ', anchor: false },
+            { href: 'index.html#contact', label: 'Contact', anchor: false }
         ];
 
         // For index.html, use anchor-only links
@@ -54,10 +37,10 @@ const YatrAmore = {
         const navLinksHTML = links.map(link => {
             let href = link.href;
             if (isIndex) {
-                if (link.href.endsWith('index.html'))        href = '#home';
-                else if (link.href.endsWith('index.html#connect')) href = '#connect';
-                else if (link.href.endsWith('index.html#about'))   href = '#about';
-                else if (link.href.endsWith('index.html#contact')) href = '#contact';
+                if (link.href === 'index.html') href = '#home';
+                else if (link.href === 'index.html#connect') href = '#connect';
+                else if (link.href === 'index.html#about') href = '#about';
+                else if (link.href === 'index.html#contact') href = '#contact';
             }
 
             // Robust active state: Match by explicit key OR by lowercased label mapping
@@ -72,12 +55,12 @@ const YatrAmore = {
         const brandTag = isIndex ? 'div' : 'a';
         const brandAttrs = isIndex
             ? 'class="brand brand-text"'
-            : `href="${_YA_BASE}index.html" class="brand brand-text" style="text-decoration: none; color: inherit;"`;
+            : 'href="index.html" class="brand brand-text" style="text-decoration: none; color: inherit;"';
 
         nav.innerHTML = `
         <div class="container nav-content">
             <${brandTag} ${brandAttrs}>
-                <img src="${_YA_BASE}Images/logo.svg" alt="YatrAmore Nav Logo" class="nav-logo" width="38" height="38">
+                <img src="Images/logo.svg" alt="YatrAmore Nav Logo" class="nav-logo" width="38" height="38">
                 YatrAmore
             </${brandTag}>
 
@@ -103,15 +86,15 @@ const YatrAmore = {
                     <span class="brand-text">YatrAmore</span>
                 </div>
                 <div class="footer-tagline">
-                    <p>Laura &amp; Yazavinder sharing love, culture, travel, and life between two worlds.</p>
+                    <p>Laura & Yazavinder sharing love, culture, travel, and life between two worlds.</p>
                 </div>
             </div>
             <div class="footer-row footer-links">
-                <a href="${_YA_BASE}privacy/">Privacy Policy</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
                 <span class="footer-divider">·</span>
-                <a href="${_YA_BASE}faq/">FAQ</a>
+                <a href="faq.html">FAQ</a>
                 <span class="footer-divider">·</span>
-                <a href="${_YA_BASE}index.html#contact">Contact Us</a>
+                <a href="index.html#contact">Contact Us</a>
             </div>
             <div class="footer-row footer-copyright">
                 <p>&copy; 2026 YatrAmore - All rights reserved.</p>
@@ -230,7 +213,7 @@ const YatrAmore = {
 
         const CORE_VERSION = 'v20'; // Increment this to break cache
         const script = document.createElement('script');
-        script.src = `${_YA_BASE}assets/script.js?v=SECURITY_${CORE_VERSION}`;
+        script.src = `script.js?v=SECURITY_${CORE_VERSION}`;
         document.body.appendChild(script);
     }
 };

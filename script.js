@@ -1216,7 +1216,7 @@ function initializeYatrAmore() {
             }
 
             // Optimized Rendering: Conditionally render image OR placeholder (never both)
-            const hasRealImage = collaborator.image && !collaborator.image.endsWith('Images/logo.svg') && collaborator.image.includes('.');
+            const hasRealImage = collaborator.image && collaborator.image !== 'Images/logo.svg' && collaborator.image.includes('.');
 
             const imageHTML = hasRealImage ? `
                 <img src="${s.image}" alt="${s.title}" 

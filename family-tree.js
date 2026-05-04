@@ -571,7 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        submitBtn.addEventListener("click", async (e) => {
+        submitBtn.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -605,17 +605,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             submitBtn.disabled = true;
-            submitBtn.innerText = "Securing...";
-
-            // v62: Guarantee fingerprint is ready before any submission
-            if (!systemFingerprint) {
-                try {
-                    systemFingerprint = await YatrAmoreSecurity.getFingerprint();
-                } catch (fpErr) {
-                    console.warn('[Family Tree] Fingerprint generation failed:', fpErr);
-                }
-            }
-
             submitBtn.innerText = "Engraving Leaf...";
 
             // Clear any active search filters to ensure the entire tree is visible
@@ -643,28 +632,6 @@ document.addEventListener("DOMContentLoaded", () => {
             let optimisticLeaf = null;
             if (!familyMembers.find(m => m.name === name)) {
                 optimisticLeaf = appendNewLeaf(name, true, familyMembers.length);
-            }
-
-            // v62: Fingerprint "Detect & Eliminate" — Local sweep before server round-trip
-            if (systemFingerprint) {
-                const fpMatch = familyMembers.find(m =>
-                    (m.fingerprint && m.fingerprint === systemFingerprint) ||
-                    (m.fp && m.fp === systemFingerprint)
-                );
-                if (fpMatch) {
-                    // Simulate server rejection: let the leaf grow briefly, then eliminate it
-                    setTimeout(() => {
-                        if (optimisticLeaf && optimisticLeaf.parentNode) {
-                            treeLeaves.removeChild(optimisticLeaf);
-                            let nodeIndex = Math.abs(nameHash(name)) % terminalNodes.length;
-                            terminalNodes[nodeIndex].occupiedCount = Math.max(0, terminalNodes[nodeIndex].occupiedCount - 1);
-                        }
-                        showMessage(`This device is already registered as "${fpMatch.name}".`, "var(--status-error)");
-                        resetState();
-                        checkJoinedStatus();
-                    }, 2500); // Let the leaf animation play for 2.5s before pruning
-                    return; // Skip server call entirely
-                }
             }
 
             const callbackName = 'gasCallback_' + Date.now();
@@ -699,14 +666,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     familyMembers.push({
                         name: submittedName,
                         rating: parseInt(rating),
-                        ['Device ID']: deviceIdValue,
-                        fingerprint: systemFingerprint || '' // v62: Store fingerprint in local cache
+                        ['Device ID']: deviceIdValue
                     });
                     localStorage.setItem(CACHE_KEY, JSON.stringify(familyMembers));
                     localStorage.setItem("yatramore_joined", "true");
                     localStorage.setItem("yatramore_joined_name", submittedName);
                     localStorage.setItem("yatramore_joined_email", email); // Anchor for perfect identification
-                    if (systemFingerprint) localStorage.setItem("yatramore_fingerprint", systemFingerprint); // v62: Persist fingerprint
                 }
 
                 setTimeout(() => {
@@ -783,7 +748,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("yatramore_joined", "true");
                     localStorage.setItem("yatramore_joined_name", joinedName);
                     if (match.email) localStorage.setItem("yatramore_joined_email", match.email.toLowerCase());
-                    if (match.fingerprint) localStorage.setItem("yatramore_fingerprint", match.fingerprint); // v62: Sync fingerprint
                 }
             }
 

@@ -687,11 +687,17 @@ footer {
 .footer-tagline p {
     font-size: 0.95rem;
     color: var(--text-main);
-    /* white-space: nowrap; REMOVED: Banning natural wrapping crashed mobile width */
     max-width: 90%;
     margin: 0 auto;
     line-height: 1.2;
     opacity: 0.85;
+}
+
+@media (min-width: 768px) {
+    .footer-tagline p {
+        white-space: nowrap;
+        max-width: none;
+    }
 }
 
 .footer-links {

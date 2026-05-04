@@ -41,14 +41,7 @@
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="assets/style.css">
-    
-    <!-- Zero-Wait: Background prefetching for sub-pages -->
-    <link rel="prefetch" href="journey/">
-    <link rel="prefetch" href="family/">
-    <link rel="prefetch" href="faq/">
-    <link rel="prefetch" href="assets/components.js">
-    <link rel="prefetch" href="journey/journeys.js">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -107,7 +100,7 @@
 
             <!-- Family Tree Call-to-Action -->
             <div class="family-tree-cta">
-                <a href="family/" class="family-tree-link">
+                <a href="family-tree.html" class="family-tree-link">
                     <i class="fas fa-seedling"></i> Join YatrAmore Family Tree
                 </a>
             </div>
@@ -202,7 +195,7 @@
 
                 <div class="privacy-notice">
                     We use your email, subject, and message only to reply to your enquiry.
-                    <a href="privacy/">Read our Privacy Policy</a>.
+                    <a href="privacy-policy.html">Read our Privacy Policy</a>.
                 </div>
 
                 <!-- Cloudflare Turnstile CAPTCHA -->
@@ -222,7 +215,7 @@
     <!-- Accessibility & Translation (rendered by components.js) -->
     <div class="accessibility-container"></div>
 
-    <script src="assets/components.js"></script>
+    <script src="components.js"></script>
     <script>
         YatrAmore.renderNav('index');
         YatrAmore.renderFooter();

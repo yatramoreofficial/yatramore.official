@@ -96,6 +96,11 @@
     <section class="travel-grid-section">
         <div class="container">
             <div class="travel-grid centered-grid" id="travel-grid">
+                <!-- Skeleton cards for perceived speed -->
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                
                 <!-- Collaborator cards injected here by script.js -->
                 <div id="collaborator-grid" style="display: contents;"></div>
                 <!-- Journey cards injected here by journeys.js -->
@@ -233,6 +238,9 @@
 
             // Insert after the collaborator-grid div
             collaboratorGrid.insertAdjacentHTML('afterend', cardsHTML);
+            
+            // Remove skeletons once cards are rendered
+            document.querySelectorAll('.skeleton-card').forEach(s => s.remove());
         })();
 
         // ── Filter Functionality ────────────────────────────

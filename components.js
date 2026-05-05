@@ -24,13 +24,15 @@ const YatrAmore = {
 
         const links = [
             { href: 'index.html', label: 'Home', anchor: false },
-            { href: 'index.html#connect', label: 'Join Community', anchor: false },
+            { href: 'index.html#connect', label: 'Community', anchor: false },
             { href: 'index.html#about', label: 'About', anchor: false },
             { href: 'our-journey.html', label: 'Journey', anchor: false },
+            { href: 'van-life.html', label: 'VanLife', anchor: false },
             { href: 'collaborator.html', label: 'Collaborator', anchor: false },
             { href: 'faq.html', label: 'FAQ', anchor: false },
             { href: 'index.html#contact', label: 'Contact', anchor: false }
         ];
+
 
         // For index.html, use anchor-only links
         const isIndex = activePage === 'index';

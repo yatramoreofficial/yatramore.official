@@ -116,8 +116,8 @@ nav {
     top: 0;
     width: 100%;
     padding: 1.2rem 0;
-    z-index: 1000;
-    background: rgba(253, 251, 247, 0.95);
+    z-index: 2000; /* FORCE NAV ABOVE MAP CONTROLS */
+    background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);

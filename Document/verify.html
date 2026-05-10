@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>YatrAmore | Document Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #FDFBF7;
+            color: #2D1A10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(107, 66, 38, 0.08);
+            border: 2px solid #C5B358;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .brand {
+            font-family: 'Georgia', serif;
+            font-size: 28px;
+            font-weight: bold;
+            color: #6B4226;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #C5B358;
+            margin-bottom: 30px;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #C5B358;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #6B4226;
+            margin-bottom: 10px;
+        }
+
+        /* Result Cards */
+        .result-card {
+            display: none;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .result-card.verified {
+            background: #f0faf0;
+            border: 1px solid #c0e0c0;
+        }
+
+        .result-card.invalid {
+            background: #faf0f0;
+            border: 1px solid #e0c0c0;
+        }
+
+        .result-card h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .result-card.verified h2 { color: #2D5A27; }
+        .result-card.invalid h2 { color: #8B0000; }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 15px 0;
+        }
+
+        .detail {
+            text-align: left;
+            margin: 12px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .detail b {
+            color: #6B4226;
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-badge.active {
+            background: #2D5A27;
+            color: white;
+        }
+
+        .status-badge.revoked {
+            background: #8B0000;
+            color: white;
+        }
+
+        .no-id {
+            color: #6B4226;
+            font-size: 14px;
+            margin-top: 10px;
+            line-height: 1.8;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 10px;
+            color: #C5B358;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .error-text {
+            color: #8B0000;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand">YatrAmore</div>
+        <div class="subtitle">Document Authentication Portal</div>
+
+        <!-- Loading State -->
+        <div id="loading">
+            <div class="loader"></div>
+            <p class="loading-text">Verifying document authenticity...</p>
+        </div>
+
+        <!-- Verified Result -->
+        <div id="verified" class="result-card verified">
+            <h2>✅ Document Authentic</h2>
+            <hr class="divider">
+            <div class="detail"><b>Document ID</b><span id="v-id"></span></div>
+            <div class="detail"><b>Issued To</b><span id="v-recipient"></span></div>
+            <div class="detail"><b>Issue Date</b><span id="v-date"></span></div>
+            <div class="detail"><b>Status</b><span id="v-status" class="status-badge active">Active</span></div>
+        </div>
+
+        <!-- Invalid Result -->
+        <div id="invalid" class="result-card invalid">
+            <h2>❌ Invalid Document</h2>
+            <hr class="divider">
+            <p style="font-size: 14px; color: #8B0000;">This Document ID is not recognized in our official registry or has been revoked.</p>
+        </div>
+
+        <!-- No ID Provided -->
+        <div id="no-id" style="display: none;">
+            <p class="no-id">⚠️ No Document ID provided.<br><br>Please scan an original YatrAmore document to verify its authenticity.</p>
+        </div>
+
+        <!-- Error State -->
+        <p id="error" class="error-text">Unable to connect to registry. Please try again.</p>
+
+        <div class="footer">© YatrAmore Official Registry</div>
+    </div>
+
+    <script>
+        // This function is called automatically when Google returns the data.
+        // The phone NEVER navigates to script.google.com — data arrives silently.
+        function handleResponse(data) {
+            document.getElementById('loading').style.display = 'none';
+
+            if (data.status === "VERIFIED" && data.docStatus === "Active") {
+                document.getElementById('v-id').textContent = data.docId;
+                document.getElementById('v-recipient').textContent = data.recipient || "—";
+                document.getElementById('v-date').textContent = data.date || "—";
+                document.getElementById('verified').style.display = 'block';
+            } else if (data.status === "VERIFIED" && data.docStatus !== "Active") {
+                document.getElementById('v-id').textContent = data.docId;
+                document.getElementById('v-recipient').textContent = data.recipient || "—";
+                document.getElementById('v-date').textContent = data.date || "—";
+                document.getElementById('v-status').textContent = data.docStatus;
+                document.getElementById('v-status').className = 'status-badge revoked';
+                document.getElementById('verified').style.display = 'block';
+            } else {
+                document.getElementById('invalid').style.display = 'block';
+            }
+        }
+
+        (function() {
+            var id = new URLSearchParams(window.location.search).get('id');
+
+            if (!id) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('no-id').style.display = 'block';
+                return;
+            }
+
+            // JSONP: Load data from Google Sheets via a <script> tag.
+            // This bypasses ALL CORS and redirect issues.
+            // The phone stays on THIS page the entire time.
+            var gasUrl = "https://script.google.com/macros/s/AKfycbyJaRzxuFP7O0wl3iHN7fo1770Hi-gPlZX29kvPMbY-zvz4g2FHdIBcD7yeCoUcWnNT1Q/exec";
+            var script = document.createElement('script');
+            script.src = gasUrl + "?id=" + encodeURIComponent(id) + "&callback=handleResponse";
+
+            // If the script fails to load after 8 seconds, show error
+            var timeout = setTimeout(function() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }, 8000);
+
+            script.onload = function() { clearTimeout(timeout); };
+            script.onerror = function() {
+                clearTimeout(timeout);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            };
+
+            document.body.appendChild(script);
+        })();
+    </script>
+</body>
+</html>

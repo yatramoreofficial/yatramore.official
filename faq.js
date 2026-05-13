@@ -7,6 +7,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const faqItems = document.querySelectorAll('.faq-item');
     const searchInput = document.getElementById('faq-search');
     const categories = document.querySelectorAll('.faq-category');
+
+    // S-3 Fix: Store original HTML before any search manipulation (preserves <a> links)
+    faqItems.forEach((item, i) => {
+        const h3 = item.querySelector('h3');
+        const answerContent = item.querySelector('.answer-content');
+        item._origQuestionHTML = h3.innerHTML;
+        item._origAnswerHTML = answerContent.innerHTML;
+
+        // A-3 Fix: ARIA disclosure pattern for screen readers
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        question.setAttribute('aria-expanded', 'false');
+        question.setAttribute('aria-controls', `faq-answer-${i}`);
+        answer.setAttribute('id', `faq-answer-${i}`);
+        answer.setAttribute('role', 'region');
+    });
     
     // Create "No Results" element if it doesn't exist
     let noResults = document.getElementById('faq-no-results');
@@ -31,11 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Close all other items
             faqItems.forEach(otherItem => {
-                if (otherItem !== item) otherItem.classList.remove('active');
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                }
             });
 
             // Toggle current item
             item.classList.toggle('active');
+            question.setAttribute('aria-expanded', String(!isActive));
         });
     });
 
@@ -59,15 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         const h3 = item.querySelector('h3');
                         const answerContent = item.querySelector('.answer-content');
                         
-                        // Get original text for highlighting
+                        // Use textContent for matching, stored originals for restoration
                         const questionText = h3.textContent;
                         const answerText = answerContent.textContent;
 
                         if (term === "") {
-                            // Reset state if search is empty
+                            // S-3 Fix: Restore original HTML (preserves <a> links)
                             item.style.display = 'block';
-                            h3.innerHTML = questionText;
-                            answerContent.innerHTML = answerText;
+                            h3.innerHTML = item._origQuestionHTML;
+                            answerContent.innerHTML = item._origAnswerHTML;
                             categoryHasVisibleItems = true;
                             totalVisible++;
                         } else if (questionText.toLowerCase().includes(term) || answerText.toLowerCase().includes(term)) {
@@ -75,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             categoryHasVisibleItems = true;
                             totalVisible++;
                             
-                            // Highlight matches
+                            // Highlight matches (text-only during search is acceptable)
                             h3.innerHTML = highlightMatch(questionText, term);
                             answerContent.innerHTML = highlightMatch(answerText, term);
                         } else {
@@ -99,7 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function highlightMatch(text, term) {
         if (!term) return text;
-        const regex = new RegExp(`(${term})`, 'gi');
+        // S-2 Fix: Escape regex special characters to prevent SyntaxError
+        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escaped})`, 'gi');
         return text.replace(regex, '<mark class="faq-highlight">$1</mark>');
     }
 });

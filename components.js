@@ -60,6 +60,7 @@ const YatrAmore = {
             : 'href="index.html" class="brand brand-text" style="text-decoration: none; color: inherit;"';
 
         nav.innerHTML = `
+        <a href="#main-content" class="skip-link">Skip to content</a>
         <div class="container nav-content">
             <${brandTag} ${brandAttrs}>
                 <img src="Images/logo.svg" alt="YatrAmore Nav Logo" class="nav-logo" width="38" height="38">
@@ -74,6 +75,13 @@ const YatrAmore = {
                 ${navLinksHTML}
             </div>
         </div>`;
+
+        // A-1 Fix: Ensure a #main-content target exists for the skip link
+        if (!document.getElementById('main-content')) {
+            const mainTarget = document.querySelector('main') ||
+                document.querySelector('.hero, .travel-hero, .faq-hero, .policy-hero, .page-content');
+            if (mainTarget) mainTarget.id = 'main-content';
+        }
     },
 
     // ── Footer ──────────────────────────────────────────

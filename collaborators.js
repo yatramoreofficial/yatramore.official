@@ -15,7 +15,13 @@ const COLLABORATOR_DATA = [
             "🇮🇳 Indian"
         ],
         "status": "Partner",
-        "isCollaborator": true
+        "isCollaborator": true,
+
+        // ╔══════════════════════════════════════════════════════════════╗
+        // ║  🔗 WEBLINK — Paste the partner's website URL below.       ║
+        // ║  Clicking the card will open this link in a new tab.       ║
+        // ╚══════════════════════════════════════════════════════════════╝
+        "weblink": "https://www.gandhipadova.it/"  // <-- ✏️ REPLACE with Gandhi restaurant's actual URL
     }
     /* 
     // --- Placeholder Collaborators (Inactive) ---
@@ -37,7 +43,10 @@ const COLLABORATOR_DATA = [
             "🧖🏻‍♀️ Wellness"
         ],
         "status": "Partner",
-        "isCollaborator": true
+        "isCollaborator": true,
+
+        // 🔗 WEBLINK — Paste the partner's website URL below:
+        "weblink": "https://example.com"  // <-- ✏️ REPLACE with actual URL
     },
     {
         "id": "partner-2",
@@ -55,7 +64,10 @@ const COLLABORATOR_DATA = [
             "🎬 Activity"
         ],
         "status": "Partner",
-        "isCollaborator": true
+        "isCollaborator": true,
+
+        // 🔗 WEBLINK — Paste the partner's website URL below:
+        "weblink": "https://example.com"  // <-- ✏️ REPLACE with actual URL
     },
     {
         "id": "partner-3",
@@ -73,7 +85,10 @@ const COLLABORATOR_DATA = [
             "🍝 Authentic"
         ],
         "status": "Partner",
-        "isCollaborator": true
+        "isCollaborator": true,
+
+        // 🔗 WEBLINK — Paste the partner's website URL below:
+        "weblink": "https://example.com"  // <-- ✏️ REPLACE with actual URL
     }
     */
 ];

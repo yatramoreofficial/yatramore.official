@@ -282,15 +282,15 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         }).addTo(map).bindPopup(`
             <div class="van-popup-card glass">
-                <img src="${dest.image}" alt="${dest.title}" class="van-popup-img">
+                <img src="${(dest.image || '').replace(/[<>"]/g, '')}" alt="${YatrAmore.sanitize(dest.title)}" class="van-popup-img">
                 <div class="van-popup-body">
-                    <div class="van-popup-title">${dest.title}</div>
-                    <p class="van-popup-text">${dest.description}</p>
+                    <div class="van-popup-title">${YatrAmore.sanitize(dest.title)}</div>
+                    <p class="van-popup-text">${YatrAmore.sanitize(dest.description)}</p>
                     <div class="van-popup-links">
-                        <a href="${dest.instagram}" target="_blank" class="van-popup-btn instagram"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="${dest.tiktok}" target="_blank" class="van-popup-btn tiktok"><i class="fa-brands fa-tiktok"></i></a>
-                        <a href="${dest.youtube}" target="_blank" class="van-popup-btn youtube"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="https://www.google.com/maps/search/?api=1&query=${dest.coords[0]},${dest.coords[1]}" target="_blank" class="van-popup-btn maps"><i class="fas fa-location-dot"></i></a>
+                        <a href="${(dest.instagram || '').replace(/[<>"]/g, '')}" target="_blank" rel="noopener noreferrer" class="van-popup-btn instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="${(dest.tiktok || '').replace(/[<>"]/g, '')}" target="_blank" rel="noopener noreferrer" class="van-popup-btn tiktok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="${(dest.youtube || '').replace(/[<>"]/g, '')}" target="_blank" rel="noopener noreferrer" class="van-popup-btn youtube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${dest.coords[0]},${dest.coords[1]}" target="_blank" rel="noopener noreferrer" class="van-popup-btn maps"><i class="fas fa-location-dot"></i></a>
                     </div>
                 </div>
             </div>
@@ -301,6 +301,15 @@ document.addEventListener('DOMContentLoaded', () => {
     radarStartTime = Date.now();
     document.body.classList.add('scanning');
     globalDiscoveryLoop();
+
+    // P-2 Fix: Pause RAF loop when tab is hidden (saves battery on mobile)
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            radarStartTime = null; // Pauses the loop (RAF still fires but returns immediately)
+        } else {
+            radarStartTime = Date.now(); // Resume from current time
+        }
+    });
 
     // 6. MISSION CONTROL READY
     console.log("YA-VanLife: Mission Control Root Engine Synchronized.");

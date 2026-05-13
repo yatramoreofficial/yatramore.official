@@ -65,10 +65,32 @@ html {
     font-family: 'Outfit', sans-serif;
 }
 
-/* Exclude media elements from theme transitions (performance) */
-img, video, canvas {
+/* P-1 Fix: Exclude heavy rendered elements from theme transitions (performance) */
+img, video, canvas, svg *, .leaflet-tile, .leaflet-pane *, .leaflet-control * {
     transition: none;
 }
+
+/* A-1: Skip-to-content link (visible only on keyboard focus) */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.8rem 1.5rem;
+    background: var(--brand-brown);
+    color: white !important;
+    text-decoration: none;
+    border-radius: 0 0 12px 12px;
+    z-index: 9999;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Media elements excluded above via P-1 rule */
 
 body {
     background-color: var(--bg-main);

@@ -143,7 +143,8 @@ function initializeYatrAmore() {
 
             // 4. Hardware
             signals.push(`${screen.width}x${screen.height}x${window.devicePixelRatio}`);
-            signals.push(navigator.platform || 'unk');
+            // Q-7 Fix: navigator.platform is deprecated; use userAgentData with fallback
+            signals.push(navigator.userAgentData?.platform || navigator.platform || 'unk');
             signals.push((navigator.hardwareConcurrency || 0).toString());
 
             const raw = signals.join('|||');
@@ -345,8 +346,6 @@ function initializeYatrAmore() {
     const heroLogo = document.getElementById("hero-logo");
     if (heroLogo) {
         let isMoving = false;
-        let rotateY = 0;
-        let rotateX = 0;
 
         document.addEventListener("mousemove", (e) => {
             if (!isMoving) {
@@ -1190,7 +1189,8 @@ function initializeYatrAmore() {
                 menu: collaborator.Menu ? YatrAmore.sanitize(collaborator.Menu) : '',
                 rating: YatrAmore.sanitize(collaborator.rating || ''),
                 status: YatrAmore.sanitize(collaborator.status || 'Partner'),
-                tags: (collaborator.tags || []).map(t => YatrAmore.sanitize(t))
+                tags: (collaborator.tags || []).map(t => YatrAmore.sanitize(t)),
+                weblink: collaborator.weblink ? collaborator.weblink.replace(/[<>"]/g, '') : ''
             };
 
             // Dynamic middle meta item (Nights, Camera gear, or Menu highlights)
@@ -1230,7 +1230,7 @@ function initializeYatrAmore() {
             `;
 
             return `
-            <article class="travel-card glass" data-category="${s.category}" data-is-collaborator="true">
+            <article class="travel-card glass" data-category="${s.category}" data-is-collaborator="true"${s.weblink ? ` data-weblink="${s.weblink}" style="cursor:pointer;"` : ''}>
                 <div class="card-image-wrapper">
                     ${imageHTML}
                     <div class="card-badge">
@@ -1270,8 +1270,18 @@ function initializeYatrAmore() {
 
         if (loadingNotice) loadingNotice.style.display = "none";
 
+        // Helper: Attach click-to-open-weblink on collaborator cards with a data-weblink attribute
+        const attachWeblinkListeners = (container) => {
+            container.querySelectorAll('.travel-card[data-weblink]').forEach(card => {
+                card.addEventListener('click', () => {
+                    window.open(card.dataset.weblink, '_blank', 'noopener,noreferrer');
+                });
+            });
+        };
+
         if (collaboratorGrid) {
             collaboratorGrid.innerHTML = cardsHTML;
+            attachWeblinkListeners(collaboratorGrid);
 
             // Immediately apply active filter to new cards on the journey page
             const currentFilterBtn = document.querySelector('.filter-btn.active');
@@ -1295,6 +1305,7 @@ function initializeYatrAmore() {
 
         if (collaboratorPageGrid) {
             collaboratorPageGrid.innerHTML = cardsHTML;
+            attachWeblinkListeners(collaboratorPageGrid);
         }
 
         // ── Surgical Scroll Reveal Implementation ──

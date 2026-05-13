@@ -18,9 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const treeStructure = document.getElementById("tree-structure");
         const treeLeaves = document.getElementById("tree-leaves");
 
-        // 0. CONFIG & DEVICE ID (Hardened Fragmentation)
-        const _ga = ['h', 't', 't', 'p', 's', ':', '/', '/', 's', 'c', 'r', 'i', 'p', 't', '.', 'g', 'o', 'o', 'g', 'l', 'e', '.', 'c', 'o', 'm', '/', 'm', 'a', 'c', 'r', 'o', 's', '/', 's', '/'].join('');
-        const _id = "AKfycbye5pj79bdFHT4vKsmTN6wAuFi5chN2-l-KSPc33Yui3JQZ0KhEyDOgMc6HVWY5l7wPig";
+        // 0. CONFIG & DEVICE ID (Hardened — Base64 Obfuscation matching script.js pattern)
+        const _ga = atob('aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy8=');
+        const _id = atob('QUtmeWNieWU1cGo3OWJkRkhUNHZLc21UTjZ3QXVGaTVjaE4yLWwtS1NQYzMzWXVpM0pRWjBLaEV5RE9nTWM2SFZXWTVsN3dQaWc=');
         const _gz = '/exec';
         const scriptURL = _ga + _id + _gz;
 
@@ -44,6 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
             star.addEventListener("click", () => {
                 ratingInput.value = star.dataset.value;
                 highlightStars(parseInt(star.dataset.value));
+            });
+            // A-2 Fix: Keyboard accessibility for star rating
+            star.addEventListener("keydown", (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    ratingInput.value = star.dataset.value;
+                    highlightStars(parseInt(star.dataset.value));
+                }
             });
         });
 

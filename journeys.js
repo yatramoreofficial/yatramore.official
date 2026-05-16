@@ -5,7 +5,7 @@
 // The card will automatically appear on the "Our Journey" page.
 //
 // Fields:
-//   category  — Must match a filter button: "Italy", "India", "Europe", "Asia"
+//   category  — Must match a filter button: "Italy", "India", "Europe", "Asia", "Oceania"
 //   badge     — "Must Visit", "Our Favourite", "Hidden Gem", "Gem Explored" (or leave empty "")
 //   badgeType — "default" (brown), "love" (pink), "gem" (dark brown), or "" for default
 //   location  — The subtitle shown below the image (e.g. "Venice, Italy")
@@ -148,5 +148,18 @@ const JOURNEY_DATA = [
         nights: "X nights",
         rating: "Rating",
         tags: ["🕌 History", "🌶️ Spices", "🛕 Spirituality"]
+    },
+    {
+        category: "Oceania",
+        badge: "Gem Explored",
+        badgeType: "gem",
+        location: "Destination, Region",
+        title: "Place Name Here",
+        description: "Describe your experience here — the culture, the food, the people, the stay. Be as real as you want. Your audience loves authenticity.",
+        image: "Images/logo.svg",
+        date: "Month Year",
+        nights: "X nights",
+        rating: "Rating",
+        tags: ["🐠 Ocean", "🦤 Wildlife", "🏝️ Beaches"]
     }
 ];

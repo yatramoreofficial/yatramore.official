@@ -1187,6 +1187,7 @@ function initializeYatrAmore() {
                 nights: collaborator.nights ? YatrAmore.sanitize(collaborator.nights) : '',
                 camera: collaborator.Camera ? YatrAmore.sanitize(collaborator.Camera) : '',
                 menu: collaborator.Menu ? YatrAmore.sanitize(collaborator.Menu) : '',
+                gift: (collaborator.Gift || collaborator.Gifts || collaborator.Products) ? YatrAmore.sanitize(collaborator.Gift || collaborator.Gifts || collaborator.Products) : '',
                 rating: YatrAmore.sanitize(collaborator.rating || ''),
                 status: YatrAmore.sanitize(collaborator.status || 'Partner'),
                 tags: (collaborator.tags || []).map(t => YatrAmore.sanitize(t)),
@@ -1212,6 +1213,12 @@ function initializeYatrAmore() {
                 <div class="card-meta-item">
                     <i class="fas fa-utensils"></i>
                     <span>${s.menu}</span>
+                </div>`;
+            } else if (s.gift) {
+                middleMetaHTML = `
+                <div class="card-meta-item">
+                    <i class="fas fa-gift"></i>
+                    <span>${s.gift}</span>
                 </div>`;
             }
 

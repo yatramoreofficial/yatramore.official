@@ -96,7 +96,7 @@ const YatrAmore = {
                     <span class="brand-text">YatrAmore</span>
                 </div>
                 <div class="footer-tagline">
-                    <p>Laura & Yazavinder sharing love, culture, travel, and life between two worlds.</p>
+                    <p>Laura & Yazavinder sharing love, culture, travel, and life between two worlds</p>
                 </div>
             </div>
             <div class="footer-row footer-links">

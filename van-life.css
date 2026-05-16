@@ -461,3 +461,148 @@
         margin-top: 2rem;
     }
 }
+/* 9. TACTICAL HUD & COMMAND LOG */
+.tactical-hud .stat-card {
+    border: 1px solid rgba(197, 179, 88, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.command-log-container {
+    max-width: 1400px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+}
+
+.command-log {
+    height: 120px;
+    background: rgba(10, 10, 10, 0.85) !important;
+    border: 1px solid var(--brand-gold);
+    border-radius: 12px;
+    padding: 1rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    color: var(--brand-gold);
+    overflow-y: auto;
+    box-shadow: inset 0 0 20px rgba(197, 179, 88, 0.1);
+    scrollbar-width: thin;
+    scrollbar-color: var(--brand-gold) transparent;
+}
+
+.log-entry {
+    margin-bottom: 0.4rem;
+    opacity: 0;
+    animation: logFadeIn 0.3s forwards;
+    display: flex;
+    gap: 10px;
+}
+
+.log-entry.system { color: #2ecc71; }
+.log-entry.discovery { color: var(--brand-gold); font-weight: bold; }
+.log-entry.scanning { color: #3498db; }
+
+@keyframes logFadeIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* 10. VAN SPECS SECTION */
+.van-specs-section {
+    padding: 4rem 5%;
+    background: var(--bg-accent); /* Changed to accent for contrast */
+}
+
+.specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.specs-image-card {
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    border-radius: 30px;
+}
+
+.specs-tag {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--brand-gold);
+    border: 1px solid var(--brand-gold);
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+}
+
+.van-schematic {
+    width: 200px;
+    height: auto;
+    margin-bottom: 2rem;
+    filter: drop-shadow(0 0 15px rgba(197, 179, 88, 0.4));
+    animation: float 4s infinite ease-in-out;
+}
+
+.specs-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.spec-item {
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.spec-item:hover {
+    background: var(--brand-gold);
+    transform: scale(1.05);
+}
+
+.spec-item:hover i,
+.spec-item:hover .spec-val,
+.spec-item:hover .spec-lab {
+    color: white !important;
+}
+
+.spec-item i {
+    font-size: 2rem;
+    color: var(--brand-gold);
+    margin-bottom: 1rem;
+}
+
+.spec-val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--brand-brown);
+}
+
+.spec-lab {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@media (max-width: 992px) {
+    .specs-grid {
+        grid-template-columns: 1fr;
+    }
+}

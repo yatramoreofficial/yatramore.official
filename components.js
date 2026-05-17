@@ -23,14 +23,14 @@ const YatrAmore = {
         if (!nav) return;
 
         const links = [
-            { href: 'index.html', label: 'Home', anchor: false },
-            { href: 'index.html#connect', label: 'Community', anchor: false },
-            { href: 'index.html#about', label: 'About', anchor: false },
-            { href: 'our-journey.html', label: 'Journey', anchor: false },
-            { href: 'van-life.html', label: 'VanLife', anchor: false },
-            { href: 'collaborator.html', label: 'Collaborator', anchor: false },
-            { href: 'faq.html', label: 'FAQ', anchor: false },
-            { href: 'index.html#contact', label: 'Contact', anchor: false }
+            { href: '/', label: 'Home', anchor: false },
+            { href: '/#connect', label: 'Community', anchor: false },
+            { href: '/#about', label: 'About', anchor: false },
+            { href: 'our-journey', label: 'Journey', anchor: false },
+            { href: 'van-life', label: 'VanLife', anchor: false },
+            { href: 'collaborator', label: 'Collaborator', anchor: false },
+            { href: 'faq', label: 'FAQ', anchor: false },
+            { href: '/#contact', label: 'Contact', anchor: false }
         ];
 
 
@@ -39,10 +39,10 @@ const YatrAmore = {
         const navLinksHTML = links.map(link => {
             let href = link.href;
             if (isIndex) {
-                if (link.href === 'index.html') href = '#home';
-                else if (link.href === 'index.html#connect') href = '#connect';
-                else if (link.href === 'index.html#about') href = '#about';
-                else if (link.href === 'index.html#contact') href = '#contact';
+                if (link.href === '/') href = '#home';
+                else if (link.href === '/#connect') href = '#connect';
+                else if (link.href === '/#about') href = '#about';
+                else if (link.href === '/#contact') href = '#contact';
             }
 
             // Robust active state: Match by explicit key OR by lowercased label mapping
@@ -57,7 +57,7 @@ const YatrAmore = {
         const brandTag = isIndex ? 'div' : 'a';
         const brandAttrs = isIndex
             ? 'class="brand brand-text"'
-            : 'href="index.html" class="brand brand-text" style="text-decoration: none; color: inherit;"';
+            : 'href="/" class="brand brand-text" style="text-decoration: none; color: inherit;"';
 
         nav.innerHTML = `
         <a href="#main-content" class="skip-link">Skip to content</a>
@@ -100,11 +100,11 @@ const YatrAmore = {
                 </div>
             </div>
             <div class="footer-row footer-links">
-                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="privacy-policy">Privacy Policy</a>
                 <span class="footer-divider">·</span>
-                <a href="faq.html">FAQ</a>
+                <a href="faq">FAQ</a>
                 <span class="footer-divider">·</span>
-                <a href="index.html#contact">Contact Us</a>
+                <a href="/#contact">Contact Us</a>
             </div>
             <div class="footer-row footer-copyright">
                 <p>&copy; 2026 YatrAmore - All rights reserved.</p>

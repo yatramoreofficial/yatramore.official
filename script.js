@@ -11,7 +11,7 @@
     }
     const setOrClearGoogleCookie = (lang) => {
         // Hit every permutation of domains and paths that Chrome/GitHub/Safari might cache
-        const domains = ['', window.location.hostname, '.' + window.location.hostname, '.github.io', '.yatramoreofficial.github.io'];
+        const domains = ['', window.location.hostname, '.' + window.location.hostname, '.github.io', '.yatramoreofficial.github.io', 'yatramore.com', '.yatramore.com', 'www.yatramore.com'];
         const paths = ['/', window.location.pathname, '/yatramore.official', '/yatramore.official/'];
 
         domains.forEach(domain => {
@@ -785,7 +785,7 @@ function initializeYatrAmore() {
             // Priority: When sharing, use the LIVE URL if we're on a local file, otherwise use current URL
             let shareUrl = window.location.href;
             if (shareUrl.startsWith('file://')) {
-                shareUrl = 'https://yatramoreofficial.github.io';
+                shareUrl = 'https://www.yatramore.com';
             }
 
             const currentUrl = encodeURIComponent(shareUrl);

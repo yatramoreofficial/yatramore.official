@@ -4,29 +4,62 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+  <!-- Created for YatrAmore -->
 
+  <!-- Home Page -->
+  <url>
+    <loc>https://www.yatramore.com/</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.00</priority>
+  </url>
 
-<url>
-  <loc>https://yatramore.com/</loc>
-  <lastmod>2026-05-17T14:59:04+00:00</lastmod>
-  <priority>1.00</priority>
-</url>
-<url>
-  <loc>https://yatramore.com/family-tree.html</loc>
-  <lastmod>2026-05-17T14:59:04+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://yatramore.com/privacy-policy.html</loc>
-  <lastmod>2026-05-17T14:59:04+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://yatramore.com/privacy-policy</loc>
-  <lastmod>2026-05-17T14:59:04+00:00</lastmod>
-  <priority>0.64</priority>
-</url>
+  <!-- Our Journey -->
+  <url>
+    <loc>https://www.yatramore.com/our-journey</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
 
+  <!-- Van Life -->
+  <url>
+    <loc>https://www.yatramore.com/van-life</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Collaborator -->
+  <url>
+    <loc>https://www.yatramore.com/collaborator</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Family Tree -->
+  <url>
+    <loc>https://www.yatramore.com/family-tree</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- FAQ -->
+  <url>
+    <loc>https://www.yatramore.com/faq</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://www.yatramore.com/privacy-policy</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
 
 </urlset>

@@ -29,6 +29,7 @@ const YatrAmore = {
             { href: 'our-journey', label: 'Journey', anchor: false },
             { href: 'van-life', label: 'VanLife', anchor: false },
             { href: 'collaborator', label: 'Collaborator', anchor: false },
+            { href: 'blog', label: 'Story', anchor: false },
             { href: 'faq', label: 'FAQ', anchor: false },
             { href: '/#contact', label: 'Contact', anchor: false }
         ];
@@ -48,7 +49,8 @@ const YatrAmore = {
             // Robust active state: Match by explicit key OR by lowercased label mapping
             const linkKey = link.label.toLowerCase().replace(/\s+/g, '-');
             const isSponsorLegacy = (activePage === 'sponsor' && linkKey === 'collaborator');
-            const isActive = (activePage === linkKey) || isSponsorLegacy;
+            const isStory = (activePage === 'blog' && linkKey === 'story');
+            const isActive = (activePage === linkKey) || isSponsorLegacy || isStory;
             const activeAttrs = isActive ? ' class="active" aria-current="page"' : '';
 
             return `<a href="${href}"${activeAttrs}>${link.label}</a>`;

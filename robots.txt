@@ -1,0 +1,17 @@
+# ============================================
+# robots.txt — YatrAmore
+# https://www.yatramore.com
+# ============================================
+
+# Allow all well-behaved crawlers full access
+User-agent: *
+Allow: /
+
+# Block access to internal/dev files
+Disallow: /server.py
+Disallow: /.git/
+Disallow: /.gitignore
+Disallow: /.DS_Store
+
+# Point crawlers to the sitemap
+Sitemap: https://www.yatramore.com/sitemap.xml

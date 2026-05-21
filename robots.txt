@@ -1,6 +1,6 @@
 # ============================================
 # robots.txt — YatrAmore
-# https://www.yatramore.com
+# https://yatramore.com
 # ============================================
 
 # Allow all well-behaved crawlers full access
@@ -14,4 +14,4 @@ Disallow: /.gitignore
 Disallow: /.DS_Store
 
 # Point crawlers to the sitemap
-Sitemap: https://www.yatramore.com/sitemap.xml
+Sitemap: https://yatramore.com/sitemap.xml

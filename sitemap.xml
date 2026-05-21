@@ -8,7 +8,7 @@
 
   <!-- Home Page -->
   <url>
-    <loc>https://www.yatramore.com/</loc>
+    <loc>https://yatramore.com/</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
@@ -16,7 +16,7 @@
 
   <!-- Our Journey -->
   <url>
-    <loc>https://www.yatramore.com/our-journey</loc>
+    <loc>https://yatramore.com/our-journey</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
@@ -24,7 +24,7 @@
 
   <!-- Van Life -->
   <url>
-    <loc>https://www.yatramore.com/van-life</loc>
+    <loc>https://yatramore.com/van-life</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
@@ -32,7 +32,7 @@
 
   <!-- Collaborator -->
   <url>
-    <loc>https://www.yatramore.com/collaborator</loc>
+    <loc>https://yatramore.com/collaborator</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
@@ -40,7 +40,7 @@
 
   <!-- Story / Journal -->
   <url>
-    <loc>https://www.yatramore.com/blog</loc>
+    <loc>https://yatramore.com/blog</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
@@ -48,7 +48,7 @@
 
   <!-- Article: The Art of Slow Travel -->
   <url>
-    <loc>https://www.yatramore.com/blog-template</loc>
+    <loc>https://yatramore.com/blog-template</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
@@ -56,7 +56,7 @@
 
   <!-- Family Tree -->
   <url>
-    <loc>https://www.yatramore.com/family-tree</loc>
+    <loc>https://yatramore.com/family-tree</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
@@ -64,7 +64,7 @@
 
   <!-- FAQ -->
   <url>
-    <loc>https://www.yatramore.com/faq</loc>
+    <loc>https://yatramore.com/faq</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
@@ -72,7 +72,7 @@
 
   <!-- Privacy Policy -->
   <url>
-    <loc>https://www.yatramore.com/privacy-policy</loc>
+    <loc>https://yatramore.com/privacy-policy</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>

@@ -22,16 +22,15 @@ const COLLABORATOR_DATA = [
         // ║  Clicking the card will open this link in a new tab.       ║
         // ╚══════════════════════════════════════════════════════════════╝
         "weblink": "https://www.gandhipadova.it/"  // <-- ✏️ REPLACE with Gandhi restaurant's actual URL
-    }
-    /*,
+    },
     {
         "id": "partner-2",
         "category": "Oceania",
         "title": "House of Khalsa ☬",
         "location": "Melbourne, Australia",
         "description": "Heritage-inspired watches and refined perfumes crafted with meaning and style. Elegant details, thoughtful design, and a distinctive identity make each piece feel truly special.",
-        "image": "Images/logo.svg",
-        "date": "June 2026",
+        "image": "Images/Khalsa.webp",
+        "date": "May 2026",
         "Gift": "2 X ⌚️+⚱️",
         "rating": "5/5",
         "tags": [

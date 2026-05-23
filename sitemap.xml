@@ -46,14 +46,6 @@
     <priority>0.90</priority>
   </url>
 
-  <!-- Article: The Art of Slow Travel -->
-  <url>
-    <loc>https://yatramore.com/blog-template</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-
   <!-- Family Tree -->
   <url>
     <loc>https://yatramore.com/family-tree</loc>

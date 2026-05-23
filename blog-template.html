@@ -21,6 +21,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
     <meta name="p:domain_verify" content="e99e550eff5a983378b5723a5b1e9ee8" />
     <title>YatrAmore | The Art of Slow Travel</title>
     <meta name="description"
@@ -106,9 +107,10 @@
       When the user provides a new story to create a standalone article page:
       1. Duplicate this 'blog-template.html' and rename it using kebab-case 
          (e.g., 'our-cooking-adventures.html').
-      2. Update the main document <title>: "YatrAmore | [Title]"
-      3. Update <meta name="description"> with a custom 1-2 sentence excerpt.
-      4. Update canonical & Open Graph metadata tags (og:title, og:description, og:url)
+      2. REMOVE the `<meta name="robots" content="noindex">` tag from the `<head>` so the new story gets indexed!
+      3. Update the main document <title>: "YatrAmore | [Title]"
+      4. Update <meta name="description"> with a custom 1-2 sentence excerpt.
+      5. Update canonical & Open Graph metadata tags (og:title, og:description, og:url)
          pointing og:url and canonical links to "https://yatramore.com/[clean-url]".
       5. Inside <main class="post-layout-wrapper"> -> <div class="post-container">:
          - Tag: <span class="post-header-tag">[CATEGORY]</span>

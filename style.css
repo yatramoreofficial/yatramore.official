@@ -369,6 +369,7 @@ nav.scrolled {
     font-size: 1.05rem;
     letter-spacing: 0.5px;
     line-height: 1;
+    gap: 0.6rem;
 }
 
 .btn:hover {
@@ -405,6 +406,7 @@ nav.scrolled {
     border: none;
     cursor: pointer;
     line-height: 1;
+    gap: 0.6rem;
 }
 
 .btn-main:hover {
@@ -1939,4 +1941,255 @@ body {
 .reveal-on-scroll.revealed {
     opacity: 1 !important;
     transform: translateY(0) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   EXPLORE CTA SECTION — Homepage "Explore YatrAmore"
+   ══════════════════════════════════════════════════════════ */
+.explore-section {
+    padding: 4rem 0;
+    scroll-margin-top: 80px;
+}
+
+.explore-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.explore-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 1.5rem 2rem;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: var(--transition-slow);
+    position: relative;
+    overflow: hidden;
+}
+
+.explore-card > i {
+    font-size: 2.5rem;
+    color: var(--brand-brown);
+    margin-bottom: 1.2rem;
+    transition: var(--transition-slow);
+}
+
+.explore-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--brand-brown);
+    margin-bottom: 0.6rem;
+}
+
+.explore-card p {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.explore-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--brand-brown);
+    color: white;
+    font-size: 0.8rem;
+    transition: var(--transition-slow);
+    margin-top: auto;
+}
+
+.explore-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(107, 66, 38, 0.18);
+}
+
+.explore-card:hover i:first-child {
+    transform: scale(1.15);
+}
+
+.explore-card:hover .explore-arrow {
+    background: var(--brand-brown-hover);
+    transform: translateX(4px);
+}
+
+[data-theme="dark"] .explore-card:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .explore-arrow {
+    background: var(--brand-brown);
+    color: var(--brand-dark);
+}
+
+/* ══════════════════════════════════════════════════════════
+   HERO CTA GROUP — Buttons inside hero sections
+   ══════════════════════════════════════════════════════════ */
+.hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-outline-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 2rem;
+    background: transparent;
+    color: var(--brand-brown);
+    border: 2px solid var(--brand-brown);
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: var(--transition-slow);
+    line-height: 1;
+}
+
+.btn-outline-hero:hover {
+    background: var(--brand-brown);
+    color: white !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(107, 66, 38, 0.2);
+}
+
+[data-theme="dark"] .btn-outline-hero {
+    color: var(--brand-brown);
+    border-color: var(--brand-brown);
+}
+
+[data-theme="dark"] .btn-outline-hero:hover {
+    background: var(--brand-brown);
+    color: var(--brand-dark) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   JOURNEY CTA LINKS — Bottom of Journey page
+   ══════════════════════════════════════════════════════════ */
+.journey-cta-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.journey-cta-links .btn-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    padding: 0.9rem 1.8rem;
+}
+
+@media (max-width: 600px) {
+    .journey-cta-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .journey-cta-links .btn-main {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   POST BREADCRUMB — Blog article hub navigation
+   ══════════════════════════════════════════════════════════ */
+.post-breadcrumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.post-breadcrumb a {
+    color: var(--brand-brown);
+    text-decoration: none;
+    transition: var(--transition-slow);
+}
+
+.post-breadcrumb a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.breadcrumb-sep {
+    color: var(--text-muted);
+    opacity: 0.5;
+    font-size: 0.65rem;
+}
+
+.breadcrumb-current {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+@media (max-width: 1024px) {
+    .explore-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .explore-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .explore-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .explore-card {
+        padding: 1.8rem 1rem 1.5rem;
+    }
+
+    .explore-card > i {
+        font-size: 2rem;
+    }
+
+    .explore-card h3 {
+        font-size: 1.05rem;
+    }
+
+    .explore-card p {
+        font-size: 0.82rem;
+    }
+
+    .hero-cta-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-cta-group .btn-main,
+    .hero-cta-group .btn-outline-hero {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 380px) {
+    .explore-grid {
+        grid-template-columns: 1fr;
+    }
 }

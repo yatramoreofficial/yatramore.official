@@ -263,17 +263,52 @@
 
 /* ── Mobile Tweaks ────────────────────────────────── */
 @media (max-width: 768px) {
+    .faq-hero {
+        padding: 8rem 1rem 3rem;
+    }
     .faq-hero h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+    }
+    .faq-hero p {
+        font-size: 1rem;
+    }
+    .faq-search-wrapper {
+        margin: 0 auto 3rem;
+        padding: 0;
+        width: 100%;
+        position: relative;
+        z-index: 20;
+    }
+    .faq-search-bar {
+        font-size: 1rem;
+        padding: 1rem 1.5rem 1rem 3.2rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .search-icon {
+        left: 1.2rem;
     }
     .faq-question {
-        padding: 1.2rem 1.5rem;
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+    .faq-question h3 {
+        font-size: 1.05rem;
     }
     .answer-content {
-        padding: 0 1.5rem 1.5rem;
+        padding: 0 1.2rem 1.5rem;
+        font-size: 0.95rem;
     }
     .category-title h2 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+    }
+    .faq-no-results {
+        padding: 3rem 1rem;
+        margin: 2rem 0;
+    }
+    .still-questions {
+        padding: 3rem 1.5rem;
+        margin-top: 3rem;
     }
 }
 

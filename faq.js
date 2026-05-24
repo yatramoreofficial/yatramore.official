@@ -95,9 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             categoryHasVisibleItems = true;
                             totalVisible++;
                             
-                            // Highlight matches (text-only during search is acceptable)
-                            h3.innerHTML = highlightMatch(questionText, term);
-                            answerContent.innerHTML = highlightMatch(answerText, term);
+                            // Highlight matches safely using original HTML to preserve <a> links
+                            h3.innerHTML = highlightMatch(item._origQuestionHTML, term);
+                            answerContent.innerHTML = highlightMatch(item._origAnswerHTML, term);
                         } else {
                             item.style.display = 'none';
                         }
@@ -115,13 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Helper: Wraps matching text in <mark> tags
+     * Helper: Wraps matching text in <mark> tags, ignoring text inside HTML tags
      */
-    function highlightMatch(text, term) {
-        if (!term) return text;
-        // S-2 Fix: Escape regex special characters to prevent SyntaxError
+    function highlightMatch(htmlString, term) {
+        if (!term) return htmlString;
+        // Escape regex special characters
         const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const regex = new RegExp(`(${escaped})`, 'gi');
-        return text.replace(regex, '<mark class="faq-highlight">$1</mark>');
+        // Negative lookahead (?![^<]*>) ensures we do NOT match text inside HTML attributes
+        const regex = new RegExp(`(${escaped})(?![^<]*>)`, 'gi');
+        return htmlString.replace(regex, '<mark class="faq-highlight">$1</mark>');
     }
 });

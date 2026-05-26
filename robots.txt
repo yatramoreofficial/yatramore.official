@@ -13,5 +13,11 @@ Disallow: /.git/
 Disallow: /.gitignore
 Disallow: /.DS_Store
 
+# Block unpublished stories
+Disallow: /stories/promises-in-the-mountains.html
+
+# Block deleted pages
+Disallow: /blog-template
+
 # Point crawlers to the sitemap
 Sitemap: https://yatramore.com/sitemap.xml

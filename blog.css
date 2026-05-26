@@ -247,7 +247,7 @@
 
 .post-layout-wrapper {
     margin-top: 80px; /* Offset fixed header */
-    padding: 5rem 0 10rem;
+    padding: 5rem 0 3rem;
     background-color: var(--bg-main);
 }
 
@@ -657,4 +657,29 @@
         white-space: nowrap;
         flex-shrink: 0;
     }
+}
+
+/* ── 5. Read State ────────────────────────────────────────── */
+.blog-card.post-read {
+    opacity: 0.75;
+}
+
+.blog-card.post-read h2 a {
+    color: var(--text-muted);
+}
+
+.read-badge {
+    color: #4CAF50;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .read-badge {
+    color: #81C784;
 }

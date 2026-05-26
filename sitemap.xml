@@ -27,7 +27,7 @@
     <loc>https://yatramore.com/van-life</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.80</priority>
   </url>
 
   <!-- Collaborator -->
@@ -35,15 +35,31 @@
     <loc>https://yatramore.com/collaborator</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <priority>0.85</priority>
   </url>
 
   <!-- Story / Journal -->
   <url>
     <loc>https://yatramore.com/blog</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Story: Part 1 -->
+  <url>
+    <loc>https://yatramore.com/stories/the-shadow-of-monte-grappa.html</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Story: Part 2 -->
+  <url>
+    <loc>https://yatramore.com/stories/the-silver-thread.html</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
   </url>
 
   <!-- Family Tree -->
@@ -51,7 +67,7 @@
     <loc>https://yatramore.com/family-tree</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
+    <priority>0.90</priority>
   </url>
 
   <!-- FAQ -->
@@ -59,7 +75,7 @@
     <loc>https://yatramore.com/faq</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <priority>0.50</priority>
   </url>
 
   <!-- Privacy Policy -->

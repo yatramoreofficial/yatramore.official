@@ -16,7 +16,7 @@ const COLLABORATOR_DATA = [
         ],
         "status": "Partner",
         "isCollaborator": true,
-        "weblink": "https://houseofkhalsa.com/"
+        "weblink": "https://houseofkhalsa.com/yatramore/"
     },
     {
         "id": "partner-4",

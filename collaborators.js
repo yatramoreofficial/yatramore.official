@@ -1,5 +1,24 @@
 const COLLABORATOR_DATA = [
     {
+        "id": "partner-6",
+        "category": "Italy",
+        "title": "Yoghi Zero",
+        "location": "Calabria, Italy",
+        "description": "What an innovative team! They perfectly blend advanced scientific research with traditional Italian oenology, allowing us to enjoy the authentic sensory profile of fine wine with 0.0% alcohol. A truly elegant & mindful addition to our journey.",
+        "image": "Images/yoghizero.webp",
+        "date": "June 2026",
+        "Product": "0.0% Alcohol",
+        "rating": "5/5",
+        "tags": [
+            "🍾 Bollicine",
+            "🥂 Bianco",
+            "🍷 Rosso"
+        ],
+        "status": "Partner",
+        "isCollaborator": true,
+        "weblink": "https://yoghizero.com/"
+    },
+    {
         "id": "partner-5",
         "category": "Oceania",
         "title": "House of Khalsa ☬",

@@ -1187,7 +1187,8 @@ function initializeYatrAmore() {
                 nights: collaborator.nights ? YatrAmore.sanitize(collaborator.nights) : '',
                 camera: collaborator.Camera ? YatrAmore.sanitize(collaborator.Camera) : '',
                 menu: collaborator.Menu ? YatrAmore.sanitize(collaborator.Menu) : '',
-                gift: (collaborator.Gift || collaborator.Gifts || collaborator.Products) ? YatrAmore.sanitize(collaborator.Gift || collaborator.Gifts || collaborator.Products) : '',
+                gift: (collaborator.Gift || collaborator.Gifts) ? YatrAmore.sanitize(collaborator.Gift || collaborator.Gifts) : '',
+                product: (collaborator.Product || collaborator.Products) ? YatrAmore.sanitize(collaborator.Product || collaborator.Products) : '',
                 collab: collaborator.Collab ? YatrAmore.sanitize(collaborator.Collab) : '',
                 rating: YatrAmore.sanitize(collaborator.rating || collaborator.love || ''),
                 status: YatrAmore.sanitize(collaborator.status || 'Partner'),
@@ -1226,6 +1227,12 @@ function initializeYatrAmore() {
                 <div class="card-meta-item">
                     <i class="fas fa-gift"></i>
                     <span>${s.gift}</span>
+                </div>`;
+            } else if (s.product) {
+                middleMetaHTML = `
+                <div class="card-meta-item">
+                    <i class="fas fa-box-open"></i>
+                    <span>${s.product}</span>
                 </div>`;
             }
 

@@ -168,7 +168,7 @@
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: 4rem;
+                gap: 2.5rem;
                 width: 100%;
                 margin: 0 auto;
             }
@@ -185,8 +185,8 @@
             }
 
             .moderator-shield-outer {
-                width: 128px;
-                height: 152px;
+                width: 108px;
+                height: 129px;
                 /* Antique hammered gold texture */
                 background:
                     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 60%),
@@ -274,9 +274,13 @@
                 animation-delay: 1.05s;
             }
 
+            .moderator-wrapper:nth-child(9) .moderator-shield-outer::before {
+                animation-delay: 1.20s;
+            }
+
             .moderator-shield-inner {
-                width: 115px;
-                height: 138px;
+                width: 97px;
+                height: 117px;
                 /* Royal velvet quartered cross with sunburst center */
                 background:
                     radial-gradient(circle at 50% 30%, rgba(255, 223, 0, 0.25) 0%, transparent 50%),
@@ -291,7 +295,7 @@
                 color: #F6E27A;
                 font-family: 'Playfair Display', 'Georgia', serif;
                 font-weight: 800;
-                font-size: 1.05rem;
+                font-size: 0.95rem;
                 letter-spacing: 1.5px;
                 text-transform: uppercase;
                 text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
@@ -304,13 +308,15 @@
                 /* Sun with rays icon */
                 font-family: "Font Awesome 6 Free";
                 font-weight: 900;
-                font-size: 1.1rem;
+                font-size: 1rem;
                 color: #F6E27A;
                 margin-bottom: 6px;
                 margin-top: 4px;
                 text-shadow: 0 0 15px rgba(246, 226, 122, 0.5);
                 background: -webkit-linear-gradient(#F6E27A, #CB9B51);
+                background: linear-gradient(#F6E27A, #CB9B51);
                 -webkit-background-clip: text;
+                background-clip: text;
                 -webkit-text-fill-color: transparent;
                 filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
             }
@@ -334,19 +340,22 @@
 
             @media (max-width: 768px) {
                 .moderators-grid {
-                    gap: 2rem;
+                    gap: 1.5rem;
                 }
+
                 .moderator-shield-outer {
-                    width: 96px;
-                    height: 114px;
-                }
-                .moderator-shield-inner {
                     width: 86px;
-                    height: 103px;
-                    font-size: 0.85rem;
+                    height: 102px;
                 }
+
+                .moderator-shield-inner {
+                    width: 77px;
+                    height: 92px;
+                    font-size: 0.75rem;
+                }
+
                 .moderator-shield-inner::before {
-                    font-size: 0.9rem;
+                    font-size: 0.8rem;
                     margin-bottom: 4px;
                 }
             }
@@ -390,6 +399,11 @@
             <div class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Fabri</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Rajeev</span></div>
                 </div>
             </div>
         </div>

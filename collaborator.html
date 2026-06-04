@@ -12,16 +12,16 @@
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LN14GGMXSK"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-      gtag('config', 'G-LN14GGMXSK');
+        gtag('config', 'G-LN14GGMXSK');
     </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="p:domain_verify" content="e99e550eff5a983378b5723a5b1e9ee8"/>
+    <meta name="p:domain_verify" content="e99e550eff5a983378b5723a5b1e9ee8" />
     <title>YatrAmore | Our Collaborators</title>
     <meta name="description"
         content="Celebrating the partners who make our journey possible. Explore our curated collaborations and sponsored travel experiences.">
@@ -133,14 +133,263 @@
                 <div class="coming-soon-links" style="margin-bottom: 1.5rem;">
                     <a href="/#contact" class="btn-main">Become a Collaborator</a>
                 </div>
-                
+
                 <!-- Direct Collab Email Alternative -->
-                <div class="direct-contact-box" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
+                <div class="direct-contact-box"
+                    style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
                     <p>Prefer to reach out directly? Connect with us via email:</p>
                     <a href="mailto:collab@yatramore.com" class="email-link-card">
                         <i class="fas fa-envelope-open-text"></i>
                         collab@yatramore.com
                     </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Moderators Section -->
+    <section class="moderators-section"
+        style="padding: 5rem 2rem; text-align: center; background: var(--bg-secondary, rgba(0,0,0,0.02)); border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1));">
+        <div style="max-width: 800px; margin: 0 auto 3rem;">
+            <hr
+                style="border: none; height: 3px; background: linear-gradient(90deg, transparent, #D4AF37, #B8860B, #D4AF37, transparent); width: 80%; margin: 0 auto;">
+        </div>
+        <h2
+            style="font-size: 3.8rem; line-height: 1.1; font-weight: 700; margin-bottom: 1.5rem; color: var(--brand-brown); letter-spacing: -1px;">
+            Thanks to Our Moderators</h2>
+        <p
+            style="max-width: 750px; margin: 0 auto 4rem; font-size: 1.15rem; color: var(--text-muted, #666); line-height: 1.85; font-style: italic;">
+            "Words cannot express our profound gratitude for your extraordinary dedication. Thank you for standing so
+            closely by our side, for offering your help unconditionally, and for voluntarily giving your time with such
+            passion. You are the true pillars of YatrAmore."
+        </p>
+        <style>
+            .moderators-grid {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 4rem;
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .moderator-wrapper {
+                filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.4));
+                transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
+                cursor: default;
+            }
+
+            .moderator-wrapper:hover {
+                transform: translateY(-15px) scale(1.08);
+                filter: drop-shadow(0 25px 35px rgba(212, 175, 55, 0.6));
+            }
+
+            .moderator-shield-outer {
+                width: 128px;
+                height: 152px;
+                /* Antique hammered gold texture */
+                background:
+                    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 60%),
+                    repeating-linear-gradient(45deg, rgba(139, 101, 8, 0.1) 0px, rgba(139, 101, 8, 0.1) 2px, transparent 2px, transparent 4px),
+                    linear-gradient(135deg, #b8860b 0%, #ffd700 25%, #daa520 50%, #8b6508 75%, #ffd700 100%);
+                /* Elaborate historical architectural crest shape */
+                clip-path: polygon(50% 100%, 95% 70%, 100% 20%, 80% 20%, 80% 0%, 50% 15%, 20% 0%, 20% 20%, 0% 20%, 5% 70%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+
+            .moderator-shield-outer::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                /* Crisp 3D Bevel Edge */
+                background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 25%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.8) 100%);
+                pointer-events: none;
+                z-index: 2;
+            }
+
+            .moderator-shield-outer::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%);
+                transform: rotate(45deg) translateX(-100%);
+                animation: shieldShine 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+                pointer-events: none;
+                z-index: 3;
+            }
+
+            @keyframes shieldShine {
+                0% {
+                    transform: rotate(45deg) translateX(-100%);
+                }
+
+                20% {
+                    transform: rotate(45deg) translateX(100%);
+                }
+
+                100% {
+                    transform: rotate(45deg) translateX(100%);
+                }
+            }
+
+            /* Stagger the shine so it sweeps across the grid beautifully */
+            .moderator-wrapper:nth-child(1) .moderator-shield-outer::before {
+                animation-delay: 0s;
+            }
+
+            .moderator-wrapper:nth-child(2) .moderator-shield-outer::before {
+                animation-delay: 0.15s;
+            }
+
+            .moderator-wrapper:nth-child(3) .moderator-shield-outer::before {
+                animation-delay: 0.3s;
+            }
+
+            .moderator-wrapper:nth-child(4) .moderator-shield-outer::before {
+                animation-delay: 0.45s;
+            }
+
+            .moderator-wrapper:nth-child(5) .moderator-shield-outer::before {
+                animation-delay: 0.6s;
+            }
+
+            .moderator-wrapper:nth-child(6) .moderator-shield-outer::before {
+                animation-delay: 0.75s;
+            }
+
+            .moderator-wrapper:nth-child(7) .moderator-shield-outer::before {
+                animation-delay: 0.9s;
+            }
+
+            .moderator-wrapper:nth-child(8) .moderator-shield-outer::before {
+                animation-delay: 1.05s;
+            }
+
+            .moderator-shield-inner {
+                width: 115px;
+                height: 138px;
+                /* Royal velvet quartered cross with sunburst center */
+                background:
+                    radial-gradient(circle at 50% 30%, rgba(255, 223, 0, 0.25) 0%, transparent 50%),
+                    linear-gradient(90deg, rgba(0, 0, 0, 0.35) 50%, transparent 50%),
+                    linear-gradient(180deg, rgba(0, 0, 0, 0.35) 50%, transparent 50%),
+                    linear-gradient(135deg, #4a0f0f 0%, #150202 100%);
+                clip-path: polygon(50% 100%, 95% 70%, 100% 20%, 80% 20%, 80% 0%, 50% 15%, 20% 0%, 20% 20%, 0% 20%, 5% 70%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #F6E27A;
+                font-family: 'Playfair Display', 'Georgia', serif;
+                font-weight: 800;
+                font-size: 1.05rem;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+                position: relative;
+                z-index: 1;
+            }
+
+            .moderator-shield-inner::before {
+                content: '\f185';
+                /* Sun with rays icon */
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+                font-size: 1.1rem;
+                color: #F6E27A;
+                margin-bottom: 6px;
+                margin-top: 4px;
+                text-shadow: 0 0 15px rgba(246, 226, 122, 0.5);
+                background: -webkit-linear-gradient(#F6E27A, #CB9B51);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+            }
+
+            .moderator-shield-inner::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 50%;
+                /* Intense glossy top highlight */
+                background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+                pointer-events: none;
+            }
+
+            .moderator-shield-inner span {
+                position: relative;
+                z-index: 2;
+            }
+
+            @media (max-width: 768px) {
+                .moderators-grid {
+                    gap: 2rem;
+                }
+                .moderator-shield-outer {
+                    width: 96px;
+                    height: 114px;
+                }
+                .moderator-shield-inner {
+                    width: 86px;
+                    height: 103px;
+                    font-size: 0.85rem;
+                }
+                .moderator-shield-inner::before {
+                    font-size: 0.9rem;
+                    margin-bottom: 4px;
+                }
+            }
+        </style>
+        <div class="moderators-grid">
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Toxic</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Multani</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Franky</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Aman</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Puneet</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Akash</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Sara</span></div>
+                </div>
+            </div>
+            <div class="moderator-wrapper">
+                <div class="moderator-shield-outer">
+                    <div class="moderator-shield-inner"><span>Fabri</span></div>
                 </div>
             </div>
         </div>

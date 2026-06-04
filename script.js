@@ -235,10 +235,10 @@ function initializeYatrAmore() {
             // High confidence combinations (E + A) or (E + F) or (A + F)
             const hasWorkersFail = signals.includes('E') && signals.includes('A');
             const hasFileSystemFail = signals.includes('F');
-            
+
             // Only Safari (C) or strong Chrome/Firefox combinations trigger a block
             let isPrivate = signals.includes('C') || hasWorkersFail || (signals.length >= 3 && hasFileSystemFail) || (signals.length >= 4);
-            
+
             if (signals.length > 0) {
                 console.log('[Security] Detected Signals: ' + signals.join(', '));
                 console.log('[Security] Private Mode Evaluation: ' + (isPrivate ? '🔒 ACTIVE' : '✅ NORMAL'));
@@ -1181,7 +1181,7 @@ function initializeYatrAmore() {
                 category: YatrAmore.sanitize(collaborator.category || ''),
                 title: YatrAmore.sanitize(collaborator.title || ''),
                 location: YatrAmore.sanitize(collaborator.location || ''),
-                description: YatrAmore.sanitize(collaborator.description || ''),
+                description: collaborator.description || '',
                 image: (collaborator.image || '').replace(/[<>"]/g, ''), // URL-safe filter (don't HTML-escape URLs)
                 date: YatrAmore.sanitize(collaborator.date || ''),
                 nights: collaborator.nights ? YatrAmore.sanitize(collaborator.nights) : '',

@@ -23,7 +23,7 @@ const COLLABORATOR_DATA = [
         "category": "Oceania",
         "title": "House of Khalsa ☬",
         "location": "Melbourne, Australia",
-        "description": "Heritage-inspired watches & refined perfumes crafted with meaning & style. Elegant details, thoughtful design, & a distinctive identity make each piece feel truly special.",
+        "description": "Heritage-inspired watches & refined perfumes crafted with meaning & style. Elegant details, thoughtful design, & a distinctive identity make each piece feel truly special. <br><strong>Discount code: KHALSA5</strong>",
         "image": "Images/Khalsa.webp",
         "date": "May 2026",
         "Gift": "2 X ⌚️+⚱️",

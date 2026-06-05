@@ -1181,7 +1181,7 @@ function initializeYatrAmore() {
                 category: YatrAmore.sanitize(collaborator.category || ''),
                 title: YatrAmore.sanitize(collaborator.title || ''),
                 location: YatrAmore.sanitize(collaborator.location || ''),
-                description: collaborator.description || '',
+                description: collaborator.description ? collaborator.description.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/on\w+\s*=\s*["'][^"']*["']/gi, '') : '',
                 image: (collaborator.image || '').replace(/[<>"]/g, ''), // URL-safe filter (don't HTML-escape URLs)
                 date: YatrAmore.sanitize(collaborator.date || ''),
                 nights: collaborator.nights ? YatrAmore.sanitize(collaborator.nights) : '',

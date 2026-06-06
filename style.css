@@ -193,8 +193,234 @@ nav.scrolled {
     color: var(--brand-brown);
 }
 
+/* ── Nav Right Controls (globe + hamburger) ─────────── */
+.nav-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Globe Language Button */
+.nav-lang-wrapper {
+    position: relative;
+}
+
+.nav-lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--brand-brown);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: var(--transition-slow);
+    white-space: nowrap;
+}
+
+.nav-lang-btn i {
+    font-size: 1rem;
+    animation: globeSpin 8s linear infinite;
+}
+
+@keyframes globeSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.nav-lang-btn:hover {
+    background: var(--brand-brown);
+    color: white;
+    border-color: var(--brand-brown);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(107, 66, 38, 0.25);
+}
+
+.nav-lang-btn:hover i {
+    color: white;
+}
+
+[data-theme="dark"] .nav-lang-btn {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.15);
+    color: var(--brand-brown);
+}
+
+[data-theme="dark"] .nav-lang-btn:hover {
+    background: var(--brand-brown);
+    color: white;
+}
+
+/* Globe Dropdown */
+.nav-lang-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 280px;
+    background: var(--bg-main);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.2rem;
+    box-shadow: 0 20px 50px rgba(107, 66, 38, 0.18);
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 9999;
+    animation: menuFadeIn 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.nav-lang-dropdown.active {
+    display: flex;
+}
+
+[data-theme="dark"] .nav-lang-dropdown {
+    background: #1a1a1a;
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.nav-lang-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.nav-lang-dropdown-header > i {
+    font-size: 1.5rem;
+    color: var(--brand-brown);
+    width: 36px;
+    height: 36px;
+    background: var(--bg-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nav-lang-dropdown-header strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.nav-lang-dropdown-header p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Search inside dropdown */
+.nav-lang-search-wrap {
+    position: relative;
+}
+
+.nav-lang-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--brand-brown);
+    opacity: 0.5;
+    font-size: 0.85rem;
+    pointer-events: none;
+}
+
+#nav-language-search {
+    width: 100%;
+    padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-accent);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: var(--transition-slow);
+}
+
+#nav-language-search:focus {
+    border-color: var(--brand-brown);
+    box-shadow: 0 0 0 3px rgba(107, 66, 38, 0.1);
+}
+
+[data-theme="dark"] #nav-language-search {
+    background: rgba(255,255,255,0.06);
+    color: white;
+}
+
+/* Language results list */
+
+.nav-language-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    display: none;
+}
+
+.nav-language-results.active {
+    display: block;
+    animation: fadeIn 0.25s ease;
+}
+
+.nav-language-results::-webkit-scrollbar { width: 5px; }
+.nav-language-results::-webkit-scrollbar-track { background: transparent; }
+.nav-language-results::-webkit-scrollbar-thumb {
+    background: rgba(107,66,38,0.2);
+    border-radius: 10px;
+}
+
+.nav-lang-item {
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+[data-theme="dark"] .nav-lang-item {
+    border-bottom-color: rgba(255,255,255,0.04);
+}
+
+.nav-lang-item:last-child { border-bottom: none; }
+
+.nav-lang-item:hover {
+    background: var(--bg-accent);
+    color: var(--brand-brown);
+    padding-left: 1.4rem;
+}
+
+.nav-lang-item.selected {
+    background: var(--brand-brown);
+    color: white !important;
+}
+
 /* Travel & Stay Nav Button */
 /* (removed — nav link now matches standard nav style) */
+
+/* ── Desktop Nav: push logo left, links right ──────── */
+/* Only on large screens — mobile layout is unchanged   */
+@media (min-width: 769px) {
+    nav .container {
+        max-width: 1600px;
+        padding: 0 1rem;
+    }
+}
+
 
 /* Hero Section */
 .hero,
@@ -1495,6 +1721,31 @@ body {
     [data-theme="dark"] .hamburger {
         color: #FFFFFF;
     }
+
+    /* Nav Globe Button — hide text label on small screens */
+    .nav-lang-label {
+        display: none;
+    }
+
+    .nav-lang-btn {
+        padding: 0.5rem 0.7rem;
+        gap: 0;
+    }
+
+    /* Break the dropdown OUT of the nav bar on mobile — use fixed positioning */
+    .nav-lang-dropdown {
+        position: fixed;
+        top: 70px;          /* sits just below the nav bar */
+        left: 1rem;
+        right: 1rem;
+        width: auto;
+        max-height: calc(100dvh - 90px);
+        overflow-y: auto;
+        border-radius: 16px;
+        z-index: 99999;
+        animation: menuFadeIn 0.25s ease;
+    }
+
 
     /* Hero Section */
     .hero {

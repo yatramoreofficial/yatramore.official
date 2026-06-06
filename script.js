@@ -1016,7 +1016,7 @@ function initializeYatrAmore() {
         { name: "فارسی (Persian)", code: "fa" },
         { name: "Afrikaans", code: "af" },
         { name: "Shqip (Albanian)", code: "sq" },
-        { name: "Հայերեն (Armenian)", code: "hy" },
+        { name: "Հայerεն (Armenian)", code: "hy" },
         { name: "Azərbaycan (Azerbaijani)", code: "az" },
         { name: "Euskara (Basque)", code: "eu" },
         { name: "Беларуская (Belarusian)", code: "be" },
@@ -1062,7 +1062,7 @@ function initializeYatrAmore() {
         { name: "Kiswahili (Swahili)", code: "sw" },
         { name: "Тоҷикӣ (Tajik)", code: "tg" },
         { name: "تاتار (Tatar)", code: "tt" },
-        { name: "بོད་སྐད་ (Tibetan)", code: "bo" },
+        { name: "བོད་སྐད་ (Tibetan)", code: "bo" },
         { name: "Türkmen (Turkmen)", code: "tk" },
         { name: "ئۇيغۇرچە (Uyghur)", code: "ug" },
         { name: "Oʻzbek (Uzbek)", code: "uz" },
@@ -1071,39 +1071,6 @@ function initializeYatrAmore() {
         { name: "ייִדיש (Yiddish)", code: "yi" },
         { name: "Yorùbá (Yoruba)", code: "yo" }
     ];
-
-    const langSearch = document.getElementById("language-search");
-    const langResults = document.getElementById("language-results");
-
-    const renderResults = (filter = "") => {
-        if (!langResults) return;
-        const filtered = languages.filter(l =>
-            l.name.toLowerCase().includes(filter.toLowerCase())
-        );
-
-        langResults.innerHTML = filtered.map(l => `
-            <div class="language-item" data-code="${l.code}">${l.name}</div>
-        `).join("");
-
-        if (filter || filtered.length > 0) {
-            langResults.classList.add("active");
-        } else {
-            langResults.classList.remove("active");
-        }
-    };
-
-    // Event Delegation for Language Selection
-    if (langResults) {
-        langResults.addEventListener("click", (e) => {
-            const item = e.target.closest('.language-item');
-            if (item) {
-                const code = item.dataset.code;
-                translatePage(code);
-                if (langSearch) langSearch.value = "";
-                langResults.classList.remove("active");
-            }
-        });
-    }
 
     const translatePage = (langCode) => {
         // 1. Tab-Isolated Persistence via strictly mapped Cookies
@@ -1123,6 +1090,93 @@ function initializeYatrAmore() {
         }
     };
 
+    // ── Nav Globe Language Button ─────────────────────────
+    const navLangBtn = document.getElementById("nav-lang-btn");
+    const navLangDropdown = document.getElementById("nav-lang-dropdown");
+    const navLangWrapper = document.getElementById("nav-lang-wrapper");
+    const navLangSearch = document.getElementById("nav-language-search");
+    const navLangResults = document.getElementById("nav-language-results");
+
+    const renderNavResults = (filter = "") => {
+        if (!navLangResults) return;
+        const filtered = languages.filter(l =>
+            l.name.toLowerCase().includes(filter.toLowerCase())
+        );
+        navLangResults.innerHTML = filtered.map(l => `
+            <div class="nav-lang-item" data-code="${l.code}">${l.name}</div>
+        `).join("");
+        navLangResults.classList.toggle("active", filtered.length > 0);
+    };
+
+    const closeNavLangDropdown = () => {
+        if (!navLangDropdown) return;
+        navLangDropdown.classList.remove("active");
+        if (navLangBtn) navLangBtn.setAttribute("aria-expanded", "false");
+        if (navLangSearch) navLangSearch.value = "";
+        if (navLangResults) navLangResults.classList.remove("active");
+    };
+
+    if (navLangBtn && navLangDropdown) {
+        // Stop clicks inside the dropdown from bubbling to document (which would close it)
+        navLangDropdown.addEventListener("click", (e) => e.stopPropagation());
+
+        navLangBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = navLangDropdown.classList.contains("active");
+
+            // Close other menus first
+            const shareMenu = document.querySelector(".share-menu");
+            const shareFab = document.getElementById("share-toggle");
+            const accMenu = document.querySelector(".accessibility-menu");
+            const accFab = document.getElementById("accessibility-fab");
+            if (shareMenu && shareMenu.classList.contains("active")) {
+                shareMenu.classList.remove("active");
+                if (shareFab) shareFab.innerHTML = '<i class="fas fa-share-alt"></i>';
+            }
+            if (accMenu && accMenu.classList.contains("active")) {
+                accMenu.classList.remove("active");
+                accMenu.style.display = "none";
+                if (accFab) accFab.innerHTML = '<i class="fas fa-universal-access"></i>';
+            }
+
+            if (!isOpen) {
+                navLangDropdown.classList.add("active");
+                navLangBtn.setAttribute("aria-expanded", "true");
+                renderNavResults("");
+                setTimeout(() => { if (navLangSearch) navLangSearch.focus(); }, 150);
+            } else {
+                closeNavLangDropdown();
+            }
+        });
+
+        // Close on outside click/tap (works on both desktop and mobile)
+        document.addEventListener("click", (e) => {
+            if (navLangWrapper && !navLangWrapper.contains(e.target)) {
+                closeNavLangDropdown();
+            }
+        });
+
+        // Search input
+        if (navLangSearch) {
+            navLangSearch.addEventListener("input", (e) => {
+                renderNavResults(e.target.value);
+            });
+        }
+
+        // Language selection
+        if (navLangResults) {
+            navLangResults.addEventListener("click", (e) => {
+                const item = e.target.closest(".nav-lang-item");
+                if (item) {
+                    translatePage(item.dataset.code);
+                    closeNavLangDropdown();
+                }
+            });
+        }
+    }
+
+
+
     // --- Safe Translation State Watcher ---
     let translationActiveConfirmed = false;
     setInterval(() => {
@@ -1130,7 +1184,7 @@ function initializeYatrAmore() {
         if (htmlClass.includes('translated-')) {
             translationActiveConfirmed = true;
         } else if (translationActiveConfirmed && !htmlClass.includes('translated-')) {
-            // The translation WAS active successfully, but is no longer. 
+            // The translation WAS active successfully, but is no longer.
             // This safely implies the user manually hit Google's 'Show Original' or 'X' button.
             if (sessionStorage.getItem('ym_translation_lang')) {
                 console.log("Native Google UI translation cancelled. Syncing state without reload...");
@@ -1141,22 +1195,10 @@ function initializeYatrAmore() {
         }
     }, 500);
 
-    if (langSearch) {
-        langSearch.addEventListener("input", (e) => {
-            renderResults(e.target.value);
-        });
-
-        langSearch.addEventListener("focus", () => {
-            renderResults(langSearch.value);
-        });
-    }
-
-    // Initialize with common languages
-    if (langSearch) requestAnimationFrame(() => renderResults(""));
-
     // The in-page Google Translate widget is now handled by the initialization in your HTML files.
 
     // Sanitization is now handled globally by YatrAmore.sanitize (in components.js)
+
 
     // --- Dynamic Collaborator Loading ---
     async function loadCollaborators() {

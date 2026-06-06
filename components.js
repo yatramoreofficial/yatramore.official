@@ -69,12 +69,35 @@ const YatrAmore = {
                 YatrAmore
             </${brandTag}>
 
-            <div class="hamburger" id="hamburger">
-                <i class="fas fa-bars"></i>
-            </div>
-
             <div class="nav-links" id="nav-links">
                 ${navLinksHTML}
+            </div>
+
+            <div class="nav-right-controls">
+                <div class="nav-lang-wrapper" id="nav-lang-wrapper">
+                    <button class="nav-lang-btn" id="nav-lang-btn" title="Translate this page" aria-label="Open language selector" aria-expanded="false">
+                        <i class="fas fa-globe"></i>
+                        <span class="nav-lang-label">Translate</span>
+                    </button>
+                    <div class="nav-lang-dropdown" id="nav-lang-dropdown" role="dialog" aria-label="Language selector">
+                        <div class="nav-lang-dropdown-header">
+                            <i class="fas fa-globe"></i>
+                            <div>
+                                <strong>Translate Page</strong>
+                                <p>Select your language</p>
+                            </div>
+                        </div>
+                        <div class="nav-lang-search-wrap">
+                            <i class="fas fa-search nav-lang-search-icon"></i>
+                            <input type="text" id="nav-language-search" placeholder="Search language..." autocomplete="off" aria-label="Search languages">
+                        </div>
+                        <div id="nav-language-results" class="nav-language-results"></div>
+                        <div id="google_translate_element" style="display:none !important;"></div>
+                    </div>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
             </div>
         </div>`;
 
@@ -174,14 +197,6 @@ const YatrAmore = {
         </div>
 
         <div class="accessibility-menu">
-            <div class="menu-section">
-                <h4>Language</h4>
-                <div class="language-search-container">
-                        <input type="text" id="language-search" placeholder="Search language..." autocomplete="off">
-                    <div id="language-results" class="language-results"></div>
-                </div>
-                <div id="google_translate_element" style="display: none !important;"></div>
-            </div>
             <div class="menu-section">
                 <h4>Text Size</h4>
                 <div class="zoom-controls">

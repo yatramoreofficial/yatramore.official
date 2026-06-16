@@ -151,6 +151,18 @@
             YatrAmore.renderAccessibility();
             YatrAmore.renderGoogleTranslate();
             YatrAmore.loadCore();
+            
+            // Mark post as read
+            try {
+                let hash = 'why-i-love-her';
+                let readPosts = JSON.parse(localStorage.getItem('yatramore_read_posts') || '[]');
+                if (!readPosts.includes(hash)) {
+                    readPosts.push(hash);
+                    localStorage.setItem('yatramore_read_posts', JSON.stringify(readPosts));
+                }
+            } catch (e) {
+                console.warn("Could not save read state", e);
+            }
         });
     </script>
 </body>

@@ -70,6 +70,14 @@
     <priority>0.80</priority>
   </url>
 
+  <!-- Story: Why I Love Her -->
+  <url>
+    <loc>https://yatramore.com/stories/why-i-love-her.html</loc>
+    <lastmod>2026-05-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
   <!-- Family Tree -->
   <url>
     <loc>https://yatramore.com/family-tree</loc>

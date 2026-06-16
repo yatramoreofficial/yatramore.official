@@ -13,8 +13,7 @@ Disallow: /.git/
 Disallow: /.gitignore
 Disallow: /.DS_Store
 
-# Block unpublished stories
-Disallow: /stories/why-i-love-her.html
+
 
 # Block deleted pages
 Disallow: /blog-template

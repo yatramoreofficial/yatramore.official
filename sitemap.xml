@@ -41,9 +41,17 @@
   <!-- Story / Journal -->
   <url>
     <loc>https://yatramore.com/blog</loc>
-    <lastmod>2026-05-26</lastmod>
+    <lastmod>2026-06-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+  </url>
+
+  <!-- Story: The Ten Reflections of Light -->
+  <url>
+    <loc>https://yatramore.com/stories/the-ten-reflections-of-light.html</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
   </url>
 
   <!-- Story: Part 1 -->

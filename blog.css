@@ -42,13 +42,13 @@
     font-size: 1.15rem;
     color: var(--text-muted);
     line-height: 1.85;
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 /* Hero Content & Animations */
 .travel-hero-content {
-    max-width: 720px;
+    max-width: 1200px;
     animation: fadeInUp 1s ease-out;
     display: flex;
     flex-direction: column;

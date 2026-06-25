@@ -783,10 +783,8 @@ function initializeYatrAmore() {
         // Setup social links function
         const updateSocialLinks = () => {
             // Priority: When sharing, use the LIVE URL if we're on a local file, otherwise use current URL
-            let shareUrl = window.location.href;
-            if (shareUrl.startsWith('file://')) {
-                shareUrl = 'https://yatramore.com';
-            }
+            // Always share the homepage as requested by the user
+            let shareUrl = 'https://yatramore.com';
 
             const currentUrl = encodeURIComponent(shareUrl);
             const shareText = encodeURIComponent(shareData.text);

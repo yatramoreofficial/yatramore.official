@@ -172,22 +172,22 @@ const YatrAmore = {
                     <div class="icon-circle"><i class="fas fa-link"></i></div>
                     <span>Copy Link</span>
                 </button>
-                <a href="#" class="share-option-btn whatsapp-btn" id="share-whatsapp" target="_blank" title="Share on WhatsApp">
+                <button class="share-option-btn whatsapp-btn" id="share-whatsapp" title="Share on WhatsApp">
                     <div class="icon-circle"><i class="fa-brands fa-whatsapp"></i></div>
                     <span>WhatsApp</span>
-                </a>
-                <a href="#" class="share-option-btn facebook-btn" id="share-facebook" target="_blank" title="Share on Facebook">
+                </button>
+                <button class="share-option-btn facebook-btn" id="share-facebook" title="Share on Facebook">
                     <div class="icon-circle"><i class="fa-brands fa-facebook"></i></div>
                     <span>Facebook</span>
-                </a>
-                <a href="#" class="share-option-btn instagram-btn" id="share-instagram" target="_blank" title="Visit Instagram">
+                </button>
+                <button class="share-option-btn instagram-btn" id="share-instagram" title="Visit Instagram">
                     <div class="icon-circle"><i class="fa-brands fa-instagram"></i></div>
                     <span>Instagram</span>
-                </a>
-                <a href="#" class="share-option-btn tiktok-btn" id="share-tiktok" target="_blank" title="Visit TikTok">
+                </button>
+                <button class="share-option-btn tiktok-btn" id="share-tiktok" title="Visit TikTok">
                     <div class="icon-circle"><i class="fa-brands fa-tiktok"></i></div>
                     <span>TikTok</span>
-                </a>
+                </button>
             </div>
         </div>
 

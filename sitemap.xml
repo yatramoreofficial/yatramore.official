@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <!-- Created for YatrAmore -->
-
   <!-- Home Page -->
   <url>
     <loc>https://yatramore.com/</loc>
@@ -13,7 +14,6 @@
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
-
   <!-- Our Journey -->
   <url>
     <loc>https://yatramore.com/our-journey</loc>
@@ -21,7 +21,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
-
   <!-- Van Life -->
   <url>
     <loc>https://yatramore.com/van-life</loc>
@@ -29,7 +28,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Collaborator -->
   <url>
     <loc>https://yatramore.com/collaborator</loc>
@@ -37,15 +35,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
-
   <!-- Story / Journal -->
   <url>
     <loc>https://yatramore.com/blog</loc>
-    <lastmod>2026-06-24</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
-
   <!-- Story: Part 1 -->
   <url>
     <loc>https://yatramore.com/stories/the-shadow-of-monte-grappa</loc>
@@ -53,7 +49,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Story: Part 2 -->
   <url>
     <loc>https://yatramore.com/stories/the-silver-thread</loc>
@@ -61,7 +56,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Story: Part 3 -->
   <url>
     <loc>https://yatramore.com/stories/promises-in-the-mountains</loc>
@@ -69,7 +63,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Story: Why I Love Her -->
   <url>
     <loc>https://yatramore.com/stories/why-i-love-her</loc>
@@ -77,7 +70,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Story: The Ten Reflections of Light -->
   <url>
     <loc>https://yatramore.com/stories/the-ten-reflections-of-light</loc>
@@ -85,11 +77,40 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Story: The Armor of the Soul -->
   <url>
     <loc>https://yatramore.com/stories/the-armor-of-the-soul</loc>
     <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Geometry of Us -->
+  <url>
+    <loc>https://yatramore.com/stories/the-geometry-of-us</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Equalizing Floor -->
+  <url>
+    <loc>https://yatramore.com/stories/the-equalizing-floor</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Story: Liquid Gold Chai -->
+  <url>
+    <loc>https://yatramore.com/stories/liquid-gold-chai</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Story: Kashmiri Rajma Chawal -->
+  <url>
+    <loc>https://yatramore.com/stories/kashmiri-rajma-chawal</loc>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -101,7 +122,6 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
-
   <!-- FAQ -->
   <url>
     <loc>https://yatramore.com/faq</loc>
@@ -109,7 +129,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
-
   <!-- Privacy Policy -->
   <url>
     <loc>https://yatramore.com/privacy-policy</loc>
@@ -117,5 +136,4 @@
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
   </url>
-
 </urlset>

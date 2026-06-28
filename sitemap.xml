@@ -42,6 +42,13 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+  <!-- Vlog -->
+  <url>
+    <loc>https://yatramore.com/vlog</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
   <!-- Story: Part 1 -->
   <url>
     <loc>https://yatramore.com/stories/the-shadow-of-monte-grappa</loc>

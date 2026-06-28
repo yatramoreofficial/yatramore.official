@@ -1,0 +1,226 @@
+/* vlog.css */
+
+.vlog-hero-video {
+    width: 100%;
+    height: clamp(250px, 50vw, 450px); /* Keeps the height exactly what you liked */
+    margin: 0 auto;
+    background-color: transparent;
+    /* Remove the box look */
+    border-radius: 0;
+    box-shadow: none;
+    /* Dissolve the left and right sides into the page */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+/* Override the 16:9 ratio specifically for the hero so it doesn't grow too tall */
+.vlog-hero-video .lite-youtube {
+    padding-bottom: 0;
+    height: 100%;
+}
+
+.vlog-hero-video iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    display: block;
+}
+
+/* Sections */
+.video-section {
+    padding: 3rem 0;
+}
+
+@media (min-width: 768px) {
+    .video-section {
+        padding: 5rem 0;
+    }
+}
+
+.video-section-title {
+    text-align: center;
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    color: var(--brand-brown);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.video-section-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+}
+
+/* Vlogs Grid */
+.vlogs-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    max-width: 1250px;
+    margin: 0 auto 2rem auto;
+}
+
+@media (min-width: 768px) {
+    .vlogs-grid {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 5rem;
+        column-gap: 8rem;
+    }
+}
+
+/* Shorts Grid */
+.shorts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .shorts-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .shorts-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4rem;
+    }
+}
+
+/* Lite YouTube Embed Facade */
+.lite-youtube {
+    position: relative;
+    display: block;
+    contain: content;
+    background-position: center center;
+    background-size: cover;
+    background-color: #222;
+    cursor: pointer;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.lite-youtube:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2); /* Subtle gold glow on hover */
+}
+
+/* Dark overlay for contrast */
+.lite-youtube::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
+    transition: background 0.3s ease;
+    pointer-events: none;
+}
+
+.lite-youtube:hover::before {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.3) 100%);
+}
+
+/* Aspect Ratios */
+.lite-youtube.vlog-format {
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 ratio */
+    height: 0;
+}
+
+.lite-youtube.short-format {
+    width: 100%;
+    padding-bottom: 177.77%; /* 9:16 ratio */
+    height: 0;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+/* Play Button */
+.lite-youtube-playbtn {
+    width: 68px;
+    height: 48px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(33, 33, 33, 0.9);
+    border-radius: 12px;
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.lite-youtube:hover .lite-youtube-playbtn {
+    background-color: #ff0000;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.lite-youtube-playbtn::before {
+    content: '';
+    border-style: solid;
+    border-width: 10px 0 10px 18px;
+    border-color: transparent transparent transparent #fff;
+    margin-left: 4px;
+}
+
+.lite-youtube.is-playing::before,
+.lite-youtube.is-playing .lite-youtube-playbtn {
+    display: none;
+}
+
+.lite-youtube iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* ===========================
+   CINEMA MODE
+   =========================== */
+.cinema-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+body.cinema-active {
+    overflow: hidden;
+}
+
+body.cinema-active .cinema-overlay {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.lite-youtube.cinema-active-player {
+    position: relative;
+    z-index: 1000;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    transition: box-shadow 0.4s ease, z-index 0s;
+}

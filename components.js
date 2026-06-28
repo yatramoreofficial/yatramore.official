@@ -30,6 +30,7 @@ const YatrAmore = {
             { href: '/van-life', label: 'VanLife', anchor: false },
             { href: '/collaborator', label: 'Collaborator', anchor: false },
             { href: '/blog', label: 'Story', anchor: false },
+            { href: '/vlog', label: 'Vlog', anchor: false },
             { href: '/faq', label: 'FAQ', anchor: false },
             { href: '/#contact', label: 'Contact', anchor: false }
         ];

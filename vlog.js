@@ -34,6 +34,11 @@ function exitCinemaMode() {
 }
 
 function loadYouTubeAPI() {
+    // If API is already fully loaded globally, resolve immediately
+    if (typeof YT !== 'undefined' && YT && YT.Player) {
+        return Promise.resolve();
+    }
+    
     if (!ytApiPromise) {
         ytApiPromise = new Promise((resolve) => {
             window.onYouTubeIframeAPIReady = () => {
@@ -46,7 +51,6 @@ function loadYouTubeAPI() {
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         });
     }
-    // If it's already loaded, resolve immediately
     if (ytApiLoaded) return Promise.resolve();
     return ytApiPromise;
 }
@@ -64,7 +68,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const videoId = this.getAttribute("data-videoid");
             const isShort = this.hasAttribute("data-short");
             
-            // Clear the thumbnail and button
+            // MOBILE FIX: Bypass the YouTube API entirely on mobile.
+            // Asynchronous API loading breaks Apple's "user gesture" requirement, causing the double-tap issue.
+            // Synchronous iframe injection fixes this instantly.
+            if (window.innerWidth < 768) {
+                let iframeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                if (isShort) iframeUrl += "&loop=1&playlist=" + videoId;
+                
+                this.innerHTML = `<iframe frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="1" src="${iframeUrl}" title="YouTube video player"></iframe>`;
+                this.classList.add("is-playing");
+                return;
+            }
+            
+            // DESKTOP/TABLET: Use Cinema Mode API
             this.innerHTML = `<div id="${playerId}"></div>`;
             this.classList.add("is-playing");
             

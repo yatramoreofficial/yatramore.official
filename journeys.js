@@ -123,6 +123,7 @@ const JOURNEY_DATA = [
         rating: "5/5",
         tags: ["🏔️ Nature", "🥩 Food", "🐻 Wildlife"]
     },
+    /*
     {
         category: "India",
         badge: "Gem Explored",
@@ -162,4 +163,5 @@ const JOURNEY_DATA = [
         rating: "Rating",
         tags: ["🐠 Ocean", "🦤 Wildlife", "🏝️ Beaches"]
     }
+    */
 ];

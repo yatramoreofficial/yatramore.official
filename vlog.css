@@ -144,38 +144,38 @@
     margin: 0 auto;
 }
 
-/* Play Button */
+/* Play Button - Premium Transparent Glass Style */
 .lite-youtube-playbtn {
-    width: 68px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(33, 33, 33, 0.9);
-    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 50%; /* Circle shape */
+    border: 1px solid rgba(255, 255, 255, 0.4);
     z-index: 1;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
 }
 
 .lite-youtube:hover .lite-youtube-playbtn {
-    background-color: #ff0000;
-    transform: translate(-50%, -50%) scale(1.1);
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transform: translate(-50%, -50%) scale(1.15);
 }
 
 .lite-youtube-playbtn::before {
     content: '';
     border-style: solid;
-    border-width: 10px 0 10px 18px;
+    border-width: 12px 0 12px 18px;
     border-color: transparent transparent transparent #fff;
-    margin-left: 4px;
+    margin-left: 6px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .lite-youtube.is-playing::before,
@@ -220,7 +220,39 @@ body.cinema-active .cinema-overlay {
 
 .lite-youtube.cinema-active-player {
     position: relative;
-    z-index: 1000;
+    z-index: 1000 !important;
     box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    transition: box-shadow 0.4s ease, z-index 0s;
+}
+
+/* Specifically scale up Active Reels for the "Genie Effect" in place */
+.lite-youtube[data-short].cinema-active-player {
+    transform: scale(1.2) !important;
+}
+
+.lite-youtube {
+    z-index: 1;
+}
+
+/* Lightbox Mode for FLIP Animation */
+.lite-youtube.lightbox-mode {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 90vw !important;
+    max-width: 1200px !important;
+    z-index: 1001 !important;
+    box-shadow: 0 0 100px rgba(0,0,0,1) !important;
+    margin: 0 !important;
+    /* transform is managed dynamically by FLIP logic in vlog.js */
+}
+
+/* Hide YouTube iframe when paused in background to remove tools */
+.lite-youtube.is-paused-hidden iframe {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Completely disable mouse interactions on Shorts so YouTube's hover tools NEVER appear */
+.lite-youtube[data-short] iframe {
+    pointer-events: none !important;
 }

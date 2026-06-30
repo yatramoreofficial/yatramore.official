@@ -105,10 +105,18 @@ function exitCinemaMode() {
                 placeholder.remove();
                 el.style.transition = '';
                 el.style.transform = '';
+                
+                // Fully reset to pristine facade
+                el.classList.remove('is-playing');
+                el.innerHTML = `<button class="lite-youtube-playbtn" aria-label="Play Video"></button>`;
             }, 500);
             
         } else {
             activePlayerElement.classList.remove('cinema-active-player');
+            // Fully reset Short to pristine facade immediately
+            activePlayerElement.classList.remove('is-paused-hidden');
+            activePlayerElement.classList.remove('is-playing');
+            activePlayerElement.innerHTML = `<button class="lite-youtube-playbtn" aria-label="Play Video"></button>`;
         }
         
         activePlayerElement = null;
@@ -234,10 +242,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Add Keyboard Navigation for Shorts/Reels
+// Add Keyboard Navigation for Shorts/Reels and Escape Key for all videos
 document.addEventListener('keydown', (e) => {
-    // Only proceed if Cinema Mode is active, we have an active player, and it's a Short
+    // Only proceed if Cinema Mode is active
     if (!document.body.classList.contains('cinema-active')) return;
+    
+    // ESCAPE KEY: Pause the video and exit cinema mode for both Vlogs and Reels
+    if (e.key === 'Escape') {
+        if (activePlayer && typeof activePlayer.pauseVideo === 'function') {
+            activePlayer.pauseVideo();
+        }
+        exitCinemaMode();
+        return;
+    }
+    
+    // For arrow navigation, we need an active player and it must be a Short
     if (!activePlayerElement || !activePlayerElement.hasAttribute('data-short')) return;
     
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {

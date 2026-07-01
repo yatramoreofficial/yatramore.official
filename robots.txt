@@ -13,6 +13,10 @@ Disallow: /.git/
 Disallow: /.gitignore
 Disallow: /.DS_Store
 
+# Block hidden portal
+Disallow: /submission-portal
+Disallow: /submission-portal.html
+
 
 
 # Block deleted pages

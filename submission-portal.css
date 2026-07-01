@@ -1,0 +1,359 @@
+/* YatrAmore Submission Portal Styles */
+
+/* Header / Minimal nav for the hidden page */
+.header {
+    background: var(--bg-main);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: var(--brand-brown);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+/* Container */
+.portal-container {
+    max-width: 800px;
+    margin: 120px auto 3rem auto;
+    padding: 0 1.5rem;
+}
+
+/* Header Text */
+.portal-header {
+    margin-bottom: 3rem;
+}
+
+.portal-header h1 {
+    color: var(--brand-brown);
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.portal-description {
+    color: var(--text-main);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.portal-note {
+    background-color: var(--bg-accent);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    color: var(--brand-brown);
+    font-size: 0.95rem;
+}
+
+.portal-note i {
+    font-size: 1.2rem;
+    margin-top: 0.15rem;
+}
+
+.portal-note a {
+    color: var(--brand-brown);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Honeypot Field (Spam Protection) */
+.honeypot-field {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    z-index: -1;
+}
+
+/* Form Sections */
+.form-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.section-header {
+    border-bottom: 2px solid var(--bg-accent);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.section-header h2 {
+    color: var(--brand-brown);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.section-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* Form Inputs */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.4rem;
+}
+
+.required {
+    color: #d9534f;
+}
+
+.field-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--bg-accent);
+    border-radius: 8px;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: 'Outfit', sans-serif;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--brand-brown);
+    box-shadow: 0 0 0 3px rgba(107, 66, 38, 0.1);
+}
+
+/* Checkpoints */
+.checkbox-group {
+    background-color: var(--glass-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    margin-bottom: 1.5rem;
+}
+
+.checkpoint-header h3 {
+    font-size: 1.1rem;
+    color: var(--brand-brown);
+    margin-bottom: 0.5rem;
+}
+
+.checkpoint-desc {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+/* Custom Checkbox */
+.custom-checkbox {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    user-select: none;
+}
+
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 24px;
+    width: 24px;
+    background-color: var(--bg-main);
+    border: 2px solid var(--bg-accent);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.custom-checkbox:hover input ~ .checkmark {
+    border-color: var(--brand-brown);
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: var(--brand-brown);
+    border-color: var(--brand-brown);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.custom-checkbox .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+/* Submit Button & States */
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn.submit-btn {
+    background-color: var(--brand-brown);
+    color: white;
+    border: none;
+    padding: 18px 40px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-radius: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn.submit-btn:hover {
+    background-color: var(--brand-brown-hover);
+    transform: translateY(-2px);
+}
+
+.btn.submit-btn:disabled {
+    background-color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Success Message */
+#success-message {
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#success-message i {
+    font-size: 4rem;
+    color: var(--grass-2);
+    margin-bottom: 1.5rem;
+}
+
+#success-message h2 {
+    color: var(--brand-brown);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+#success-message p {
+    color: var(--text-main);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+#success-message .btn {
+    display: inline-block;
+    background-color: var(--brand-brown);
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.error-msg {
+    color: var(--status-error);
+    font-weight: 600;
+}
+
+/* Spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--bg-accent);
+    border-top: 4px solid var(--brand-brown);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .portal-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .checkbox-group {
+        padding: 1rem;
+    }
+}

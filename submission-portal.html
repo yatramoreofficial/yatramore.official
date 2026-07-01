@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Prevents search engines from indexing this hidden page -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://unpkg.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://server.arcgisonline.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://server.arcgisonline.com https://router.project-osrm.org https://*.google-analytics.com https://*.analytics.google.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com; base-uri 'self'; form-action 'self';">
+
+    <!-- Immediate Theme Application -->
+    <script>
+        (function () {
+            let theme = 'light';
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            } catch (e) {
+                console.warn("Theme storage access failed:", e);
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
+    <title>YatrAmore Data Submission & Clearance Portal</title>
+
+    <!-- Core site styles -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Specific portal styles -->
+    <link rel="stylesheet" href="submission-portal.css">
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Navigation (Loads the translation icon and theme toggle) -->
+    <nav id="navbar" class="navbar" aria-label="Main navigation"></nav>
+
+    <main class="portal-container">
+
+        <div class="portal-header text-center">
+            <h1>YatrAmore Data Submission & Clearance Portal</h1>
+            <p class="portal-description">
+                Welcome! This portal allows you to securely submit your digital data, information, and text about you,
+                while clearing the necessary permissions for publication on YatrAmore.
+            </p>
+            <div class="portal-note">
+                <i class="fa-solid fa-circle-info"></i>
+                <p><em>Note: If you haven't done so already, please email your information, profile photo, and
+                        social links directly to <a href="mailto:contact@yatramore.com">contact@yatramore.com</a> so we
+                        can link back to you!</em></p>
+            </div>
+        </div>
+
+        <!-- Success Message Container -->
+        <div id="success-message" class="hidden">
+            <i class="fa-solid fa-circle-check"></i>
+            <h2>Submission Received!</h2>
+            <p>Thank you for submitting your information. We have successfully recorded your details and cleared
+                permissions.</p>
+            <a href="index.html" class="btn">Return to Homepage</a>
+        </div>
+
+        <form id="submission-form" class="portal-form">
+
+            <!-- SPAM PROTECTION: Honeypot Field -->
+            <!-- Real users won't see this. Bots will fill it. If filled, the GAS script ignores the submission. -->
+            <div class="honeypot-field" aria-hidden="true">
+                <label for="website_url">Leave this field blank if you are human:</label>
+                <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- DEVICE FINGERPRINT: Hidden field for backend rate limiting -->
+            <input type="hidden" id="SystemFingerprint" name="SystemFingerprint" value="">
+            <input type="hidden" id="DeviceID" name="DeviceID" value="">
+
+            <!-- SECTION 1 -->
+            <section class="form-section glass-panel">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-user-check"></i> Section 1: Contributor Info & Verifications</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="Name">Legal Full Name <span class="required">*</span></label>
+                    <input type="text" id="Name" name="Name" required placeholder="Name Surname">
+                </div>
+
+                <div class="form-group">
+                    <label for="PenName">Public Pen Name / Bylines <span class="required">*</span></label>
+                    <p class="field-desc">Exactly how your name should appear on the website.</p>
+                    <input type="text" id="PenName" name="PenName" required placeholder="Brand or Social name">
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">Email Address Used for Communication <span class="required">*</span></label>
+                    <p class="field-desc">Please provide the exact email address you used to send us your digital data
+                        and files.</p>
+                    <input type="email" id="Email" name="Email" required placeholder="you@example.com">
+                </div>
+            </section>
+
+            <!-- SECTION 2 -->
+            <section class="form-section glass-panel">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-scale-balanced"></i> Section 2: Universal Legal & Privacy Checkpoints</h2>
+                    <p>All checkpoints are required to proceed.</p>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="checkpoint-header">
+                        <h3>Checkpoint 1: Ownership & Licensing Agreement</h3>
+                        <p class="checkpoint-desc">You retain full ownership of the original text, information, and
+                            digital data submitted through this form or via email. By checking the box below, you grant
+                            the YatrAmore a worldwide, royalty-free, perpetual, non-exclusive license to publish,
+                            host, distribute, and format this specific text and info on yatramore.com and our associated
+                            digital platforms. You warrant that all submitted work is original and created by you.</p>
+                    </div>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="Agreement1" value="Agreed" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">I certify that I own this data and grant YatrAmore the license to
+                            use it. <span class="required">*</span></span>
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="checkpoint-header">
+                        <h3>Checkpoint 2: Right to Edit and Format (SEO & Layout)</h3>
+                        <p class="checkpoint-desc">To ensure a clean user experience and alignment with search engine
+                            guidelines, you grant the YatrAmore the right to correct grammatical errors, format
+                            text layouts, and optimize headings. No fundamental alterations to your voice or core
+                            meaning will be made without your prior notification.</p>
+                    </div>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="Agreement2" value="Agreed" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">I understand and agree to these formatting guidelines. <span
+                                class="required">*</span></span>
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="checkpoint-header">
+                        <h3>Checkpoint 3: Accuracy and Liability</h3>
+                        <p class="checkpoint-desc">You agree that the information and details provided are accurate to
+                            the best of your knowledge. The YatrAmore is not legally liable for any third-party
+                            claims or disputes arising from the publication of information submitted by you.</p>
+                    </div>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="Agreement3" value="Agreed" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">I agree and accept full responsibility for the accuracy of my
+                            submission. <span class="required">*</span></span>
+                    </label>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="checkpoint-header">
+                        <h3>Checkpoint 4: Data Right-to-Forget (Revocation Clause)</h3>
+                        <p class="checkpoint-desc">We respect your privacy. If at any point in the future you wish to
+                            update your information or remove your details entirely from the website, you maintain that
+                            right. Please contact us at contact@yatramore.com, and our team will process the take-down
+                            or modification of your specific data within 72 hours.</p>
+                    </div>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="Agreement4" value="Agreed" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">I understand that I can request the removal or update of my
+                            information at any time. <span class="required">*</span></span>
+                    </label>
+                </div>
+            </section>
+
+            <div class="form-actions text-center">
+                <p class="privacy-notice" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                    For details on how we handle and protect your information, please read our <a href="/privacy-policy"
+                        target="_blank"
+                        style="color: var(--brand-brown); text-decoration: underline; font-weight: 600;">Privacy
+                        Policy</a>.
+                </p>
+                <button type="submit" id="submit-btn" class="btn submit-btn">
+                    <span>Submit & Clear Data</span>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+                <div id="loading-spinner" class="spinner hidden"></div>
+                <p id="error-message" class="error-msg hidden">There was an error submitting your data. Please try again
+                    or email us.</p>
+            </div>
+
+        </form>
+    </main>
+
+    <!-- JS to handle form submission via GAS -->
+    <script>
+        // --- IMPORTANT: PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE ---
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxpfpf9u9GMMfzBHwSABM4v7-VX3nF2TsEjM5zOTCo7ppJaSDK4BIxnGxyVz8kyVmwB/exec';
+        // ------------------------------------------------------------------
+
+        const form = document.getElementById('submission-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const spinner = document.getElementById('loading-spinner');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+
+        // Generates a lightweight, non-personal hardware hash for spam protection
+        function generateDeviceFingerprint() {
+            const data = [
+                navigator.userAgent,
+                navigator.language,
+                screen.colorDepth,
+                screen.width + 'x' + screen.height,
+                new Date().getTimezoneOffset()
+            ].join('|');
+            
+            let hash = 0;
+            for (let i = 0; i < data.length; i++) {
+                const char = data.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString(16);
+        }
+
+        // Retrieves or generates the standard Yatramore device ID
+        function getDeviceId() {
+            let id = localStorage.getItem('yatramore_device_id');
+            if (!id) {
+                id = 'temp_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('yatramore_device_id', id);
+            }
+            return id;
+        }
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+
+            // Populate the hidden fingerprint fields
+            document.getElementById('SystemFingerprint').value = generateDeviceFingerprint();
+            document.getElementById('DeviceID').value = getDeviceId();
+
+            // Check if GAS_URL has been replaced
+            if (GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                alert("The Form Backend URL has not been configured yet. Please check the setup-gas instructions.");
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.querySelector('span').innerText = 'Submitting...';
+            spinner.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+
+            const formData = new FormData(form);
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        // Hide form and show success message
+                        form.classList.add('hidden');
+                        successMessage.classList.remove('hidden');
+                        // Scroll to top to see success message
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        throw new Error(data.error || 'Submission failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    // Reset loading state and show error
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('span').innerText = 'Submit & Clear Data';
+                    spinner.classList.add('hidden');
+                    
+                    // Display the specific error message returned from the server
+                    errorMessage.innerText = error.message;
+                    errorMessage.classList.remove('hidden');
+                });
+        });
+    </script>
+
+    <!-- Footer (rendered by components.js) -->
+    <footer></footer>
+
+    <!-- Accessibility & Translation (rendered by components.js) -->
+    <div class="accessibility-container"></div>
+    <script src="components.js"></script>
+    <script>
+        // Render the nav to get the translation widget, but pass 'portal' so no link is highlighted
+        YatrAmore.renderNav('portal');
+        // Render the site footer
+        YatrAmore.renderFooter();
+        // Adds the floating action buttons (Accessibility, etc)
+        YatrAmore.renderAccessibility();
+        // Initializes Google Translate
+        YatrAmore.renderGoogleTranslate();
+        // Loads core site logic (like the dropdown interactions)
+        YatrAmore.loadCore();
+    </script>
+</body>
+
+</html>

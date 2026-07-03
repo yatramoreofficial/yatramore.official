@@ -129,6 +129,20 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
+  <!-- Moderators -->
+  <url>
+    <loc>https://yatramore.com/Moderators/franky</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/sara-fabri</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
   <!-- FAQ -->
   <url>
     <loc>https://yatramore.com/faq</loc>

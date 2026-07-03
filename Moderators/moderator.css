@@ -1,0 +1,745 @@
+/* Moderator Profile - Premium Editorial Glassmorphism */
+
+/* ═══════════════════════════════════════════════════
+   1. HERO BACKGROUND & PARTICLES
+   ═══════════════════════════════════════════════════ */
+
+.moderator-hero {
+    min-height: 100vh;
+    padding: 8rem 2rem 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Floating Golden Particles — pure CSS, no JS */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    /* Stronger opacity for light mode so they are clearly visible */
+    background: radial-gradient(circle, rgba(212, 155, 30, 0.85) 0%, rgba(212, 175, 55, 0) 70%);
+    pointer-events: none;
+    z-index: 1;
+    animation: particleFloat linear infinite;
+    will-change: transform, opacity;
+}
+
+.particle:nth-child(1) { width: 7px; height: 7px; left: 42%; bottom: -10%; animation-duration: 26s; animation-delay: -7s; --drift-x: -45vw; }
+.particle:nth-child(2) { width: 14px; height: 14px; left: 57%; bottom: -10%; animation-duration: 23s; animation-delay: -3s; --drift-x: 35vw; }
+.particle:nth-child(3) { width: 6px; height: 6px; left: 58%; bottom: -10%; animation-duration: 26s; animation-delay: -20s; --drift-x: -29vw; }
+.particle:nth-child(4) { width: 10px; height: 10px; left: 47%; bottom: -10%; animation-duration: 29s; animation-delay: -26s; --drift-x: 39vw; }
+.particle:nth-child(5) { width: 12px; height: 12px; left: 46%; bottom: -10%; animation-duration: 34s; animation-delay: -34s; --drift-x: -43vw; }
+.particle:nth-child(6) { width: 9px; height: 9px; left: 44%; bottom: -10%; animation-duration: 30s; animation-delay: -32s; --drift-x: 34vw; }
+.particle:nth-child(7) { width: 14px; height: 14px; left: 53%; bottom: -10%; animation-duration: 33s; animation-delay: -25s; --drift-x: -38vw; }
+.particle:nth-child(8) { width: 6px; height: 6px; left: 41%; bottom: -10%; animation-duration: 31s; animation-delay: -28s; --drift-x: 25vw; }
+.particle:nth-child(9) { width: 9px; height: 9px; left: 47%; bottom: -10%; animation-duration: 24s; animation-delay: -10s; --drift-x: -32vw; }
+.particle:nth-child(10) { width: 14px; height: 14px; left: 36%; bottom: -10%; animation-duration: 30s; animation-delay: -5s; --drift-x: 28vw; }
+.particle:nth-child(11) { width: 11px; height: 11px; left: 49%; bottom: -10%; animation-duration: 31s; animation-delay: -17s; --drift-x: -23vw; }
+.particle:nth-child(12) { width: 6px; height: 6px; left: 35%; bottom: -10%; animation-duration: 35s; animation-delay: -32s; --drift-x: 22vw; }
+.particle:nth-child(13) { width: 9px; height: 9px; left: 40%; bottom: -10%; animation-duration: 35s; animation-delay: -27s; --drift-x: -33vw; }
+.particle:nth-child(14) { width: 7px; height: 7px; left: 46%; bottom: -10%; animation-duration: 24s; animation-delay: -12s; --drift-x: 41vw; }
+.particle:nth-child(15) { width: 12px; height: 12px; left: 37%; bottom: -10%; animation-duration: 30s; animation-delay: -16s; --drift-x: -42vw; }
+.particle:nth-child(16) { width: 9px; height: 9px; left: 59%; bottom: -10%; animation-duration: 22s; animation-delay: -12s; --drift-x: 30vw; }
+.particle:nth-child(17) { width: 6px; height: 6px; left: 51%; bottom: -10%; animation-duration: 28s; animation-delay: -23s; --drift-x: -32vw; }
+.particle:nth-child(18) { width: 9px; height: 9px; left: 37%; bottom: -10%; animation-duration: 25s; animation-delay: -12s; --drift-x: 20vw; }
+.particle:nth-child(19) { width: 10px; height: 10px; left: 62%; bottom: -10%; animation-duration: 33s; animation-delay: -3s; --drift-x: -43vw; }
+.particle:nth-child(20) { width: 13px; height: 13px; left: 60%; bottom: -10%; animation-duration: 27s; animation-delay: -4s; --drift-x: 39vw; }
+.particle:nth-child(21) { width: 8px; height: 8px; left: 58%; bottom: -10%; animation-duration: 22s; animation-delay: -21s; --drift-x: -31vw; }
+.particle:nth-child(22) { width: 8px; height: 8px; left: 63%; bottom: -10%; animation-duration: 26s; animation-delay: -28s; --drift-x: 42vw; }
+.particle:nth-child(23) { width: 9px; height: 9px; left: 50%; bottom: -10%; animation-duration: 23s; animation-delay: -32s; --drift-x: -43vw; }
+.particle:nth-child(24) { width: 7px; height: 7px; left: 54%; bottom: -10%; animation-duration: 26s; animation-delay: -27s; --drift-x: 45vw; }
+.particle:nth-child(25) { width: 10px; height: 10px; left: 52%; bottom: -10%; animation-duration: 33s; animation-delay: -34s; --drift-x: -25vw; }
+.particle:nth-child(26) { width: 13px; height: 13px; left: 51%; bottom: -10%; animation-duration: 33s; animation-delay: -23s; --drift-x: 32vw; }
+.particle:nth-child(27) { width: 12px; height: 12px; left: 57%; bottom: -10%; animation-duration: 22s; animation-delay: -11s; --drift-x: -43vw; }
+.particle:nth-child(28) { width: 8px; height: 8px; left: 58%; bottom: -10%; animation-duration: 27s; animation-delay: -13s; --drift-x: 29vw; }
+.particle:nth-child(29) { width: 7px; height: 7px; left: 51%; bottom: -10%; animation-duration: 24s; animation-delay: -10s; --drift-x: -36vw; }
+.particle:nth-child(30) { width: 13px; height: 13px; left: 65%; bottom: -10%; animation-duration: 28s; animation-delay: -10s; --drift-x: 37vw; }
+.particle:nth-child(31) { width: 8px; height: 8px; left: 54%; bottom: -10%; animation-duration: 28s; animation-delay: -13s; --drift-x: -22vw; }
+.particle:nth-child(32) { width: 13px; height: 13px; left: 52%; bottom: -10%; animation-duration: 22s; animation-delay: -12s; --drift-x: 43vw; }
+.particle:nth-child(33) { width: 6px; height: 6px; left: 53%; bottom: -10%; animation-duration: 24s; animation-delay: -3s; --drift-x: -29vw; }
+.particle:nth-child(34) { width: 12px; height: 12px; left: 42%; bottom: -10%; animation-duration: 35s; animation-delay: -9s; --drift-x: 24vw; }
+.particle:nth-child(35) { width: 9px; height: 9px; left: 61%; bottom: -10%; animation-duration: 30s; animation-delay: -6s; --drift-x: -31vw; }
+.particle:nth-child(36) { width: 10px; height: 10px; left: 56%; bottom: -10%; animation-duration: 23s; animation-delay: -9s; --drift-x: 43vw; }
+.particle:nth-child(37) { width: 6px; height: 6px; left: 51%; bottom: -10%; animation-duration: 32s; animation-delay: -27s; --drift-x: -31vw; }
+.particle:nth-child(38) { width: 11px; height: 11px; left: 55%; bottom: -10%; animation-duration: 34s; animation-delay: -26s; --drift-x: 25vw; }
+.particle:nth-child(39) { width: 9px; height: 9px; left: 39%; bottom: -10%; animation-duration: 30s; animation-delay: -17s; --drift-x: -30vw; }
+.particle:nth-child(40) { width: 7px; height: 7px; left: 51%; bottom: -10%; animation-duration: 25s; animation-delay: -7s; --drift-x: 26vw; }
+.particle:nth-child(41) { width: 6px; height: 6px; left: 35%; bottom: -10%; animation-duration: 26s; animation-delay: -21s; --drift-x: -29vw; }
+.particle:nth-child(42) { width: 7px; height: 7px; left: 51%; bottom: -10%; animation-duration: 26s; animation-delay: -7s; --drift-x: 21vw; }
+.particle:nth-child(43) { width: 9px; height: 9px; left: 55%; bottom: -10%; animation-duration: 32s; animation-delay: -22s; --drift-x: -26vw; }
+.particle:nth-child(44) { width: 11px; height: 11px; left: 37%; bottom: -10%; animation-duration: 28s; animation-delay: -17s; --drift-x: 29vw; }
+.particle:nth-child(45) { width: 6px; height: 6px; left: 49%; bottom: -10%; animation-duration: 22s; animation-delay: -30s; --drift-x: -24vw; }
+.particle:nth-child(46) { width: 7px; height: 7px; left: 60%; bottom: -10%; animation-duration: 23s; animation-delay: -10s; --drift-x: 43vw; }
+.particle:nth-child(47) { width: 11px; height: 11px; left: 62%; bottom: -10%; animation-duration: 35s; animation-delay: -20s; --drift-x: -41vw; }
+.particle:nth-child(48) { width: 15px; height: 15px; left: 58%; bottom: -10%; animation-duration: 24s; animation-delay: -30s; --drift-x: 43vw; }
+.particle:nth-child(49) { width: 7px; height: 7px; left: 60%; bottom: -10%; animation-duration: 28s; animation-delay: -16s; --drift-x: -37vw; }
+.particle:nth-child(50) { width: 9px; height: 9px; left: 62%; bottom: -10%; animation-duration: 35s; animation-delay: -33s; --drift-x: 30vw; }
+.particle:nth-child(51) { width: 6px; height: 6px; left: 56%; bottom: -10%; animation-duration: 24s; animation-delay: -8s; --drift-x: -39vw; }
+.particle:nth-child(52) { width: 15px; height: 15px; left: 37%; bottom: -10%; animation-duration: 35s; animation-delay: -27s; --drift-x: 26vw; }
+.particle:nth-child(53) { width: 13px; height: 13px; left: 35%; bottom: -10%; animation-duration: 23s; animation-delay: -22s; --drift-x: -45vw; }
+.particle:nth-child(54) { width: 6px; height: 6px; left: 49%; bottom: -10%; animation-duration: 26s; animation-delay: -24s; --drift-x: 42vw; }
+.particle:nth-child(55) { width: 12px; height: 12px; left: 55%; bottom: -10%; animation-duration: 27s; animation-delay: -12s; --drift-x: -41vw; }
+.particle:nth-child(56) { width: 12px; height: 12px; left: 52%; bottom: -10%; animation-duration: 32s; animation-delay: -12s; --drift-x: 38vw; }
+.particle:nth-child(57) { width: 13px; height: 13px; left: 37%; bottom: -10%; animation-duration: 34s; animation-delay: -2s; --drift-x: -40vw; }
+.particle:nth-child(58) { width: 8px; height: 8px; left: 44%; bottom: -10%; animation-duration: 31s; animation-delay: -20s; --drift-x: 28vw; }
+.particle:nth-child(59) { width: 10px; height: 10px; left: 59%; bottom: -10%; animation-duration: 33s; animation-delay: -30s; --drift-x: -33vw; }
+.particle:nth-child(60) { width: 9px; height: 9px; left: 54%; bottom: -10%; animation-duration: 28s; animation-delay: -3s; --drift-x: 23vw; }
+.particle:nth-child(61) { width: 13px; height: 13px; left: 42%; bottom: -10%; animation-duration: 22s; animation-delay: -21s; --drift-x: 33vw; }
+.particle:nth-child(62) { width: 6px; height: 6px; left: 45%; bottom: -10%; animation-duration: 26s; animation-delay: -14s; --drift-x: 27vw; }
+.particle:nth-child(63) { width: 15px; height: 15px; left: 59%; bottom: -10%; animation-duration: 37s; animation-delay: -39s; --drift-x: 24vw; }
+.particle:nth-child(64) { width: 14px; height: 14px; left: 25%; bottom: -10%; animation-duration: 25s; animation-delay: -22s; --drift-x: 18vw; }
+.particle:nth-child(65) { width: 15px; height: 15px; left: 73%; bottom: -10%; animation-duration: 24s; animation-delay: -15s; --drift-x: 12vw; }
+.particle:nth-child(66) { width: 6px; height: 6px; left: 35%; bottom: -10%; animation-duration: 35s; animation-delay: -19s; --drift-x: -4vw; }
+.particle:nth-child(67) { width: 14px; height: 14px; left: 33%; bottom: -10%; animation-duration: 35s; animation-delay: -28s; --drift-x: 38vw; }
+.particle:nth-child(68) { width: 12px; height: 12px; left: 35%; bottom: -10%; animation-duration: 28s; animation-delay: -36s; --drift-x: -1vw; }
+.particle:nth-child(69) { width: 5px; height: 5px; left: 84%; bottom: -10%; animation-duration: 24s; animation-delay: -25s; --drift-x: 10vw; }
+.particle:nth-child(70) { width: 5px; height: 5px; left: 67%; bottom: -10%; animation-duration: 33s; animation-delay: -7s; --drift-x: 10vw; }
+.particle:nth-child(71) { width: 6px; height: 6px; left: 66%; bottom: -10%; animation-duration: 31s; animation-delay: -26s; --drift-x: -33vw; }
+.particle:nth-child(72) { width: 11px; height: 11px; left: 73%; bottom: -10%; animation-duration: 25s; animation-delay: -6s; --drift-x: 8vw; }
+.particle:nth-child(73) { width: 12px; height: 12px; left: 77%; bottom: -10%; animation-duration: 36s; animation-delay: -17s; --drift-x: -22vw; }
+.particle:nth-child(74) { width: 7px; height: 7px; left: 83%; bottom: -10%; animation-duration: 23s; animation-delay: -3s; --drift-x: -10vw; }
+.particle:nth-child(75) { width: 12px; height: 12px; left: 33%; bottom: -10%; animation-duration: 30s; animation-delay: -2s; --drift-x: -29vw; }
+.particle:nth-child(76) { width: 10px; height: 10px; left: 14%; bottom: -10%; animation-duration: 36s; animation-delay: -37s; --drift-x: 11vw; }
+.particle:nth-child(77) { width: 15px; height: 15px; left: 25%; bottom: -10%; animation-duration: 29s; animation-delay: -32s; --drift-x: 50vw; }
+.particle:nth-child(78) { width: 10px; height: 10px; left: 26%; bottom: -10%; animation-duration: 23s; animation-delay: -25s; --drift-x: 30vw; }
+.particle:nth-child(79) { width: 11px; height: 11px; left: 31%; bottom: -10%; animation-duration: 36s; animation-delay: -36s; --drift-x: -23vw; }
+.particle:nth-child(80) { width: 12px; height: 12px; left: 84%; bottom: -10%; animation-duration: 40s; animation-delay: -23s; --drift-x: 43vw; }
+.particle:nth-child(81) { width: 12px; height: 12px; left: 75%; bottom: -10%; animation-duration: 32s; animation-delay: -33s; --drift-x: 2vw; }
+.particle:nth-child(82) { width: 9px; height: 9px; left: 77%; bottom: -10%; animation-duration: 37s; animation-delay: -14s; --drift-x: -28vw; }
+.particle:nth-child(83) { width: 7px; height: 7px; left: 62%; bottom: -10%; animation-duration: 34s; animation-delay: -19s; --drift-x: -4vw; }
+.particle:nth-child(84) { width: 7px; height: 7px; left: 36%; bottom: -10%; animation-duration: 25s; animation-delay: -8s; --drift-x: 33vw; }
+.particle:nth-child(85) { width: 14px; height: 14px; left: 54%; bottom: -10%; animation-duration: 40s; animation-delay: -8s; --drift-x: -36vw; }
+.particle:nth-child(86) { width: 10px; height: 10px; left: 29%; bottom: -10%; animation-duration: 25s; animation-delay: -31s; --drift-x: -24vw; }
+.particle:nth-child(87) { width: 11px; height: 11px; left: 44%; bottom: -10%; animation-duration: 27s; animation-delay: -21s; --drift-x: -23vw; }
+.particle:nth-child(88) { width: 10px; height: 10px; left: 24%; bottom: -10%; animation-duration: 24s; animation-delay: -9s; --drift-x: 9vw; }
+.particle:nth-child(89) { width: 9px; height: 9px; left: 69%; bottom: -10%; animation-duration: 31s; animation-delay: -11s; --drift-x: 8vw; }
+.particle:nth-child(90) { width: 10px; height: 10px; left: 83%; bottom: -10%; animation-duration: 37s; animation-delay: -5s; --drift-x: -43vw; }
+.particle:nth-child(91) { width: 12px; height: 12px; left: 72%; bottom: -10%; animation-duration: 29s; animation-delay: -2s; --drift-x: -41vw; }
+.particle:nth-child(92) { width: 9px; height: 9px; left: 10%; bottom: -10%; animation-duration: 24s; animation-delay: -4s; --drift-x: -50vw; }
+.particle:nth-child(93) { width: 5px; height: 5px; left: 43%; bottom: -10%; animation-duration: 29s; animation-delay: -6s; --drift-x: 42vw; }
+.particle:nth-child(94) { width: 11px; height: 11px; left: 19%; bottom: -10%; animation-duration: 35s; animation-delay: -14s; --drift-x: -44vw; }
+.particle:nth-child(95) { width: 11px; height: 11px; left: 40%; bottom: -10%; animation-duration: 29s; animation-delay: -32s; --drift-x: -13vw; }
+.particle:nth-child(96) { width: 15px; height: 15px; left: 31%; bottom: -10%; animation-duration: 30s; animation-delay: -21s; --drift-x: 28vw; }
+.particle:nth-child(97) { width: 9px; height: 9px; left: 89%; bottom: -10%; animation-duration: 29s; animation-delay: -34s; --drift-x: -27vw; }
+.particle:nth-child(98) { width: 9px; height: 9px; left: 17%; bottom: -10%; animation-duration: 24s; animation-delay: -6s; --drift-x: 6vw; }
+.particle:nth-child(99) { width: 6px; height: 6px; left: 10%; bottom: -10%; animation-duration: 21s; animation-delay: -16s; --drift-x: 47vw; }
+.particle:nth-child(100) { width: 11px; height: 11px; left: 49%; bottom: -10%; animation-duration: 38s; animation-delay: -17s; --drift-x: -11vw; }
+
+
+@keyframes particleFloat {
+    0% {
+        bottom: -10%;
+        transform: translateX(0) scale(0);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+        bottom: 10%;
+        transform: translateX(calc(var(--drift-x) * 0.2)) scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        bottom: 50%;
+        transform: translateX(calc(var(--drift-x) * 0.6)) scale(0.8);
+    }
+    90% {
+        opacity: 0.9;
+        bottom: 90%;
+        transform: translateX(var(--drift-x)) scale(0.6);
+    }
+    100% {
+        bottom: 110%;
+        transform: translateX(calc(var(--drift-x) * 1.1)) scale(0);
+        opacity: 0;
+    }
+}
+
+
+[data-theme="dark"] .particle {
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.55) 0%, rgba(255, 215, 0, 0) 70%);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   2. THE GLASS CARD — with corner accents
+   ═══════════════════════════════════════════════════ */
+
+.moderator-glass-card {
+    position: relative;
+    z-index: 10;
+    max-width: 1000px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 4rem 3rem;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    text-align: center;
+    animation: cardEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+[data-theme="dark"] .moderator-glass-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Decorative Corner Accents */
+.moderator-glass-card::before,
+.moderator-glass-card::after {
+    content: '✦';
+    position: absolute;
+    font-size: 1.2rem;
+    color: rgba(212, 175, 55, 0.25);
+    pointer-events: none;
+    line-height: 1;
+}
+
+.moderator-glass-card::before {
+    top: 24px;
+    left: 28px;
+}
+
+.moderator-glass-card::after {
+    bottom: 24px;
+    right: 28px;
+}
+
+[data-theme="dark"] .moderator-glass-card::before,
+[data-theme="dark"] .moderator-glass-card::after {
+    color: rgba(255, 215, 0, 0.2);
+}
+
+@keyframes cardEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════
+   3. STAGGERED CASCADE ANIMATION SYSTEM
+   ═══════════════════════════════════════════════════ */
+
+.mod-stagger {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: staggerIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: calc(0.15s * var(--i));
+}
+
+@keyframes staggerIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════
+   4. FLOATING AVATAR
+   ═══════════════════════════════════════════════════ */
+
+.moderator-image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    perspective: 1000px;
+}
+
+.moderator-image-slot {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+    border: 3px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.15), inset 0 0 40px rgba(212, 175, 55, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    animation: floatAvatar 6s ease-in-out infinite;
+}
+
+@keyframes floatAvatar {
+    0%, 100% { transform: translateY(0) rotateX(5deg); }
+    50% { transform: translateY(-15px) rotateX(-5deg); box-shadow: 0 25px 45px rgba(212, 175, 55, 0.25), inset 0 0 40px rgba(212, 175, 55, 0.05); }
+}
+
+.moderator-image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   5. HEART SHAPE (Sara & Fabri)
+   ═══════════════════════════════════════════════════ */
+
+.moderator-heart-wrapper {
+    width: 400px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: floatHeartWrapper 6s ease-in-out infinite;
+}
+
+.heart-outer-glow {
+    animation: floatHeartGlow 6s ease-in-out infinite;
+}
+
+@keyframes floatHeartWrapper {
+    0%, 100% { transform: translateY(0) rotateX(5deg); }
+    50% { transform: translateY(-15px) rotateX(-5deg); }
+}
+
+@keyframes floatHeartGlow {
+    0%, 100% { 
+        transform: translate(0, 15px); 
+        stroke: rgba(212, 175, 55, 0.15); 
+        filter: blur(17.5px);
+    }
+    50% { 
+        transform: translate(0, 25px); 
+        stroke: rgba(212, 175, 55, 0.25); 
+        filter: blur(22.5px);
+    }
+}
+
+.heart-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   6. TYPOGRAPHY
+   ═══════════════════════════════════════════════════ */
+
+.moderator-real-name {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, var(--brand-brown), #C59B27);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.moderator-social-name {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--brand-brown);
+    margin-bottom: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   7. ROLE BADGE — Glass Pill
+   ═══════════════════════════════════════════════════ */
+
+.moderator-badge {
+    display: inline-block;
+    padding: 0.5rem 1.8rem;
+    border-radius: 50px;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--brand-brown);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+[data-theme="dark"] .moderator-badge {
+    background: rgba(255, 215, 0, 0.06);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   8. SIGNATURE QUOTE
+   ═══════════════════════════════════════════════════ */
+
+.moderator-quote {
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 800px;
+    width: fit-content;
+    margin: 0 auto 2rem;
+    position: relative;
+    padding: 0 2rem;
+}
+
+.moderator-quote::before {
+    content: '«';
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 2rem;
+    color: rgba(212, 175, 55, 0.5);
+    font-style: normal;
+    line-height: 1;
+}
+
+.moderator-quote::after {
+    content: '»';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: 2rem;
+    color: rgba(212, 175, 55, 0.5);
+    font-style: normal;
+    line-height: 1;
+}
+
+[data-theme="dark"] .moderator-quote::before,
+[data-theme="dark"] .moderator-quote::after {
+    color: rgba(255, 215, 0, 0.35);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   9. EDITORIAL BIO TEXT (Drop Cap)
+   ═══════════════════════════════════════════════════ */
+
+.moderator-text {
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    line-height: 1.9;
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+/* Drop Cap on the first paragraph */
+.moderator-text:first-of-type::first-letter {
+    float: left;
+    font-size: 4.5rem;
+    line-height: 0.8;
+    padding-top: 0.2rem;
+    padding-right: 0.5rem;
+    font-weight: 900;
+    color: var(--brand-brown);
+}
+
+.moderator-text strong {
+    color: var(--brand-brown);
+    font-weight: 700;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   10. DIVIDER
+   ═══════════════════════════════════════════════════ */
+
+.moderator-divider {
+    width: 60px;
+    height: 3px;
+    background: var(--brand-brown);
+    margin: 3rem auto;
+    border-radius: 2px;
+    opacity: 0.3;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   11. SOCIAL CONNECT SECTION
+   ═══════════════════════════════════════════════════ */
+
+.moderator-socials {
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.moderator-socials h3 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.social-links-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+/* Labeled Social Buttons */
+.social-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-width: 180px;
+    height: 64px;
+    border-radius: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--brand-brown);
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.social-icon-btn i {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.social-icon-btn .social-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+}
+
+.social-icon-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+/* Dynamic Hover Effects */
+.social-icon-btn.instagram-btn::before {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-icon-btn.tiktok-btn::before {
+    background: #000000;
+}
+
+[data-theme="dark"] .social-icon-btn.tiktok-btn::before {
+    background: #ffffff;
+}
+
+.social-icon-btn:hover {
+    transform: translateY(-8px) scale(1.05);
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.social-icon-btn:hover i,
+.social-icon-btn:hover .social-label {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .social-icon-btn.tiktok-btn:hover {
+    color: #000000;
+}
+
+[data-theme="dark"] .social-icon-btn.tiktok-btn:hover i,
+[data-theme="dark"] .social-icon-btn.tiktok-btn:hover .social-label {
+    color: #000000;
+}
+
+.social-icon-btn:hover::before {
+    opacity: 1;
+}
+
+.social-icon-btn.instagram-btn:hover {
+    box-shadow: 0 20px 40px rgba(220, 39, 67, 0.4);
+}
+
+.social-icon-btn.tiktok-btn:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .social-icon-btn.tiktok-btn:hover {
+    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.3);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   12. SARA & FABRI SPLIT LAYOUT
+   ═══════════════════════════════════════════════════ */
+
+.sara-fabri-socials {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   13. BACK BUTTON
+   ═══════════════════════════════════════════════════ */
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.back-btn:hover {
+    color: var(--brand-brown);
+    border-bottom-color: var(--brand-brown);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   14. MOBILE ADJUSTMENTS
+   ═══════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .moderator-glass-card {
+        padding: 3rem 1.5rem;
+        border-radius: 30px;
+    }
+
+    .moderator-real-name {
+        font-size: 2.5rem;
+    }
+    
+    .moderator-image-slot {
+        width: 240px;
+        height: 240px;
+    }
+    
+    .moderator-heart-wrapper {
+        width: 320px;
+        height: 320px;
+    }
+    
+    .sara-fabri-socials {
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+    
+    /* Reduce particles on mobile */
+    .particle:nth-child(2),
+    .particle:nth-child(4),
+    .particle:nth-child(6),
+    .particle:nth-child(8),
+    .particle:nth-child(10),
+    .particle:nth-child(12),
+    .particle:nth-child(14),
+    .particle:nth-child(16),
+    .particle:nth-child(18),
+    .particle:nth-child(20),
+    .particle:nth-child(22),
+    .particle:nth-child(24),
+    .particle:nth-child(26),
+    .particle:nth-child(28),
+    .particle:nth-child(30),
+    .particle:nth-child(32),
+    .particle:nth-child(34),
+    .particle:nth-child(36),
+    .particle:nth-child(38),
+    .particle:nth-child(40),
+    .particle:nth-child(42),
+    .particle:nth-child(44),
+    .particle:nth-child(46),
+    .particle:nth-child(48),
+    .particle:nth-child(50),
+    .particle:nth-child(52),
+    .particle:nth-child(54),
+    .particle:nth-child(56),
+    .particle:nth-child(58),
+    .particle:nth-child(60),
+    .particle:nth-child(62),
+    .particle:nth-child(64),
+    .particle:nth-child(66),
+    .particle:nth-child(68),
+    .particle:nth-child(70),
+    .particle:nth-child(72),
+    .particle:nth-child(74),
+    .particle:nth-child(76),
+    .particle:nth-child(78),
+    .particle:nth-child(80),
+    .particle:nth-child(82),
+    .particle:nth-child(84),
+    .particle:nth-child(86),
+    .particle:nth-child(88),
+    .particle:nth-child(90),
+    .particle:nth-child(92),
+    .particle:nth-child(94),
+    .particle:nth-child(96),
+    .particle:nth-child(98),
+    .particle:nth-child(100) {
+        display: none;
+    }
+    
+    .moderator-badge {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        padding: 0.4rem 1.4rem;
+    }
+    
+    .moderator-quote {
+        font-size: 1.1rem;
+        padding: 0 1rem;
+    }
+    
+    .social-icon-btn {
+        min-width: 160px;
+        height: 56px;
+        font-size: 1rem;
+    }
+    
+    .social-icon-btn i {
+        font-size: 1.3rem;
+    }
+    
+    .social-icon-btn .social-label {
+        font-size: 0.8rem;
+    }
+    
+    .moderator-glass-card::before,
+    .moderator-glass-card::after {
+        font-size: 0.9rem;
+        top: 16px;
+        left: 20px;
+    }
+    
+    .moderator-glass-card::after {
+        top: auto;
+        bottom: 16px;
+        left: auto;
+        right: 20px;
+    }
+}

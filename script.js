@@ -1306,7 +1306,10 @@ function initializeYatrAmore() {
                         <i class="fas fa-map-pin"></i>
                         <span>${s.location}</span>
                     </div>
-                    <h2 class="card-title">${s.title}</h2>
+                    <h2 class="card-title">
+                        ${s.title}
+                        ${collaborator.whatsappClub ? ` <a href="${collaborator.whatsappClub.replace(/[<>"]/g, '')}" target="_blank" class="whatsapp-club-btn" onclick="event.stopPropagation()"><i class="fa-brands fa-whatsapp"></i> Join Club</a>` : ''}
+                    </h2>
                     <p class="card-description">${s.description}</p>
                     <div class="card-meta">
                         <div class="card-meta-item">
@@ -1397,6 +1400,15 @@ function initializeYatrAmore() {
                     if (!card.classList.contains('revealed')) card.classList.add('revealed');
                 }, 2000);
             });
+        }
+
+        // Re-scroll to moderators if the hash is present, 
+        // to handle layout shifting caused by dynamic card injection
+        if (window.location.hash === '#moderators') {
+            setTimeout(() => {
+                const target = document.getElementById('moderators');
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
         }
     }
 

@@ -152,8 +152,8 @@
     </section>
 
     <!-- Moderators Section -->
-    <section class="moderators-section"
-        style="padding: 5rem 2rem; text-align: center; background: var(--bg-secondary, rgba(0,0,0,0.02)); border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1));">
+    <section id="moderators" class="moderators-section"
+        style="padding: 5rem 2rem; text-align: center; background: var(--bg-secondary, rgba(0,0,0,0.02)); border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1)); scroll-margin-top: 100px;">
         <div style="max-width: 800px; margin: 0 auto 3rem;">
             <hr
                 style="border: none; height: 3px; background: linear-gradient(90deg, transparent, #D4AF37, #B8860B, #D4AF37, transparent); width: 80%; margin: 0 auto;">
@@ -180,7 +180,8 @@
             .moderator-wrapper {
                 filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.4));
                 transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
-                cursor: default;
+                cursor: pointer;
+                text-decoration: none;
             }
 
             .moderator-wrapper:hover {
@@ -366,52 +367,89 @@
             }
         </style>
         <div class="moderators-grid">
-            <div class="moderator-wrapper">
+            <a href="/Moderators/toxic.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Toxic</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/multani.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Multani</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/franky.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Franky</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/aman.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Aman</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/puneet.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Puneet</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/akash.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Akash</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/sara-fabri.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Sara</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/sara-fabri.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Fabri</span></div>
                 </div>
-            </div>
-            <div class="moderator-wrapper">
+            </a>
+            <a href="/Moderators/rajeev.html" class="moderator-wrapper">
                 <div class="moderator-shield-outer">
                     <div class="moderator-shield-inner"><span>Rajeev</span></div>
                 </div>
-            </div>
+            </a>
         </div>
+
+        <script>
+            // Configuration: Set to 'true' to enable the link, 'false' to disable it.
+            const activeModerators = {
+                'franky': true,
+                'sara': true,
+                'fabri': true,
+                'toxic': false,
+                'multani': false,
+                'aman': false,
+                'puneet': false,
+                'akash': false,
+                'rajeev': false
+            };
+
+            // Automatically disable links that are set to false
+            document.querySelectorAll('.moderator-wrapper').forEach(link => {
+                const nameNode = link.querySelector('span');
+                if (nameNode) {
+                    const name = nameNode.textContent.trim().toLowerCase();
+                    if (activeModerators[name] === false) {
+                        link.removeAttribute('href'); // Removes the link functionality
+                        link.style.cursor = 'default'; // Changes mouse pointer to normal
+                        link.title = "Profile coming soon!"; // Adds a tooltip
+                        
+                        // Force prevent default on click just in case
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                        });
+                    }
+                }
+            });
+        </script>
+        
+        <p style="margin-top: 3.5rem; font-size: 1.05rem; color: var(--text-muted, #666); font-style: italic; opacity: 0.8; letter-spacing: 0.5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));">
+            Tap a shield to discover their story...
+        </p>
     </section>
 
     <!-- Footer (rendered by components.js) -->

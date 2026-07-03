@@ -16,7 +16,8 @@ const COLLABORATOR_DATA = [
         ],
         "status": "Partner",
         "isCollaborator": true,
-        "weblink": "https://yoghizero.com/"
+        "weblink": "https://yoghizero.com/",
+        "whatsappClub": "https://chat.whatsapp.com/ECgy13eF8V22g3qVYSQ7Wd?mode=gi_t"
     },
     {
         "id": "partner-5",

@@ -87,7 +87,7 @@
 @media (min-width: 1024px) {
     .shorts-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: 4rem;
+        gap: 3rem;
     }
 }
 

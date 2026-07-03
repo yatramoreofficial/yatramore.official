@@ -153,7 +153,7 @@ textarea {
     border-radius: 8px;
     background-color: var(--bg-main);
     color: var(--text-main);
-    font-size: 1rem;
+    font-size: 16px; /* 16px exactly prevents iOS Safari auto-zoom */
     transition: all 0.3s ease;
     font-family: 'Outfit', sans-serif;
 }

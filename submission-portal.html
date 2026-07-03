@@ -268,8 +268,18 @@
                 method: 'POST',
                 body: formData
             })
-                .then(response => response.json())
-                .then(data => {
+                .then(response => response.text())
+                .then(text => {
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        // If parsing JSON fails, it means Google Apps Script returned an HTML page.
+                        // This usually happens if the script crashed, or if it requires login.
+                        console.error('Non-JSON response received:', text.substring(0, 100) + '...');
+                        throw new Error("We couldn't verify if your submission went through perfectly because the server returned an unusual response. Please contact us to confirm.");
+                    }
+                    
                     if (data.result === 'success') {
                         // Hide form and show success message
                         form.classList.add('hidden');

@@ -183,7 +183,21 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://yatramore.com/privacy-policy</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://yatramore.com/terms-of-service</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <!-- Lucky Draw Rules -->
+  <url>
+    <loc>https://yatramore.com/lucky-draw-rules</loc>
+    <lastmod>2026-07-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
   </url>

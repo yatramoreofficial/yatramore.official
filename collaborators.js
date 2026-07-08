@@ -202,3 +202,185 @@ const COLLABORATOR_DATA = [
     }
     */
 ];
+
+/* ==========================================================================
+   Lucky Draw Contest Logic
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const luckyDrawSection = document.getElementById('lucky-draw');
+    if (!luckyDrawSection) return;
+
+    // Configuration
+    // Target date for the draw (Set to 60 days from now as placeholder, or exact date)
+    // ============================================================================
+    // 🎯 LUCKY DRAW DATE CONFIGURATION
+    // ============================================================================
+    // 👇 TO KEEP THE TIMER OFF (AT 00:00:00):
+    const CONTEST_DRAW_DATE = new Date();
+
+    // 👇 TO USE THE AUTO 60-DAY DEMO MODE, UNCOMMENT THESE TWO LINES:
+    // const CONTEST_DRAW_DATE = new Date();
+    // CONTEST_DRAW_DATE.setDate(CONTEST_DRAW_DATE.getDate() + 60); 
+
+    // 👇 TO SET A REAL, FIXED DATE, UNCOMMENT THIS LINE AND ENTER YOUR DATE:
+    // const CONTEST_DRAW_DATE = new Date('2026-12-31T23:59:59Z');
+
+    // 👇 TO OPEN OR CLOSE REGISTRATION (true = open, false = closed):
+    const IS_REGISTRATION_OPEN = false;
+    // ============================================================================
+
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvxpVDjReHv43bwq3ZphBXNM6TSoSBcpmF-4QLtjBuuvxsmDPUj9r4aOLGX4iXd_ylvw/exec';
+
+    // DOM Elements
+    const globalTimerText = document.getElementById('contest-timer-text');
+    const formContainer = document.getElementById('lucky-draw-form-container');
+    const successContainer = document.getElementById('lucky-draw-success-container');
+    const personalTimerText = document.getElementById('personal-lockout-timer');
+    const form = document.getElementById('lucky-draw-form');
+    const statusMsg = document.getElementById('ld-form-status');
+    const submitBtn = document.getElementById('ld-submit-btn');
+
+    // Function to calculate and format remaining time
+    function getRemainingTime(endTime) {
+        const total = Date.parse(endTime) - Date.parse(new Date());
+        if (total <= 0) return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+        const seconds = Math.floor((total / 1000) % 60);
+        const minutes = Math.floor((total / 1000 / 60) % 60);
+        const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+        const days = Math.floor(total / (1000 * 60 * 60 * 24));
+
+        return { total, days, hours, minutes, seconds };
+    }
+
+    // Function to format time string
+    function formatTimeString(t) {
+        if (t.total <= 0) return "0d 0h 0m 0s";
+        return `${t.days}d ${t.hours}h ${t.minutes}m ${t.seconds}s`;
+    }
+
+    // Update global and personal timers
+    function updateTimers() {
+        const timeRemaining = getRemainingTime(CONTEST_DRAW_DATE);
+        const timeString = formatTimeString(timeRemaining);
+
+        if (globalTimerText) globalTimerText.textContent = timeString;
+        if (personalTimerText) personalTimerText.textContent = timeString;
+    }
+
+    // Start timer loop
+    updateTimers();
+    setInterval(updateTimers, 1000);
+
+    // Check Local Storage for existing registration
+    const isRegistered = localStorage.getItem('yatramore_luckydraw_entered');
+    if (isRegistered === 'true') {
+        formContainer.style.display = 'none';
+        successContainer.style.display = 'block';
+    } else if (!IS_REGISTRATION_OPEN) {
+        // Handle Closed Registration State
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-lock"></i> Registration Closed';
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+        }
+        if (form) {
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => input.disabled = true);
+        }
+    }
+
+    // Basic Email Validation
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    // Handle Form Submit
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!IS_REGISTRATION_OPEN) return;
+
+            const name = document.getElementById('ld-name').value.trim();
+            const email = document.getElementById('ld-email').value.trim();
+            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value;
+
+            // Validate Email
+            if (!validateEmail(email)) {
+                statusMsg.textContent = "Please enter a valid email address.";
+                statusMsg.style.color = "var(--status-error, #e74c3c)";
+                return;
+            }
+
+            // Validate CAPTCHA
+            if (!turnstileResponse) {
+                statusMsg.textContent = "Please complete the CAPTCHA.";
+                statusMsg.style.color = "var(--status-error, #e74c3c)";
+                return;
+            }
+
+            statusMsg.textContent = "Registering...";
+            statusMsg.style.color = "var(--text-main)";
+            submitBtn.disabled = true;
+
+            try {
+                // Get Fingerprint & Device ID
+                let systemFingerprint = '';
+                if (typeof YatrAmoreSecurity !== 'undefined' && typeof YatrAmoreSecurity.getFingerprint === 'function') {
+                    systemFingerprint = await YatrAmoreSecurity.getFingerprint();
+                }
+                const deviceId = localStorage.getItem('yatramore_device_id') || '';
+
+                // Send Data to GAS
+                const formData = new URLSearchParams();
+                formData.append('name', name);
+                formData.append('email', email);
+                formData.append('fingerprint', systemFingerprint);
+                formData.append('deviceId', deviceId);
+                formData.append('cf-turnstile-response', turnstileResponse);
+
+                // Note: Fetch to Google Script using "no-cors" is common, but you can't read the response directly.
+                // For a proper API response, the GAS must support CORS, or use JSONP.
+                // Assuming the user configures their GAS web app to allow CORS and return JSON.
+
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Success!
+                    localStorage.setItem('yatramore_luckydraw_entered', 'true');
+                    formContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        formContainer.style.display = 'none';
+                        successContainer.style.display = 'block';
+                        successContainer.style.opacity = '0';
+                        setTimeout(() => successContainer.style.opacity = '1', 50);
+                    }, 500);
+                } else if (result.status === 'error') {
+                    // Server rejected (e.g. already registered)
+                    statusMsg.textContent = result.message || "Registration failed. You may have already entered.";
+                    statusMsg.style.color = "var(--status-error, #e74c3c)";
+                    submitBtn.disabled = false;
+
+                    if (result.already_registered) {
+                        localStorage.setItem('yatramore_luckydraw_entered', 'true');
+                        formContainer.style.display = 'none';
+                        successContainer.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error("Lucky Draw Error:", error);
+                statusMsg.textContent = "Network error. Please try again later.";
+                statusMsg.style.color = "var(--status-error, #e74c3c)";
+                submitBtn.disabled = false;
+            }
+        });
+    }
+});

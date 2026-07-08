@@ -2206,9 +2206,13 @@ body {
     scroll-margin-top: 80px;
 }
 
+.explore-section .container {
+    max-width: 1550px;
+}
+
 .explore-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 1.5rem;
     margin-top: 1.5rem;
 }
@@ -2446,5 +2450,161 @@ body {
 @media (max-width: 380px) {
     .explore-grid {
         grid-template-columns: 1fr;
+    }
+}
+/* ==========================================================================
+   Lucky Draw Contest Styles
+   ========================================================================== */
+.lucky-draw-section {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    scroll-margin-top: 100px;
+}
+
+.lucky-draw-wheel-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto;
+    border-radius: 50%;
+    padding: 12px;
+    /* Premium Outer glowing ring */
+    background: linear-gradient(135deg, #D4AF37, #F3E5AB, #B8860B);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(0,0,0,0.3);
+}
+
+.lucky-draw-wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    /* Clean conic gradient slices */
+    background: conic-gradient(
+        #FDFBF4 0deg 60deg,
+        #F5F0DC 60deg 120deg,
+        #FDFBF4 120deg 180deg,
+        #F5F0DC 180deg 240deg,
+        #FDFBF4 240deg 300deg,
+        #F5F0DC 300deg 360deg
+    );
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.15), 0 0 15px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: slowSpin 25s linear infinite;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .lucky-draw-wheel {
+    background: conic-gradient(
+        #2A2A2A 0deg 60deg,
+        #1F1F1F 60deg 120deg,
+        #2A2A2A 120deg 180deg,
+        #1F1F1F 180deg 240deg,
+        #2A2A2A 240deg 300deg,
+        #1F1F1F 300deg 360deg
+    );
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
+}
+
+@keyframes slowSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.wheel-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    /* Perfectly align each text slice */
+    transform: rotate(calc(var(--i) * 60deg + 30deg));
+}
+
+.wheel-text span {
+    display: block;
+    margin-top: 25px; /* Push text to outer edge */
+    color: var(--brand-brown);
+    font-weight: 800;
+    font-size: 1.4rem;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+
+[data-theme="dark"] .wheel-text span {
+    color: #D4AF37;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.wheel-center {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at top left, #F3E5AB, #D4AF37);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-primary);
+    font-size: 1.8rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 -3px 5px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 30px solid #D4AF37;
+    z-index: 20;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+}
+
+[data-theme="dark"] .lucky-draw-wheel-container {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2), inset 0 0 20px rgba(0,0,0,0.8);
+}
+[data-theme="dark"] .lucky-draw-header h2,
+[data-theme="dark"] .lucky-draw-countdown,
+[data-theme="dark"] #lucky-draw-success-container h3,
+[data-theme="dark"] #lucky-draw-success-container div {
+    color: #D4AF37 !important;
+}
+[data-theme="dark"] .lucky-draw-header p,
+[data-theme="dark"] #lucky-draw-success-container p,
+[data-theme="dark"] #lucky-draw-form label {
+    color: var(--text-main, #E0E0E0) !important;
+}
+[data-theme="dark"] #lucky-draw-form input {
+    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+[data-theme="dark"] #lucky-draw-form input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Mobile Responsiveness for Lucky Draw */
+@media (max-width: 600px) {
+    .lucky-draw-section {
+        padding: 2rem 1rem !important;
+    }
+    .lucky-draw-wheel-container {
+        width: 250px !important;
+        height: 250px !important;
+    }
+    .lucky-draw-countdown {
+        font-size: 1.4rem !important;
+        padding: 0.8rem 1.2rem !important;
+    }
+    .lucky-draw-header h2 {
+        font-size: 2rem !important;
     }
 }

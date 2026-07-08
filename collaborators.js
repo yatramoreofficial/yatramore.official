@@ -1,5 +1,24 @@
 const COLLABORATOR_DATA = [
     {
+        "id": "partner-7",
+        "category": "Italy",
+        "title": "Trend Panjab (Sidhu Closet)",
+        "location": "Suzzara, Italy",
+        "description": "A premium collection of elegantly crafted traditional wear, from beautiful Lehengas & Shararas to stunning Sarees. Visit their store or explore their gorgeous ethnic collection online. Worldwide delivery available! &nbsp;&nbsp;&nbsp;<strong>Discount code: TRENDYATRA5</strong>",
+        "image": "Images/TrendPanjab.webp",
+        "date": "July 2026",
+        "Wardrobe": "Ethnic Wear",
+        "rating": "5/5",
+        "tags": [
+            "👗 Dresses",
+            "🛍️ Fashion",
+            "💰 Discount"
+        ],
+        "status": "Partner",
+        "isCollaborator": true,
+        "weblink": "https://trendpanjab.com/"
+    },
+    {
         "id": "partner-6",
         "category": "Italy",
         "title": "Yoghi Zero",

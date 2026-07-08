@@ -91,9 +91,7 @@
     position: relative;
 }
 
-[data-theme="dark"] .hero-scroll-indicator span {
-    border-color: rgba(212, 196, 176, 0.35);
-}
+
 
 .hero-scroll-indicator span::after {
     content: '';

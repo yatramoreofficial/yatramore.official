@@ -96,8 +96,8 @@
     <section class="section-padded">
         <div class="container policy-content glass">
             <div class="policy-header-nav">
-                <a href="/#contact" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to Contact
+                <a href="/" onclick="if(document.referrer.includes(window.location.host)) { window.history.back(); return false; }" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Go Back
                 </a>
             </div>
             
@@ -254,8 +254,8 @@
             </div>
 
             <div class="policy-footer">
-                <a href="/#contact" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to Contact
+                <a href="/" onclick="if(document.referrer.includes(window.location.host)) { window.history.back(); return false; }" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Go Back
                 </a>
             </div>
         </div>

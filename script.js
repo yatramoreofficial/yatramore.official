@@ -1229,6 +1229,7 @@ function initializeYatrAmore() {
                 menu: collaborator.Menu ? YatrAmore.sanitize(collaborator.Menu) : '',
                 gift: (collaborator.Gift || collaborator.Gifts) ? YatrAmore.sanitize(collaborator.Gift || collaborator.Gifts) : '',
                 product: (collaborator.Product || collaborator.Products) ? YatrAmore.sanitize(collaborator.Product || collaborator.Products) : '',
+                wardrobe: collaborator.Wardrobe ? YatrAmore.sanitize(collaborator.Wardrobe) : '',
                 collab: collaborator.Collab ? YatrAmore.sanitize(collaborator.Collab) : '',
                 rating: YatrAmore.sanitize(collaborator.rating || collaborator.love || ''),
                 status: YatrAmore.sanitize(collaborator.status || 'Partner'),
@@ -1255,6 +1256,12 @@ function initializeYatrAmore() {
                 <div class="card-meta-item">
                     <i class="fas fa-utensils"></i>
                     <span>${s.menu}</span>
+                </div>`;
+            } else if (s.wardrobe) {
+                middleMetaHTML = `
+                <div class="card-meta-item">
+                    <i class="fas fa-tshirt"></i>
+                    <span>${s.wardrobe}</span>
                 </div>`;
             } else if (s.collab) {
                 middleMetaHTML = `

@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         }).addTo(map).bindPopup(`
             <div class="van-popup-card glass">
-                <img src="${(dest.image || '').replace(/[<>"]/g, '')}" alt="${YatrAmore.sanitize(dest.title)}" class="van-popup-img">
+                <img loading="lazy" src="${(dest.image || '').replace(/[<>"]/g, '')}" alt="${YatrAmore.sanitize(dest.title)}" class="van-popup-img">
                 <div class="van-popup-body">
                     <div class="van-popup-title">${YatrAmore.sanitize(dest.title)}</div>
                     <p class="van-popup-text">${YatrAmore.sanitize(dest.description)}</p>

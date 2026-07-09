@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const IS_REGISTRATION_OPEN = false;
     // ============================================================================
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvxpVDjReHv43bwq3ZphBXNM6TSoSBcpmF-4QLtjBuuvxsmDPUj9r4aOLGX4iXd_ylvw/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-uMWse2zwU5J5EXoJNXCtdmD-3rFBbEEnBj8Wi0EhFj_ElHpgcD7CBlDZEtcsAdCDGQ/exec';
 
     // DOM Elements
     const globalTimerText = document.getElementById('contest-timer-text');
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.style.cursor = 'not-allowed';
         }
         if (form) {
-            const inputs = form.querySelectorAll('input');
+            const inputs = form.querySelectorAll('input, select');
             inputs.forEach(input => input.disabled = true);
         }
     }
@@ -306,6 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const name = document.getElementById('ld-name').value.trim();
             const email = document.getElementById('ld-email').value.trim();
+            const country = document.getElementById('ld-country').value.trim();
+            const gotcha = document.getElementById('ld-gotcha')?.value || '';
             const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
             // Validate Email
@@ -338,8 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new URLSearchParams();
                 formData.append('name', name);
                 formData.append('email', email);
+                formData.append('country', country);
                 formData.append('fingerprint', systemFingerprint);
                 formData.append('deviceId', deviceId);
+                formData.append('_gotcha', gotcha);
                 formData.append('cf-turnstile-response', turnstileResponse);
 
                 // Note: Fetch to Google Script using "no-cors" is common, but you can't read the response directly.

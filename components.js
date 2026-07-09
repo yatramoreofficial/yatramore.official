@@ -96,7 +96,7 @@ const YatrAmore = {
                         <div id="google_translate_element" style="display:none !important;"></div>
                     </div>
                 </div>
-                <div class="hamburger" id="hamburger">
+                <div class="hamburger" id="hamburger" role="button" tabindex="0" aria-label="Toggle navigation menu" aria-expanded="false">
                     <i class="fas fa-bars"></i>
                 </div>
             </div>

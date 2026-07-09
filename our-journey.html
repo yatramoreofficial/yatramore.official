@@ -244,7 +244,7 @@
                            <span>Trips on the way</span>
                            <span class="coming-soon-text">Coming soon</span>
                        </div>`
-                    : `<img src="${trip.image.replace(/[<>"]/g, '')}" 
+                    : `<img loading="lazy" src="${trip.image.replace(/[<>"]/g, '')}" 
                             alt="${YatrAmore.sanitize(trip.title)}" 
                             decoding="async" 
                             ${fetchPriority}>`;

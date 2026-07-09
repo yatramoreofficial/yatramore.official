@@ -154,7 +154,7 @@ textarea {
     background-color: var(--bg-main);
     color: var(--text-main);
     font-size: 16px; /* 16px exactly prevents iOS Safari auto-zoom */
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     font-family: 'Outfit', sans-serif;
 }
 
@@ -218,7 +218,7 @@ textarea:focus {
     background-color: var(--bg-main);
     border: 2px solid var(--bg-accent);
     border-radius: 4px;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .custom-checkbox:hover input ~ .checkmark {

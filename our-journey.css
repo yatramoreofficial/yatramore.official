@@ -142,7 +142,7 @@
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
     backdrop-filter: blur(10px);
 }
 
@@ -202,7 +202,7 @@
     flex-direction: column;
     overflow: hidden;
     border-radius: 24px;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
     opacity: 0;
     transform: translateY(30px) translateZ(0);
     /* Add translateZ for GPU layer */
@@ -468,14 +468,14 @@
     padding: 0.4rem 1rem;
     border-radius: 30px;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     backdrop-filter: blur(5px);
 }
 
 .whatsapp-club-btn i {
     color: #25D366;
     font-size: 1.1rem;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
 .whatsapp-club-btn:hover {

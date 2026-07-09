@@ -69,6 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Delay execution by 200ms to improve performance (Debounce)
             searchTimeout = setTimeout(() => {
                 const term = e.target.value.toLowerCase().trim();
+                
+                // Security: Escape HTML characters to prevent XSS
+                const safeTerm = term.replace(/[&<>'"]/g, tag => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+                }[tag] || tag));
+                
                 let totalVisible = 0;
 
                 categories.forEach(category => {
@@ -96,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             totalVisible++;
                             
                             // Highlight matches safely using original HTML to preserve <a> links
-                            h3.innerHTML = highlightMatch(item._origQuestionHTML, term);
-                            answerContent.innerHTML = highlightMatch(item._origAnswerHTML, term);
+                            h3.innerHTML = highlightMatch(item._origQuestionHTML, safeTerm);
+                            answerContent.innerHTML = highlightMatch(item._origAnswerHTML, safeTerm);
                         } else {
                             item.style.display = 'none';
                         }

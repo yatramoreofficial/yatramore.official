@@ -1287,7 +1287,7 @@ function initializeYatrAmore() {
             const hasRealImage = collaborator.image && collaborator.image !== 'Images/logo.svg' && collaborator.image.includes('.');
 
             const imageHTML = hasRealImage ? `
-                <img src="${s.image}" alt="${s.title}" 
+                <img loading="lazy" src="${s.image}" alt="${s.title}" 
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             ` : `
                 <div class="card-image-placeholder">
@@ -1315,7 +1315,7 @@ function initializeYatrAmore() {
                     </div>
                     <h2 class="card-title">
                         ${s.title}
-                        ${collaborator.whatsappClub ? ` <a href="${collaborator.whatsappClub.replace(/[<>"]/g, '')}" target="_blank" class="whatsapp-club-btn" onclick="event.stopPropagation()"><i class="fa-brands fa-whatsapp"></i> Join Club</a>` : ''}
+                        ${collaborator.whatsappClub ? ` <a href="${collaborator.whatsappClub.replace(/[<>"]/g, '')}" target="_blank" rel="noopener noreferrer" class="whatsapp-club-btn" onclick="event.stopPropagation()"><i class="fa-brands fa-whatsapp"></i> Join Club</a>` : ''}
                     </h2>
                     <p class="card-description">${s.description}</p>
                     <div class="card-meta">
@@ -1377,6 +1377,15 @@ function initializeYatrAmore() {
         if (collaboratorPageGrid) {
             collaboratorPageGrid.innerHTML = cardsHTML;
             attachWeblinkListeners(collaboratorPageGrid);
+
+            // Fix anchor jumping on mobile/dynamic load: 
+            // Re-scroll to hash after injecting the content that shifts the page layout
+            if (window.location.hash) {
+                setTimeout(() => {
+                    const hashEl = document.querySelector(window.location.hash);
+                    if (hashEl) hashEl.scrollIntoView();
+                }, 100);
+            }
         }
 
         // ── Surgical Scroll Reveal Implementation ──

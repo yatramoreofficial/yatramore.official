@@ -186,7 +186,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 // playsinline=1 is CRITICAL for 1-tap autoplay on iOS/mobile
                 let iframeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
                 
-                this.innerHTML = `<iframe frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="1" src="${iframeUrl}" title="YouTube video player"></iframe>`;
+                // Clear the facade contents (play button, etc) safely
+                this.innerHTML = '';
+                
+                // Create iframe dynamically to preserve synchronous user gesture context!
+                // Using innerHTML with iframes sometimes breaks the user gesture chain in iOS Safari.
+                const iframe = document.createElement('iframe');
+                iframe.frameBorder = "0";
+                iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                iframe.allowFullscreen = true;
+                iframe.src = iframeUrl;
+                iframe.title = "YouTube video player";
+                
+                this.appendChild(iframe);
                 this.classList.add("is-playing");
                 return;
             }

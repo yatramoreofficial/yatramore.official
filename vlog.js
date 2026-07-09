@@ -183,10 +183,8 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // MOBILE FIX: Bypass the YouTube API entirely on mobile.
             if (window.innerWidth < 768) {
-                let iframeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-                if (isShort) {
-                    iframeUrl += "&loop=1&playlist=" + videoId + "&controls=0";
-                }
+                // playsinline=1 is CRITICAL for 1-tap autoplay on iOS/mobile
+                let iframeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
                 
                 this.innerHTML = `<iframe frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="1" src="${iframeUrl}" title="YouTube video player"></iframe>`;
                 this.classList.add("is-playing");

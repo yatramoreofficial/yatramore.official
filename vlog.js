@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const playerId = `yt-player-${index}`;
         element.setAttribute('data-player-id', playerId);
         
-        element.addEventListener("click", async function() {
+        element.addEventListener("click", function() {
             // Immediately scroll Reels into the perfect center of the screen
             // so they are completely visible and never cut off by the navbar!
             if (this.hasAttribute("data-short")) {

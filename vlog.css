@@ -253,6 +253,8 @@ body.cinema-active .cinema-overlay {
 }
 
 /* Completely disable mouse interactions on Shorts so YouTube's hover tools NEVER appear */
-.lite-youtube[data-short] iframe {
-    pointer-events: none !important;
+@media (min-width: 768px) {
+    .lite-youtube[data-short] iframe {
+        pointer-events: none !important;
+    }
 }

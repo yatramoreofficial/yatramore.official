@@ -181,16 +181,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const videoId = this.getAttribute("data-videoid");
             const isShort = this.hasAttribute("data-short");
             
-            // MOBILE FIX: Bypass the YouTube API entirely on mobile.
+            // MOBILE FIX: Bypass the YouTube API entirely on mobile for performance.
             if (window.innerWidth < 768) {
-                // playsinline=1 is CRITICAL for 1-tap autoplay on iOS/mobile
+                // playsinline=1 prevents iOS from forcing fullscreen on play
                 let iframeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
                 
-                // Clear the facade contents (play button, etc) safely
+                // Clear the facade contents (play button, overlay, etc) safely
                 this.innerHTML = '';
                 
-                // Create iframe dynamically to preserve synchronous user gesture context!
-                // Using innerHTML with iframes sometimes breaks the user gesture chain in iOS Safari.
+                // Safely create the iframe via the DOM API (faster and safer than innerHTML)
                 const iframe = document.createElement('iframe');
                 iframe.frameBorder = "0";
                 iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";

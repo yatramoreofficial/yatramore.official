@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (window.innerWidth < 768) {
                 let iframeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
                 if (isShort) {
-                    iframeUrl += "&loop=1&playlist=" + videoId;
+                    iframeUrl += "&loop=1&playlist=" + videoId + "&controls=0";
                 }
                 
                 this.innerHTML = `<iframe frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="1" src="${iframeUrl}" title="YouTube video player"></iframe>`;

@@ -2463,16 +2463,18 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     scroll-margin-top: 100px;
-    min-height: 85vh;
 }
 
 .lucky-draw-wheel-container {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 230px;
+    height: 230px;
     margin: 0 auto;
     border-radius: 50%;
     padding: 12px;
+    /* Add transition for reactive cursor */
+    transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
     /* Premium Outer glowing ring */
     background: linear-gradient(135deg, #D4AF37, #F3E5AB, #B8860B);
     box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(0,0,0,0.3);
@@ -2515,6 +2517,16 @@ body {
 @keyframes slowSpin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+.lucky-draw-wheel.fast-spin {
+    /* 5 full rotations in 3 seconds, starting fast and ending on a specific angle */
+    animation: fastSpin 3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes fastSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(1800deg); }
 }
 
 .wheel-text {

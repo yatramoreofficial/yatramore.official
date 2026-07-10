@@ -87,6 +87,7 @@
       }
     }
     </script>
+    <!-- Confetti Library for Fireworks Effect Removed -->
 </head>
 
 <body>
@@ -465,28 +466,29 @@
 
     <!-- Lucky Draw Contest Section -->
     <section id="lucky-draw" class="lucky-draw-section glass"
-        style="margin: 2rem auto; max-width: 900px; padding: 2rem 2rem 1rem 2rem; border-radius: 20px; text-align: center; border-top: 2px solid var(--brand-gold);">
+        style="margin: 1.5rem auto; max-width: 900px; padding: 1.5rem; border-radius: 20px; text-align: center; border-top: 2px solid var(--brand-gold);">
         <div class="lucky-draw-header">
-            <h2 style="color: var(--brand-brown); font-size: 2.5rem; margin-bottom: 0.5rem;"><i class="fas fa-gift"
+            <h2 style="color: var(--brand-brown); font-size: 2rem; margin-bottom: 0.3rem;"><i class="fas fa-gift"
                     style="color: #D4AF37;"></i> The Grand Lucky Draw</h2>
-            <p style="margin-bottom: 1rem; font-size: 0.95rem;">
+            <p style="margin-bottom: 0.5rem; font-size: 0.95rem;">
                 <a href="/lucky-draw-rules"
                     style="color: var(--brand-brown); text-decoration: underline; font-weight: bold;"><i
                         class="fas fa-scroll"></i> Read Official Lucky Draw Rules</a>
             </p>
-            <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2rem;">
-                Enter our contest to win exclusive discount codes! Register your name and email below. The big
+            <p id="lucky-draw-description"
+                style="font-size: 1.05rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 1rem;">
+                Enter our contest to win exclusive discount codes! Register your name, email & country below. The big
                 draw happens when the countdown ends.
             </p>
         </div>
 
         <div class="lucky-draw-countdown" id="global-contest-countdown"
-            style="font-size: 1.5rem; font-weight: bold; color: var(--brand-brown); background: rgba(212, 175, 55, 0.1); padding: 0.8rem 1.5rem; border-radius: 50px; display: inline-block; margin-bottom: 1.5rem; border: 1px solid rgba(212, 175, 55, 0.3);">
+            style="font-size: 1.35rem; font-weight: bold; color: var(--brand-brown); background: var(--glass-bg); padding: 0.6rem 1.2rem; border-radius: 50px; display: inline-block; margin-bottom: 2rem; border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
             <i class="fas fa-hourglass-half fa-spin-pulse" style="margin-right: 10px; --fa-animation-duration: 3s;"></i>
             <span id="contest-timer-text">Loading...</span>
         </div>
 
-        <div class="lucky-draw-content" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+        <div class="lucky-draw-content" style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
             <!-- Decorative Wheel -->
             <div class="lucky-draw-wheel-container">
                 <div class="lucky-draw-wheel">
@@ -506,16 +508,22 @@
 
             <!-- Registration Form -->
             <div id="lucky-draw-form-container" style="width: 100%; max-width: 800px; transition: all 0.5s ease;">
+                <div class="lucky-draw-badge"
+                    style="background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--brand-brown); font-weight: bold; padding: 0.4rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); font-size: 0.95rem;">
+                    🎁 Free to enter/register
+                </div>
                 <form id="lucky-draw-form" class="standard-form">
-                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
                         <div class="form-group" style="flex: 1; min-width: 200px; text-align: left;">
                             <label for="ld-name">Your Name</label>
-                            <input type="text" id="ld-name" name="ld-name" required placeholder="Name Surname" maxlength="80"
+                            <input type="text" id="ld-name" name="ld-name" required placeholder="Name Surname"
+                                maxlength="80"
                                 style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-primary); color: var(--text-main);">
                         </div>
                         <div class="form-group" style="flex: 1; min-width: 200px; text-align: left;">
                             <label for="ld-email">Email Address</label>
-                            <input type="email" id="ld-email" name="ld-email" required placeholder="your@email.com" maxlength="100"
+                            <input type="email" id="ld-email" name="ld-email" required placeholder="your@email.com"
+                                maxlength="100"
                                 style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-primary); color: var(--text-main);">
                         </div>
                         <div class="form-group" style="flex: 1; min-width: 200px; text-align: left;">
@@ -671,7 +679,8 @@
                                 <option value="Rwanda">Rwanda</option>
                                 <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
                                 <option value="Saint Lucia">Saint Lucia</option>
-                                <option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
+                                <option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines
+                                </option>
                                 <option value="Samoa">Samoa</option>
                                 <option value="San Marino">San Marino</option>
                                 <option value="Sao Tome and Principe">Sao Tome and Principe</option>
@@ -725,15 +734,18 @@
 
                     <!-- Cloudflare Turnstile CAPTCHA -->
                     <div class="cf-turnstile" data-sitekey="0x4AAAAAAC75vfDlt1Ng8f6d" data-theme="auto"
-                        style="margin-bottom: 1.5rem; display: flex; justify-content: center;"></div>
+                        style="margin-bottom: 1rem; display: flex; justify-content: center;"></div>
 
                     <!-- Honeypot (Bot Trap) -->
-                    <input type="text" name="_gotcha" id="ld-gotcha" style="display:none" tabindex="-1" autocomplete="off">
+                    <input type="text" name="_gotcha" id="ld-gotcha" style="display:none" tabindex="-1"
+                        autocomplete="off">
 
-                    <button type="submit" class="btn-main" id="ld-submit-btn"
-                        style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 50px;">
-                        <i class="fas fa-ticket-alt"></i> Unlock My Chance to Win!
-                    </button>
+                    <div style="display: flex; justify-content: center;">
+                        <button type="submit" class="btn-main" id="ld-submit-btn"
+                            style="width: 100%; max-width: 450px; padding: 1rem 1.5rem; font-size: 1.1rem; border-radius: 50px;">
+                            <i class="fas fa-ticket-alt"></i> Unlock My Chance to Win!
+                        </button>
+                    </div>
 
                     <div class="privacy-notice"
                         style="font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-top: 0.8rem;">
@@ -761,7 +773,8 @@
                     registered. Your entry is locked until the countdown ends.</p>
                 <div style="font-size: 1.5rem; font-weight: bold; color: var(--brand-brown);">
                     Lockout Time Remaining:<br>
-                    <span id="personal-lockout-timer">...</span>
+                    <div id="personal-lockout-timer" style="font-size: 1.8rem; margin-top: 0.5rem;">...</div>
+                    <div id="personal-lockout-breakdown" style="font-size: 0.9rem; color: var(--text-muted); font-weight: normal; margin-top: 0.5rem;"></div>
                 </div>
             </div>
         </div>

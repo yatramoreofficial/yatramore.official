@@ -211,25 +211,61 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!luckyDrawSection) return;
 
     // Configuration
-    // Target date for the draw (Set to 60 days from now as placeholder, or exact date)
     // ============================================================================
-    // 🎯 LUCKY DRAW DATE CONFIGURATION
+    // 🎯 AUTO-LOOPING LUCKY DRAW DATE CONFIGURATION (37-Day Cycle)
     // ============================================================================
-    // 👇 TO KEEP THE TIMER OFF (AT 00:00:00):
-    const CONTEST_DRAW_DATE = new Date();
+    const CYCLE_START_DATE = new Date('2026-07-13T00:00:00Z'); // Registrations open on Monday
+    const OPEN_DAYS = 30; // Registration open for 30 days
+    const BREAK_DAYS = 7; // Registration closed for 7 days
+    const CYCLE_LENGTH = OPEN_DAYS + BREAK_DAYS; // 37 days total
 
-    // 👇 TO USE THE AUTO 60-DAY DEMO MODE, UNCOMMENT THESE TWO LINES:
-    // const CONTEST_DRAW_DATE = new Date();
-    // CONTEST_DRAW_DATE.setDate(CONTEST_DRAW_DATE.getDate() + 60); 
+    const now = new Date();
 
-    // 👇 TO SET A REAL, FIXED DATE, UNCOMMENT THIS LINE AND ENTER YOUR DATE:
-    // const CONTEST_DRAW_DATE = new Date('2026-12-31T23:59:59Z');
+    // Calculate how many full days have passed since the very first start date
+    const diffTime = now - CYCLE_START_DATE;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    // 👇 TO OPEN OR CLOSE REGISTRATION (true = open, false = closed):
-    const IS_REGISTRATION_OPEN = false;
+    const currentCycleNumber = Math.floor(diffDays / CYCLE_LENGTH);
+    let currentDayInCycle = diffDays % CYCLE_LENGTH;
+
+    // Handle negative days (if the current date is BEFORE July 13, 2026)
+    if (currentDayInCycle < 0) {
+        currentDayInCycle += CYCLE_LENGTH;
+    }
+
+    let CONTEST_DRAW_DATE;
+    let NEXT_CYCLE_START_DATE;
+    let IS_REGISTRATION_OPEN;
+    let IS_BREAK_PERIOD = false;
+
+    // The next cycle always starts after the current cycle's 37 days are complete
+    NEXT_CYCLE_START_DATE = new Date(CYCLE_START_DATE.getTime());
+    NEXT_CYCLE_START_DATE.setDate(NEXT_CYCLE_START_DATE.getDate() + ((currentCycleNumber + 1) * CYCLE_LENGTH));
+
+    if (currentDayInCycle < OPEN_DAYS) {
+        // OPEN PHASE: Global timer counts down to the end of the 30 days
+        IS_REGISTRATION_OPEN = true;
+        CONTEST_DRAW_DATE = new Date(CYCLE_START_DATE.getTime());
+        CONTEST_DRAW_DATE.setDate(CONTEST_DRAW_DATE.getDate() + (currentCycleNumber * CYCLE_LENGTH) + OPEN_DAYS);
+    } else {
+        // BREAK PHASE (or before start date): Global timer counts down to the NEXT open phase
+        IS_REGISTRATION_OPEN = false;
+        IS_BREAK_PERIOD = true;
+        CONTEST_DRAW_DATE = new Date(NEXT_CYCLE_START_DATE.getTime());
+    }
+
+    // Update the description text based on the current phase
+    const descElement = document.getElementById('lucky-draw-description');
+    if (descElement) {
+        if (IS_BREAK_PERIOD) {
+            descElement.innerHTML = "We are currently on a break! The next registration period opens when the countdown ends.";
+        } else {
+            descElement.innerHTML = "Enter our contest to win exclusive discount codes! Register your name and email below. The big draw happens when the countdown ends.";
+        }
+    }
     // ============================================================================
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-uMWse2zwU5J5EXoJNXCtdmD-3rFBbEEnBj8Wi0EhFj_ElHpgcD7CBlDZEtcsAdCDGQ/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXnexXpyyMef24EGS_SD_4RqhOaHaUrnwc_VYFj_WSdomr9Hm1fgveeyu8F2n9NhsrTA/exec';
 
     // DOM Elements
     const globalTimerText = document.getElementById('contest-timer-text');
@@ -261,11 +297,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update global and personal timers
     function updateTimers() {
-        const timeRemaining = getRemainingTime(CONTEST_DRAW_DATE);
-        const timeString = formatTimeString(timeRemaining);
+        const globalTimeRemaining = getRemainingTime(CONTEST_DRAW_DATE);
+        const globalTimeString = formatTimeString(globalTimeRemaining);
 
-        if (globalTimerText) globalTimerText.textContent = timeString;
-        if (personalTimerText) personalTimerText.textContent = timeString;
+        const personalTimeRemaining = getRemainingTime(NEXT_CYCLE_START_DATE);
+        const personalTimeString = formatTimeString(personalTimeRemaining);
+
+        if (globalTimerText) {
+            globalTimerText.textContent = IS_BREAK_PERIOD ? "Registration Opens In: " + globalTimeString : "Claim Your Chance Before: " + globalTimeString;
+        }
+        if (personalTimerText) {
+            personalTimerText.textContent = personalTimeString;
+            
+            const breakdownText = document.getElementById('personal-lockout-breakdown');
+            if (breakdownText) {
+                if (!IS_BREAK_PERIOD) {
+                    breakdownText.innerHTML = `<i class="fas fa-clock"></i> ${globalTimeString} (until draw) + 7 days break = ${personalTimeString} total`;
+                } else {
+                    breakdownText.innerHTML = `<i class="fas fa-clock"></i> ${personalTimeString} total (break phase ends)`;
+                }
+            }
+        }
     }
 
     // Start timer loop
@@ -282,7 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-lock"></i> Registration Closed';
-            submitBtn.style.opacity = '0.6';
             submitBtn.style.cursor = 'not-allowed';
         }
         if (form) {
@@ -324,9 +375,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            statusMsg.textContent = "Registering...";
+            statusMsg.textContent = "Please wait, contacting secure server...";
             statusMsg.style.color = "var(--text-main)";
             submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
 
             try {
                 // Get Fingerprint & Device ID
@@ -360,23 +412,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status === 'success') {
                     // Success!
                     localStorage.setItem('yatramore_luckydraw_entered', 'true');
-                    formContainer.style.opacity = '0';
+
+                    // Trigger JS Fast Spin & Scale Up
+                    if (window.luckyDrawWheelVelocity !== undefined) {
+                        window.luckyDrawWheelVelocity = 35;
+
+                        const wheelContainerForScale = document.querySelector('.lucky-draw-wheel-container');
+                        if (wheelContainerForScale) {
+                            wheelContainerForScale.style.transform = 'scale3d(1.15, 1.15, 1.15)';
+                            setTimeout(() => { wheelContainerForScale.style.transform = ''; }, 3000);
+                        }
+                    }
+
+                    // Delay the form hiding so they can see the effect
                     setTimeout(() => {
-                        formContainer.style.display = 'none';
-                        successContainer.style.display = 'block';
-                        successContainer.style.opacity = '0';
-                        setTimeout(() => successContainer.style.opacity = '1', 50);
-                    }, 500);
+                        formContainer.style.opacity = '0';
+                        setTimeout(() => {
+                            formContainer.style.display = 'none';
+                            successContainer.style.display = 'block';
+                            successContainer.style.opacity = '0';
+                            setTimeout(() => successContainer.style.opacity = '1', 50);
+                        }, 500);
+                    }, 1500);
                 } else if (result.status === 'error') {
                     // Server rejected (e.g. already registered)
                     statusMsg.textContent = result.message || "Registration failed. You may have already entered.";
                     statusMsg.style.color = "var(--status-error, #e74c3c)";
                     submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> Unlock My Chance to Win!';
 
                     if (result.already_registered) {
                         localStorage.setItem('yatramore_luckydraw_entered', 'true');
-                        formContainer.style.display = 'none';
-                        successContainer.style.display = 'block';
+
+                        // FOR DEMO PURPOSES: Trigger fireworks even on duplicate so you can see it!
+                        if (window.luckyDrawWheelVelocity !== undefined) window.luckyDrawWheelVelocity = 35;
+                        const wheelContainerForScale = document.querySelector('.lucky-draw-wheel-container');
+                        if (wheelContainerForScale) {
+                            wheelContainerForScale.style.transform = 'scale3d(1.15, 1.15, 1.15)';
+                            setTimeout(() => { wheelContainerForScale.style.transform = ''; }, 3000);
+                        }
+
+                        setTimeout(() => {
+                            formContainer.style.opacity = '0';
+                            setTimeout(() => {
+                                formContainer.style.display = 'none';
+                                successContainer.style.display = 'block';
+                            }, 500);
+                        }, 1500);
                     }
                 }
             } catch (error) {
@@ -386,5 +468,109 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = false;
             }
         });
+    }
+
+    // ============================================================================
+    // 🎯 MOMENTUM PHYSICS WHEEL (True physical spin behavior)
+    // ============================================================================
+    const wheelElement = document.querySelector('.lucky-draw-wheel');
+    const wheelCont = document.querySelector('.lucky-draw-wheel-container');
+
+    if (wheelElement && wheelCont) {
+        // Disable CSS animation permanently to let JS physics engine run it
+        wheelElement.style.animation = 'none';
+
+        let currentAngle = 0;
+        window.luckyDrawWheelVelocity = 0.24; // Base idle speed (approx 25s rotation)
+        let isHovering = false;
+        let lastAngle = 0;
+        let lastTime = 0;
+
+        function animateWheel() {
+            if (!isHovering) {
+                // Apply friction to slow down to base speed
+                if (window.luckyDrawWheelVelocity > 0.24) {
+                    window.luckyDrawWheelVelocity *= 0.98;
+                    if (window.luckyDrawWheelVelocity < 0.24) window.luckyDrawWheelVelocity = 0.24;
+                } else if (window.luckyDrawWheelVelocity < -0.24) {
+                    window.luckyDrawWheelVelocity *= 0.98;
+                    if (window.luckyDrawWheelVelocity > -0.24) window.luckyDrawWheelVelocity = -0.24;
+                }
+
+                currentAngle += window.luckyDrawWheelVelocity;
+                wheelElement.style.transform = `rotate(${currentAngle}deg)`;
+            }
+            requestAnimationFrame(animateWheel);
+        }
+        animateWheel(); // Start engine
+
+        // ------------------------------------------------------------------
+        // Interaction Handlers (Mouse + Touch)
+        // ------------------------------------------------------------------
+        function startInteraction() {
+            isHovering = true;
+            lastTime = 0; // Reset timer on entry
+        }
+
+        function endInteraction() {
+            isHovering = false;
+        }
+
+        function handleMove(clientX, clientY) {
+            if (!isHovering) return;
+
+            const rect = wheelCont.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const dx = clientX - centerX;
+            const dy = clientY - centerY;
+
+            let angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+
+            if (lastTime > 0) {
+                const dt = performance.now() - lastTime;
+                if (dt > 0) {
+                    let dAngle = angle - lastAngle;
+                    // Fix wraparound maths
+                    if (dAngle > 180) dAngle -= 360;
+                    if (dAngle < -180) dAngle += 360;
+
+                    // Velocity calculation (degrees per ~16ms frame)
+                    window.luckyDrawWheelVelocity = (dAngle / dt) * 16;
+                }
+            }
+
+            lastAngle = angle;
+            lastTime = performance.now();
+            currentAngle = angle; // Sync rendering angle
+
+            wheelElement.style.transform = `rotate(${currentAngle}deg)`;
+        }
+
+        // --- Mouse Events ---
+        wheelCont.addEventListener('mouseenter', startInteraction);
+        wheelCont.addEventListener('mouseleave', endInteraction);
+        wheelCont.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+
+        // --- Touch Events (Mobile) ---
+        wheelCont.addEventListener('touchstart', (e) => {
+            // Prevent default to stop scrolling while interacting with the wheel
+            if (e.cancelable) e.preventDefault();
+            startInteraction();
+            if (e.touches.length > 0) {
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
+
+        wheelCont.addEventListener('touchmove', (e) => {
+            if (e.cancelable) e.preventDefault();
+            if (e.touches.length > 0) {
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
+
+        wheelCont.addEventListener('touchend', endInteraction);
+        wheelCont.addEventListener('touchcancel', endInteraction);
     }
 });

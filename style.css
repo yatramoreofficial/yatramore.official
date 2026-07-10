@@ -1193,6 +1193,22 @@ footer {
     color: var(--brand-brown);
 }
 
+a.nav-icon-link {
+    font-size: 1.15rem;
+    margin-left: 0.25rem;
+    color: var(--brand-brown);
+    transition: transform var(--transition-slow), color var(--transition-slow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+a.nav-icon-link:hover {
+    transform: translateY(-2px);
+    color: var(--brand-brown-hover);
+}
+
 .hamburger {
     display: none;
     font-size: 1.4rem;

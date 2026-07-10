@@ -35,6 +35,10 @@ const YatrAmore = {
             { href: '/#contact', label: 'Contact', anchor: false }
         ];
 
+        const iconLinks = [
+            { href: '/family-tree', label: 'Family Tree', id: 'family-tree', icon: '<i class="fa-solid fa-seedling" style="font-size: 1.6rem;"></i>' },
+            { href: '/collaborator#lucky-draw', label: 'Lucky Draw', id: 'lucky-draw', icon: '<svg viewBox="0 0 100 100" style="width: 2.2rem; height: 2.2rem; overflow: visible;" aria-hidden="true"><style>.lucky-wheel-group { transform-origin: 50px 50px; transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.15); } .nav-icon-link:hover .lucky-wheel-group { transform: rotate(720deg); }</style><g class="lucky-wheel-group"><circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3" fill="none"/><circle cx="50" cy="50" r="43" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="50" cy="50" r="36" stroke="currentColor" stroke-width="14" stroke-dasharray="18.85 18.85" fill="none"/><circle cx="50" cy="50" r="28" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="50" cy="4" r="2.5" fill="currentColor"/><circle cx="50" cy="96" r="2.5" fill="currentColor"/><circle cx="4" cy="50" r="2.5" fill="currentColor"/><circle cx="96" cy="50" r="2.5" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2.5" fill="currentColor"/><circle cx="82.5" cy="82.5" r="2.5" fill="currentColor"/><circle cx="17.5" cy="82.5" r="2.5" fill="currentColor"/><circle cx="82.5" cy="17.5" r="2.5" fill="currentColor"/></g><path d="M 50 1 L 56 12 L 44 12 Z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/><text x="50" y="56" font-family="\'Brush Script MT\', \'Pacifico\', cursive" font-weight="normal" font-size="22" text-anchor="middle" fill="currentColor">Lucky</text></svg>' }
+        ];
 
         // For index.html, use anchor-only links
         const isIndex = activePage === 'index';
@@ -52,9 +56,15 @@ const YatrAmore = {
             const isSponsorLegacy = (activePage === 'sponsor' && linkKey === 'collaborator');
             const isStory = (activePage === 'blog' && linkKey === 'story');
             const isActive = (activePage === linkKey) || isSponsorLegacy || isStory;
-            const activeAttrs = isActive ? ' class="active" aria-current="page"' : '';
+            let activeAttrs = isActive ? ' class="active" aria-current="page"' : '';
 
             return `<a href="${href}"${activeAttrs}>${link.label}</a>`;
+        }).join('\n                ');
+        
+        const iconLinksHTML = iconLinks.map(link => {
+            const isActive = activePage === link.id;
+            const iconClass = isActive ? 'nav-icon-link active' : 'nav-icon-link';
+            return `<a href="${link.href}" class="${iconClass}" title="${link.label}" aria-label="${link.label}" ${isActive ? 'aria-current="page"' : ''}>${link.icon}</a>`;
         }).join('\n                ');
 
         const brandTag = isIndex ? 'div' : 'a';
@@ -75,6 +85,7 @@ const YatrAmore = {
             </div>
 
             <div class="nav-right-controls">
+                ${iconLinksHTML}
                 <div class="nav-lang-wrapper" id="nav-lang-wrapper">
                     <button class="nav-lang-btn" id="nav-lang-btn" title="Translate this page" aria-label="Open language selector" aria-expanded="false">
                         <i class="fas fa-globe"></i>

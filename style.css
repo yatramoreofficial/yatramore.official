@@ -809,6 +809,7 @@ nav.scrolled {
 }
 
 .form-group input,
+.form-group select,
 .form-group textarea {
     width: 100%;
     padding: 1.2rem;
@@ -821,6 +822,7 @@ nav.scrolled {
 }
 
 .form-group input:focus,
+.form-group select:focus,
 .form-group textarea:focus {
     outline: none;
     background: white;
@@ -829,12 +831,15 @@ nav.scrolled {
 }
 
 [data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
 [data-theme="dark"] .form-group textarea {
     background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
     color: white !important;
 }
 
 [data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group select:focus,
 [data-theme="dark"] .form-group textarea:focus {
     background: rgba(255, 255, 255, 0.1);
     border-color: #D4C3A3;
@@ -2478,7 +2483,7 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    scroll-margin-top: 100px;
+    scroll-margin-top: 160px;
 }
 
 .lucky-draw-wheel-container {

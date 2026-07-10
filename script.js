@@ -303,22 +303,41 @@ function initializeYatrAmore() {
         });
     }
 
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute("href");
+    // Smooth scrolling for anchor links (using event delegation to support dynamically added links and full paths)
+    document.addEventListener("click", function (e) {
+        const anchor = e.target.closest('a');
+        if (!anchor) return;
+        
+        const href = anchor.getAttribute("href");
+        if (!href) return;
+        
+        // Match either plain "#hash" or "/current-path#hash"
+        const isLocalHash = href.startsWith('#');
+        const isPathnameHash = href.startsWith(window.location.pathname + '#');
+        
+        if (isLocalHash || isPathnameHash) {
+            const hashIndex = href.indexOf('#');
+            const targetId = href.substring(hashIndex);
+            
             if (targetId === "#") return;
+            
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                const navHeight = navbar.offsetHeight;
+                e.preventDefault();
+                const navHeight = navbar ? navbar.offsetHeight : 80;
                 const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                
                 window.scrollTo({
-                    top: targetPosition - navHeight,
+                    top: targetPosition - navHeight - 15,
                     behavior: "smooth"
                 });
+                
+                // Update URL without jumping
+                if (window.history && window.history.pushState) {
+                    window.history.pushState(null, null, href);
+                }
             }
-        });
+        }
     });
 
     // Intersection observer for section reveal
@@ -1383,8 +1402,15 @@ function initializeYatrAmore() {
             if (window.location.hash) {
                 setTimeout(() => {
                     const hashEl = document.querySelector(window.location.hash);
-                    if (hashEl) hashEl.scrollIntoView();
-                }, 100);
+                    if (hashEl) {
+                        const navHeight = document.querySelector('.navbar') ? document.querySelector('.navbar').offsetHeight : 80;
+                        const targetPosition = hashEl.getBoundingClientRect().top + window.scrollY;
+                        window.scrollTo({
+                            top: targetPosition - navHeight - 20, // 20px extra padding
+                            behavior: "smooth"
+                        });
+                    }
+                }, 300); // 300ms allows layout to fully settle
             }
         }
 

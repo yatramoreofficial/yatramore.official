@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================================
     // 🎯 AUTO-LOOPING LUCKY DRAW DATE CONFIGURATION (37-Day Cycle)
     // ============================================================================
-    const CYCLE_START_DATE = new Date('2026-07-13T00:00:00Z'); // Registrations open on Monday
+    const CYCLE_START_DATE = new Date('2026-07-07T00:00:00Z'); // Registrations open on Monday
     const OPEN_DAYS = 30; // Registration open for 30 days
     const BREAK_DAYS = 7; // Registration closed for 7 days
     const CYCLE_LENGTH = OPEN_DAYS + BREAK_DAYS; // 37 days total
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // ============================================================================
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXnexXpyyMef24EGS_SD_4RqhOaHaUrnwc_VYFj_WSdomr9Hm1fgveeyu8F2n9NhsrTA/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-uMWse2zwU5J5EXoJNXCtdmD-3rFBbEEnBj8Wi0EhFj_ElHpgcD7CBlDZEtcsAdCDGQ/exec';
 
     // DOM Elements
     const globalTimerText = document.getElementById('contest-timer-text');
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (personalTimerText) {
             personalTimerText.textContent = personalTimeString;
-            
+
             const breakdownText = document.getElementById('personal-lockout-breakdown');
             if (breakdownText) {
                 if (!IS_BREAK_PERIOD) {
@@ -397,6 +397,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('deviceId', deviceId);
                 formData.append('_gotcha', gotcha);
                 formData.append('cf-turnstile-response', turnstileResponse);
+
+                // Generate a Dynamic Timestamp/Token (Security by Obscurity)
+                // We combine the email, current date, and a salt, then base64 encode it.
+                // Bots won't know they need to generate this specific formula.
+                const todayStr = new Date().toISOString().split('T')[0];
+                const dynamicToken = btoa(email + "|" + todayStr + "|YatrAmore_Secure_2026");
+                formData.append('_secureToken', dynamicToken);
 
                 // Note: Fetch to Google Script using "no-cors" is common, but you can't read the response directly.
                 // For a proper API response, the GAS must support CORS, or use JSONP.

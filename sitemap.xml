@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
       
+  
+  
+  
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
       
+  
+  
+  
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
@@ -105,7 +111,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Story: Liquid Gold Chai -->
   <url>
     <loc>https://yatramore.com/stories/liquid-gold-chai</loc>
@@ -113,7 +118,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Story: Kashmiri Rajma Chawal -->
   <url>
     <loc>https://yatramore.com/stories/kashmiri-rajma-chawal</loc>
@@ -121,7 +125,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
   <!-- Family Tree -->
   <url>
     <loc>https://yatramore.com/family-tree</loc>
@@ -172,7 +175,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
-
   <!-- FAQ -->
   <url>
     <loc>https://yatramore.com/faq</loc>
@@ -193,6 +195,13 @@
     <lastmod>2026-07-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
+  </url>
+  <!-- Lucky Draw -->
+  <url>
+    <loc>https://yatramore.com/collaborator#lucky-draw</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
   </url>
   <!-- Lucky Draw Rules -->
   <url>

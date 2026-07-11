@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================================
     // 🎯 AUTO-LOOPING LUCKY DRAW DATE CONFIGURATION (37-Day Cycle)
     // ============================================================================
-    const CYCLE_START_DATE = new Date('2026-07-10T00:00:00Z'); // Registrations open on Monday
+    const CYCLE_START_DATE = new Date('2026-07-13T00:00:00Z'); // Registrations open on Monday
     const OPEN_DAYS = 30; // Registration open for 30 days
     const BREAK_DAYS = 7; // Registration closed for 7 days
     const CYCLE_LENGTH = OPEN_DAYS + BREAK_DAYS; // 37 days total
@@ -421,6 +421,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status === 'success') {
                     // Success!
                     localStorage.setItem(storageKey, 'true');
+
+                    // Personalize the success screen
+                    const firstName = name.split(' ')[0] || 'there';
+                    const successTitle = document.getElementById('ld-success-title');
+                    if (successTitle) {
+                        successTitle.textContent = `You are in the draw, ${firstName}!`;
+                    }
 
                     // Trigger JS Fast Spin & Scale Up
                     if (window.luckyDrawWheelVelocity !== undefined) {

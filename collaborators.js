@@ -324,8 +324,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimers();
     setInterval(updateTimers, 1000);
 
-    // Check Local Storage for existing registration
-    const isRegistered = localStorage.getItem('yatramore_luckydraw_entered');
+    // Check Local Storage for existing registration (tied to the current 37-day cycle)
+    const storageKey = 'yatramore_luckydraw_entered_cycle_' + currentCycleNumber;
+    const isRegistered = localStorage.getItem(storageKey);
     if (isRegistered === 'true') {
         formContainer.style.display = 'none';
         successContainer.style.display = 'block';
@@ -375,8 +376,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            statusMsg.textContent = "Please wait, contacting secure server...";
+            // Clear any previous error styling
             statusMsg.style.color = "var(--text-main)";
+            statusMsg.textContent = "Please wait, contacting secure server...";
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
 
@@ -418,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (result.status === 'success') {
                     // Success!
-                    localStorage.setItem('yatramore_luckydraw_entered', 'true');
+                    localStorage.setItem(storageKey, 'true');
 
                     // Trigger JS Fast Spin & Scale Up
                     if (window.luckyDrawWheelVelocity !== undefined) {
@@ -449,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     submitBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> Unlock My Chance to Win!';
 
                     if (result.already_registered) {
-                        localStorage.setItem('yatramore_luckydraw_entered', 'true');
+                        localStorage.setItem(storageKey, 'true');
 
                         // Extract just their first name for a friendly greeting
                         const firstName = name.split(' ')[0] || 'there';
@@ -566,19 +568,40 @@ document.addEventListener('DOMContentLoaded', () => {
         wheelCont.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
 
         // --- Touch Events (Mobile) ---
+        let startTouchX = 0;
+        let startTouchY = 0;
+        let isSpinningWheel = false;
+
         wheelCont.addEventListener('touchstart', (e) => {
-            // Prevent default to stop scrolling while interacting with the wheel
-            if (e.cancelable) e.preventDefault();
             startInteraction();
             if (e.touches.length > 0) {
-                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+                startTouchX = e.touches[0].clientX;
+                startTouchY = e.touches[0].clientY;
+                isSpinningWheel = false; // We don't know yet if they are scrolling or spinning
+                handleMove(startTouchX, startTouchY);
             }
         }, { passive: false });
 
         wheelCont.addEventListener('touchmove', (e) => {
-            if (e.cancelable) e.preventDefault();
             if (e.touches.length > 0) {
-                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+                const currentTouchX = e.touches[0].clientX;
+                const currentTouchY = e.touches[0].clientY;
+
+                // Determine if the user is swiping mostly horizontally (spinning) or vertically (scrolling)
+                if (!isSpinningWheel) {
+                    const diffX = Math.abs(currentTouchX - startTouchX);
+                    const diffY = Math.abs(currentTouchY - startTouchY);
+
+                    // If they move horizontally more than vertically, they are spinning the wheel!
+                    if (diffX > diffY && diffX > 5) {
+                        isSpinningWheel = true;
+                    }
+                }
+
+                if (isSpinningWheel) {
+                    if (e.cancelable) e.preventDefault(); // ONLY prevent default (scrolling) if they are spinning
+                    handleMove(currentTouchX, currentTouchY);
+                }
             }
         }, { passive: false });
 

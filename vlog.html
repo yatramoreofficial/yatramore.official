@@ -30,7 +30,7 @@
 
     <!-- High-Level Security: Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://www.youtube.com https://s.ytimg.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://img.youtube.com https://i.ytimg.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://www.youtube.com https://youtube.com; base-uri 'self'; form-action 'self';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://www.youtube.com https://s.ytimg.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://img.youtube.com https://i.ytimg.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://www.youtube.com https://youtube.com; base-uri 'self'; form-action 'self';">
 
     <!-- Immediate Theme Application -->
     <script>
@@ -54,6 +54,11 @@
     <meta property="og:image" content="https://yatramore.com/Images/og-share.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://yatramore.com/vlog">
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="YatrAmore | Vlogs and Shorts">
+    <meta name="twitter:description" content="Watch our latest travel vlogs and shorts. Join us on our cross-cultural journey through videos.">
+    <meta name="twitter:image" content="https://yatramore.com/Images/og-share.png">
     <link rel="canonical" href="https://yatramore.com/vlog">
 
     <!-- Favicon -->
@@ -84,8 +89,33 @@
         "@type": "WebSite",
         "name": "YatrAmore",
         "url": "https://yatramore.com/"
+      },
+      "publisher": {
+        "@id": "https://yatramore.com/#organization"
       }
     }
+    </script>
+
+    <!-- SEO: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+            {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://yatramore.com/"
+            },
+            {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Vlogs and Shorts",
+                  "item": "https://yatramore.com/vlog"
+            }
+      ]
+}
     </script>
 </head>
 

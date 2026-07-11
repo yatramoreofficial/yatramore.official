@@ -16,29 +16,29 @@
   <!-- Home Page -->
   <url>
     <loc>https://yatramore.com/</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
   <!-- Our Journey -->
   <url>
     <loc>https://yatramore.com/our-journey</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <!-- Van Life -->
   <url>
     <loc>https://yatramore.com/van-life</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Collaborator -->
   <url>
     <loc>https://yatramore.com/collaborator</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <!-- Story / Journal -->
@@ -59,76 +59,76 @@
   <url>
     <loc>https://yatramore.com/stories/the-shadow-of-monte-grappa</loc>
     <lastmod>2026-05-15</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: Part 2 -->
   <url>
     <loc>https://yatramore.com/stories/the-silver-thread</loc>
     <lastmod>2026-05-26</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: Part 3 -->
   <url>
     <loc>https://yatramore.com/stories/promises-in-the-mountains</loc>
     <lastmod>2026-06-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: Why I Love Her -->
   <url>
     <loc>https://yatramore.com/stories/why-i-love-her</loc>
     <lastmod>2026-05-27</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: The Ten Reflections of Light -->
   <url>
     <loc>https://yatramore.com/stories/the-ten-reflections-of-light</loc>
     <lastmod>2026-06-17</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: The Armor of the Soul -->
   <url>
     <loc>https://yatramore.com/stories/the-armor-of-the-soul</loc>
     <lastmod>2026-06-24</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: The Geometry of Us -->
   <url>
     <loc>https://yatramore.com/stories/the-geometry-of-us</loc>
     <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: The Equalizing Floor -->
   <url>
     <loc>https://yatramore.com/stories/the-equalizing-floor</loc>
     <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: Liquid Gold Chai -->
   <url>
     <loc>https://yatramore.com/stories/liquid-gold-chai</loc>
     <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Story: Kashmiri Rajma Chawal -->
   <url>
     <loc>https://yatramore.com/stories/kashmiri-rajma-chawal</loc>
     <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
   <!-- Family Tree -->
   <url>
     <loc>https://yatramore.com/family-tree</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
@@ -175,10 +175,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/akash</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
   <!-- FAQ -->
   <url>
     <loc>https://yatramore.com/faq</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-07-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
@@ -186,14 +192,14 @@
   <url>
     <loc>https://yatramore.com/privacy-policy</loc>
     <lastmod>2026-07-09</lastmod>
-    <changefreq>yearly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
   <!-- Terms of Service -->
   <url>
     <loc>https://yatramore.com/terms-of-service</loc>
     <lastmod>2026-07-09</lastmod>
-    <changefreq>yearly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
   <!-- Lucky Draw -->
@@ -207,7 +213,7 @@
   <url>
     <loc>https://yatramore.com/lucky-draw-rules</loc>
     <lastmod>2026-07-09</lastmod>
-    <changefreq>yearly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
 </urlset>

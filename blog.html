@@ -28,7 +28,7 @@
 
     <!-- High-Level Security: Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com; base-uri 'self'; form-action 'self';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://pagead2.googlesyndication.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com; base-uri 'self'; form-action 'self';">
 
     <!-- Immediate Theme Application (Security Hardened) -->
     <script>
@@ -52,6 +52,11 @@
     <meta property="og:image" content="https://yatramore.com/Images/og-share.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://yatramore.com/blog">
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="YatrAmore | Story">
+    <meta name="twitter:description" content="Read the latest reflections, travel stories, van life logs, and cross-cultural insights from Laura and Yazavinder.">
+    <meta name="twitter:image" content="https://yatramore.com/Images/og-share.png">
     <link rel="canonical" href="https://yatramore.com/blog">
 
     <!-- Favicon -->
@@ -80,12 +85,49 @@
         "@type": "WebSite",
         "name": "YatrAmore",
         "url": "https://yatramore.com/"
-      }
+      },
+      "publisher": {
+        "@id": "https://yatramore.com/#organization"
+      },
+      "blogPost": [
+        { "@type": "BlogPosting", "headline": "The Shadow of Monte Grappa", "url": "https://yatramore.com/stories/the-shadow-of-monte-grappa" },
+        { "@type": "BlogPosting", "headline": "The Silver Thread", "url": "https://yatramore.com/stories/the-silver-thread" },
+        { "@type": "BlogPosting", "headline": "Promises in the Mountains", "url": "https://yatramore.com/stories/promises-in-the-mountains" },
+        { "@type": "BlogPosting", "headline": "Why I Love Her", "url": "https://yatramore.com/stories/why-i-love-her" },
+        { "@type": "BlogPosting", "headline": "The Ten Reflections of Light", "url": "https://yatramore.com/stories/the-ten-reflections-of-light" },
+        { "@type": "BlogPosting", "headline": "The Armor of the Soul", "url": "https://yatramore.com/stories/the-armor-of-the-soul" },
+        { "@type": "BlogPosting", "headline": "The Geometry of Us", "url": "https://yatramore.com/stories/the-geometry-of-us" },
+        { "@type": "BlogPosting", "headline": "The Equalizing Floor", "url": "https://yatramore.com/stories/the-equalizing-floor" },
+        { "@type": "BlogPosting", "headline": "Liquid Gold Chai", "url": "https://yatramore.com/stories/liquid-gold-chai" },
+        { "@type": "BlogPosting", "headline": "Kashmiri Rajma Chawal", "url": "https://yatramore.com/stories/kashmiri-rajma-chawal" }
+      ]
     }
     </script>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6715930730875600"
         crossorigin="anonymous"></script>
+
+    <!-- SEO: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+            {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://yatramore.com/"
+            },
+            {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Story",
+                  "item": "https://yatramore.com/blog"
+            }
+      ]
+}
+    </script>
 </head>
 
 <body>

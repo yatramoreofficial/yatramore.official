@@ -812,12 +812,13 @@ nav.scrolled {
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 1.2rem;
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid var(--glass-border);
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     font-size: 1rem;
     color: var(--text-main);
+    font-family: inherit;
     transition: var(--transition-slow);
 }
 
@@ -835,7 +836,7 @@ nav.scrolled {
 [data-theme="dark"] .form-group textarea {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.1);
-    color: white !important;
+    color: var(--text-main);
 }
 
 [data-theme="dark"] .form-group input:focus,
@@ -2910,5 +2911,20 @@ body {
     }
     .moderators-section h2 {
         font-size: 1.7rem !important;
+    }
+}
+
+/* Global Horizontal Form Grid (mirrors family-tree) */
+.horizontal-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 1rem;
+    align-items: end;
+}
+
+@media (max-width: 768px) {
+    .horizontal-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
     }
 }

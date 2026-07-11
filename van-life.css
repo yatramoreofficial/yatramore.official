@@ -606,3 +606,34 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 480px) {
+    .specs-info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .spec-item {
+        padding: 1.5rem;
+    }
+
+    .spec-val {
+        font-size: 1.2rem;
+    }
+
+    .spec-item i {
+        font-size: 1.5rem;
+    }
+
+    .van-popup-card {
+        width: 200px;
+    }
+
+    .van-popup-title {
+        font-size: 0.95rem;
+    }
+
+    .van-popup-text {
+        font-size: 0.8rem;
+    }
+}

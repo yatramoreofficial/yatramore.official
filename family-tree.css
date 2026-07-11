@@ -40,7 +40,7 @@
 }
 
 .travel-hero h1 {
-    font-size: 3.5rem;
+    font-size: clamp(1.8rem, 5.5vw, 3.5rem);
     line-height: 1.1;
     color: var(--brand-brown);
     margin-bottom: 1.2rem;
@@ -227,7 +227,7 @@
 }
 
 .section-title h2 {
-    font-size: 2.5rem;
+    font-size: clamp(1.6rem, 4.5vw, 2.5rem);
     color: var(--brand-brown);
     margin-bottom: 0.8rem;
     font-weight: 700;
@@ -689,6 +689,10 @@
         padding: 1.5rem;
     }
 
+    .glass-card {
+        padding: 1.5rem;
+    }
+
     .tree-visualization-container {
         margin-top: 2rem !important;
         margin-bottom: 2rem !important;
@@ -696,6 +700,19 @@
 
     .star-rating i {
         font-size: 2.2rem;
+    }
+
+    .status-card h3 {
+        font-size: 1.6rem;
+    }
+
+    .status-card p {
+        font-size: 1rem;
+    }
+
+    .btn-status {
+        padding: 1rem 2rem;
+        font-size: 0.95rem;
     }
 }
 

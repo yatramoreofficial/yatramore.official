@@ -460,7 +460,7 @@ nav.scrolled {
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 5vw, 3rem);
     margin: 0 0 1.2rem;
     letter-spacing: -1px;
     color: var(--brand-brown);
@@ -477,13 +477,13 @@ nav.scrolled {
 }
 
 .hero-meaning p {
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
     color: var(--brand-brown);
     line-height: 1.8;
 }
 
 .hero p {
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 2.2vw, 1.1rem);
     color: var(--text-muted);
     max-width: 800px;
     margin: 0 auto;
@@ -502,7 +502,7 @@ nav.scrolled {
 }
 
 .section-title h2 {
-    font-size: 2.5rem;
+    font-size: clamp(1.6rem, 4.5vw, 2.5rem);
     color: var(--brand-brown);
     margin-bottom: 1rem;
 }
@@ -1789,7 +1789,7 @@ body {
     }
 
     .hero-meaning p {
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;
         line-height: 1.6 !important;
     }
 
@@ -1801,6 +1801,32 @@ body {
 
     .social-card {
         padding: 1.5rem;
+    }
+
+    .social-card i {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .social-card span {
+        font-size: 1rem;
+    }
+
+    /* About section text */
+    .about-text {
+        font-size: 1rem;
+    }
+
+    /* Buttons */
+    .btn,
+    .btn-main {
+        padding: 1rem 2rem;
+        font-size: 0.95rem;
+    }
+
+    /* Contact */
+    .email-link-card {
+        font-size: 0.95rem;
     }
 
     /* FABs & Accessibility */
@@ -1825,6 +1851,69 @@ body {
         width: 280px;
         max-width: calc(100vw - 40px);
     }
+
+    /* Share menu */
+    .share-menu {
+        width: calc(100vw - 30px);
+        right: 0;
+    }
+
+    /* Policy content */
+    .policy-section p,
+    .policy-section ul {
+        font-size: 0.95rem;
+    }
+
+    .policy-section h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Footer */
+    footer {
+        padding: 2rem 0 60px;
+    }
+
+    .footer-content {
+        gap: 0.6rem;
+    }
+
+    .footer-header {
+        gap: 0.6rem;
+    }
+
+    .footer-brand .brand-text {
+        font-size: 1.15rem;
+    }
+
+    .footer-tagline p {
+        font-size: 0.85rem;
+        max-width: 85%;
+        line-height: 1.4;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        gap: 0.6rem 1rem;
+        font-size: 0.8rem;
+        justify-content: center;
+    }
+
+    .footer-divider {
+        display: none;
+    }
+
+    .footer-copyright p {
+        font-size: 0.7rem;
+    }
+
+    .footer-stats {
+        font-size: 0.78rem;
+        padding: 0.4rem 1.2rem;
+    }
+
+    .footer-visitor {
+        margin-top: 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1832,13 +1921,69 @@ body {
         font-size: 1.2rem;
     }
 
-    .section-title h2 {
-        font-size: 2rem;
+    .hero-logo {
+        width: 130px;
+        height: 130px;
     }
 
-    .hero-logo {
-        width: 140px;
-        height: 140px;
+    .hero h1 {
+        font-size: 1.7rem;
+    }
+
+    .hero-meaning p {
+        font-size: 0.95rem !important;
+    }
+
+    .hero p {
+        font-size: 0.92rem;
+    }
+
+    .section-padded {
+        padding: 2rem 0;
+    }
+
+    .contact-section {
+        padding: 2rem 0;
+    }
+
+    .contact-form-styled {
+        padding: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 1rem;
+        font-size: 16px;
+    }
+
+    /* Footer — tightest */
+    footer {
+        padding: 1.5rem 0 60px;
+    }
+
+    .footer-tagline p {
+        font-size: 0.8rem;
+        max-width: 90%;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.78rem;
+    }
+
+    .footer-brand .brand-text {
+        font-size: 1.05rem;
+    }
+
+    .footer-copyright p {
+        font-size: 0.65rem;
+    }
+
+    .footer-stats {
+        font-size: 0.72rem;
+        padding: 0.35rem 1rem;
     }
 }
 
@@ -1914,7 +2059,7 @@ body {
 }
 
 .policy-hero h1 {
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 5vw, 3rem);
     margin-bottom: 0.5rem;
 }
 
@@ -2233,7 +2378,7 @@ body {
 
 .explore-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 1.5rem;
     margin-top: 1.5rem;
 }
@@ -2629,47 +2774,141 @@ body {
 @media (max-width: 600px) {
     .lucky-draw-section {
         padding: 2rem 1rem !important;
+        margin: 1rem auto !important;
     }
     .lucky-draw-wheel-container {
-        width: 200px !important;
-        height: 200px !important;
+        width: 180px !important;
+        height: 180px !important;
         padding: 8px;
     }
     .lucky-draw-countdown {
         font-size: 0.85rem !important;
         padding: 0.5rem 0.8rem !important;
         white-space: nowrap !important;
+        margin-bottom: 1.5rem !important;
     }
     .lucky-draw-header h2 {
-        font-size: 1.6rem !important;
+        font-size: 1.5rem !important;
+    }
+    #lucky-draw-description {
+        font-size: 0.92rem !important;
+    }
+    .lucky-draw-badge {
+        font-size: 0.85rem !important;
+        padding: 0.3rem 0.8rem !important;
     }
     .wheel-text span {
-        margin-top: 20px;
-        font-size: 1.1rem;
+        margin-top: 18px;
+        font-size: 1rem;
     }
     .wheel-center {
-        width: 45px;
-        height: 45px;
-        font-size: 1.3rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
     }
     .wheel-pointer {
         top: -10px;
-        border-left: 15px solid transparent;
-        border-right: 15px solid transparent;
-        border-top: 22px solid #D4AF37;
+        border-left: 14px solid transparent;
+        border-right: 14px solid transparent;
+        border-top: 20px solid #D4AF37;
     }
-    
+
+    /* Lucky Draw Form — stack fields vertically */
+    #lucky-draw-form > div:first-child {
+        flex-direction: column !important;
+        gap: 0.8rem !important;
+    }
+    #lucky-draw-form .form-group {
+        min-width: 100% !important;
+    }
+    #lucky-draw-form .form-group label {
+        font-size: 0.85rem;
+    }
+    #lucky-draw-form .form-group input,
+    #lucky-draw-form .form-group select {
+        font-size: 16px !important;
+        padding: 0.9rem !important;
+    }
+    #ld-submit-btn {
+        font-size: 1rem !important;
+        padding: 0.9rem 1.2rem !important;
+    }
+    #lucky-draw-form .privacy-notice {
+        font-size: 0.78rem !important;
+    }
+
     /* Shrink the success state text and lockout timers */
     #lucky-draw-success-container {
         padding: 1.5rem !important;
     }
+    #lucky-draw-success-container > i {
+        font-size: 2.2rem !important;
+    }
+    #lucky-draw-success-container h3 {
+        font-size: 1.2rem !important;
+    }
+    #lucky-draw-success-container p {
+        font-size: 0.9rem !important;
+    }
     #lucky-draw-success-container > div {
-        font-size: 1.2rem !important; /* "Lockout Time Remaining:" */
+        font-size: 1.1rem !important;
     }
     #personal-lockout-timer {
-        font-size: 1.4rem !important; /* The actual numbers */
+        font-size: 1.3rem !important;
     }
     #personal-lockout-breakdown {
-        font-size: 0.8rem !important;
+        font-size: 0.78rem !important;
+    }
+
+    /* Turnstile CAPTCHA — scale for mobile */
+    .cf-turnstile {
+        transform: scale(0.85);
+        transform-origin: center;
+    }
+
+    /* ── Moderators Section ─────────────────────────── */
+    .moderators-section {
+        padding: 3rem 1rem !important;
+    }
+    .moderators-section h2 {
+        font-size: 2rem !important;
+    }
+    .moderators-section > p {
+        font-size: 0.95rem !important;
+        margin-bottom: 2.5rem !important;
+    }
+    .moderators-section > p:last-of-type {
+        font-size: 0.9rem !important;
+        margin-top: 2rem !important;
+    }
+
+    /* ── Collaborator Coming Soon Notice ─────────────── */
+    .coming-soon-notice h3 {
+        font-size: 1.3rem;
+    }
+    .coming-soon-notice p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .lucky-draw-wheel-container {
+        width: 160px !important;
+        height: 160px !important;
+    }
+    .lucky-draw-header h2 {
+        font-size: 1.3rem !important;
+    }
+    .wheel-text span {
+        margin-top: 15px;
+        font-size: 0.85rem;
+    }
+    .wheel-center {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    .moderators-section h2 {
+        font-size: 1.7rem !important;
     }
 }

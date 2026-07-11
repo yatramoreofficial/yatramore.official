@@ -38,7 +38,7 @@
 }
 
 .travel-hero h1 {
-    font-size: 3.8rem;
+    font-size: clamp(2rem, 6vw, 3.8rem);
     line-height: 1.1;
     color: var(--brand-brown);
     margin-bottom: 1.5rem;
@@ -46,7 +46,7 @@
 }
 
 .travel-hero p {
-    font-size: 1.15rem;
+    font-size: clamp(0.92rem, 2.5vw, 1.15rem);
     color: var(--text-muted);
     line-height: 1.85;
     max-width: 1200px;
@@ -557,6 +557,14 @@
         gap: 2rem;
     }
 
+    .card-title {
+        font-size: 1.25rem;
+    }
+
+    .card-description {
+        font-size: 0.9rem;
+    }
+
     .card-meta {
         gap: 0.85rem;
     }
@@ -568,7 +576,11 @@
     }
 
     .travel-hero h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+
+    .travel-hero p {
+        font-size: 0.9rem;
     }
 
     .filter-bar-section {

@@ -30,7 +30,7 @@
 }
 
 .blog-hero h1 {
-    font-size: 3.8rem;
+    font-size: clamp(2rem, 6vw, 3.8rem);
     line-height: 1.1;
     margin-bottom: 1.5rem;
     color: var(--brand-brown);
@@ -39,7 +39,7 @@
 }
 
 .blog-hero p {
-    font-size: 1.15rem;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
     color: var(--text-muted);
     line-height: 1.85;
     max-width: 1200px;
@@ -190,7 +190,7 @@
 
 /* Post Content */
 .blog-card h2 {
-    font-size: 1.8rem;
+    font-size: clamp(1.3rem, 3.5vw, 1.8rem);
     color: var(--brand-brown);
     font-weight: 700;
     line-height: 1.3;
@@ -282,7 +282,7 @@
 }
 
 .post-header h1 {
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 5vw, 3rem);
     color: var(--brand-brown);
     line-height: 1.2;
     font-weight: 700;
@@ -493,19 +493,31 @@
     }
     
     .post-body {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         line-height: 1.75;
     }
     
     .post-body h2 {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         margin: 2.5rem 0 1rem;
+    }
+
+    .post-body h3 {
+        font-size: 1.25rem;
     }
     
     .post-body blockquote {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         padding: 1.2rem 1.5rem;
         margin: 2rem 0;
+    }
+
+    .post-excerpt {
+        font-size: 0.95rem;
+    }
+
+    .post-subtitle {
+        font-size: 1.05rem;
     }
 }
 

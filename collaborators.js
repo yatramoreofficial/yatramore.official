@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================================
     // 🎯 AUTO-LOOPING LUCKY DRAW DATE CONFIGURATION (37-Day Cycle)
     // ============================================================================
-    const CYCLE_START_DATE = new Date('2026-07-07T00:00:00Z'); // Registrations open on Monday
+    const CYCLE_START_DATE = new Date('2026-07-10T00:00:00Z'); // Registrations open on Monday
     const OPEN_DAYS = 30; // Registration open for 30 days
     const BREAK_DAYS = 7; // Registration closed for 7 days
     const CYCLE_LENGTH = OPEN_DAYS + BREAK_DAYS; // 37 days total
@@ -451,21 +451,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (result.already_registered) {
                         localStorage.setItem('yatramore_luckydraw_entered', 'true');
 
-                        // FOR DEMO PURPOSES: Trigger fireworks even on duplicate so you can see it!
-                        if (window.luckyDrawWheelVelocity !== undefined) window.luckyDrawWheelVelocity = 35;
-                        const wheelContainerForScale = document.querySelector('.lucky-draw-wheel-container');
-                        if (wheelContainerForScale) {
-                            wheelContainerForScale.style.transform = 'scale3d(1.15, 1.15, 1.15)';
-                            setTimeout(() => { wheelContainerForScale.style.transform = ''; }, 3000);
-                        }
+                        // Extract just their first name for a friendly greeting
+                        const firstName = name.split(' ')[0] || 'there';
 
+                        // Pop a native browser alert so mobile users definitely see it!
+                        alert(`Hey ${firstName}, you have already entered the draw within this 37-day cycle!`);
+
+                        // Change the success container text to reflect they are already registered
+                        const successTitle = document.getElementById('ld-success-title');
+                        const successMsg = document.getElementById('ld-success-msg');
+                        if (successTitle) successTitle.textContent = "Already Registered!";
+                        if (successMsg) successMsg.textContent = `Hey ${firstName}, you have already entered the draw for this cycle. Your previous entry is safe and locked in!`;
+
+                        // Fade directly to the success screen immediately (skip the fireworks)
+                        formContainer.style.opacity = '0';
                         setTimeout(() => {
-                            formContainer.style.opacity = '0';
-                            setTimeout(() => {
-                                formContainer.style.display = 'none';
-                                successContainer.style.display = 'block';
-                            }, 500);
-                        }, 1500);
+                            formContainer.style.display = 'none';
+                            successContainer.style.display = 'block';
+                            successContainer.style.opacity = '0';
+                            setTimeout(() => successContainer.style.opacity = '1', 50);
+                        }, 500);
                     }
                 }
             } catch (error) {

@@ -1705,12 +1705,16 @@ body {
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 1rem;
-        overflow-x: hidden;
+@media (max-width: 1280px) {
+    .nav-links {
+        gap: 1.2rem;
     }
+    .nav-links a {
+        font-size: 0.95rem;
+    }
+}
 
+@media (max-width: 1024px) {
     /* Navbar */
     .nav-links {
         display: none;
@@ -1770,6 +1774,13 @@ body {
         border-radius: 16px;
         z-index: 99999;
         animation: menuFadeIn 0.25s ease;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+        overflow-x: hidden;
     }
 
 

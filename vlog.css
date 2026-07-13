@@ -64,6 +64,13 @@
 @media (min-width: 768px) {
     .vlogs-grid {
         grid-template-columns: repeat(2, 1fr);
+        row-gap: 4rem;
+        column-gap: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .vlogs-grid {
         row-gap: 5rem;
         column-gap: 8rem;
     }
@@ -132,14 +139,14 @@
 /* Aspect Ratios */
 .lite-youtube.vlog-format {
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 ratio */
-    height: 0;
+    aspect-ratio: 16 / 9;
+    height: auto;
 }
 
 .lite-youtube.short-format {
     width: 100%;
-    padding-bottom: 177.77%; /* 9:16 ratio */
-    height: 0;
+    aspect-ratio: 9 / 16;
+    height: auto;
     max-width: 320px;
     margin: 0 auto;
 }

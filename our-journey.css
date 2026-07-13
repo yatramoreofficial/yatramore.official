@@ -539,7 +539,7 @@
 }
 
 /* ── Responsive ──────────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .travel-hero h1 {
         font-size: 2.5rem;
     }

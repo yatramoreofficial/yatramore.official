@@ -1,27 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
-      
-  
-  
-  
-  
-  
-  
-  
   
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      
-  
-  
-  
-  
-  
-  
-  
   
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <!-- Created for YatrAmore -->
   <!-- Home Page -->
   <url>
@@ -58,25 +42,18 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
-  <!-- Zodiac Bonds Series -->
-  <url>
-    <loc>https://yatramore.com/zodiac-bonds</loc>
-    <lastmod>2026-07-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <!-- The Silver Thread -->
-  <url>
-    <loc>https://yatramore.com/stories/the-silver-thread</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.80</priority>
-  </url>
   <!-- Vlog -->
   <url>
     <loc>https://yatramore.com/vlog</loc>
     <lastmod>2026-06-28</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <!-- Zodiac Bonds Series -->
+  <url>
+    <loc>https://yatramore.com/zodiac-bonds</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <!-- Story: Part 1 -->
@@ -86,82 +63,263 @@
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-
-    <!-- Story: Why I Love Her -->
+  <!-- Story: Part 2 -->
+  <url>
+    <loc>https://yatramore.com/stories/the-silver-thread</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: Part 3 -->
+  <url>
+    <loc>https://yatramore.com/stories/promises-in-the-mountains</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: Why I Love Her -->
   <url>
     <loc>https://yatramore.com/stories/why-i-love-her</loc>
     <lastmod>2026-06-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Armor of the Soul -->
+  <!-- Story: The Ten Reflections of Light -->
+  <url>
+    <loc>https://yatramore.com/stories/the-ten-reflections-of-light</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Armor of the Soul -->
   <url>
     <loc>https://yatramore.com/stories/the-armor-of-the-soul</loc>
-    <lastmod>2026-06-19</lastmod>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Visionary Rule-Breakers -->
+  <!-- Story: The Geometry of Us -->
   <url>
-    <loc>https://yatramore.com/stories/the-visionary-rule-breakers-sagittarius-aquarius</loc>
-    <lastmod>2026-06-23</lastmod>
+    <loc>https://yatramore.com/stories/the-geometry-of-us</loc>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Equalizing Floor -->
+  <!-- Story: The Equalizing Floor -->
   <url>
     <loc>https://yatramore.com/stories/the-equalizing-floor</loc>
     <lastmod>2026-06-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Wildfire -->
+  <!-- Story: Liquid Gold Chai -->
   <url>
-    <loc>https://yatramore.com/stories/the-wildfire-sagittarius-aries</loc>
-    <lastmod>2026-06-27</lastmod>
+    <loc>https://yatramore.com/stories/liquid-gold-chai</loc>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Royal Bonfire -->
-  <url>
-    <loc>https://yatramore.com/stories/the-royal-bonfire-aries-leo</loc>
-    <lastmod>2026-06-30</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.80</priority>
-  </url>
-    <!-- Story: The Fast-Paced Partners in Crime -->
-  <url>
-    <loc>https://yatramore.com/stories/the-fast-paced-partners-in-crime-aries-gemini</loc>
-    <lastmod>2026-07-04</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.80</priority>
-  </url>
-    <!-- Story: Kashmiri Rajma Chawal -->
+  <!-- Story: Kashmiri Rajma Chawal -->
   <url>
     <loc>https://yatramore.com/stories/kashmiri-rajma-chawal</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Glamorous Showstoppers -->
+  <!-- Story: The Visionary Rule-Breakers -->
+  <url>
+    <loc>https://yatramore.com/stories/the-visionary-rule-breakers-sagittarius-aquarius</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Wildfire -->
+  <url>
+    <loc>https://yatramore.com/stories/the-wildfire-sagittarius-aries</loc>
+    <lastmod>2026-06-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Royal Bonfire -->
+  <url>
+    <loc>https://yatramore.com/stories/the-royal-bonfire-aries-leo</loc>
+    <lastmod>2026-06-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Fast-Paced Partners in Crime -->
+  <url>
+    <loc>https://yatramore.com/stories/the-fast-paced-partners-in-crime-aries-gemini</loc>
+    <lastmod>2026-07-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Glamorous Showstoppers -->
   <url>
     <loc>https://yatramore.com/stories/the-glamorous-showstoppers-leo-libra</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Electric Brainstorm -->
+  <!-- Story: The Electric Brainstorm -->
   <url>
     <loc>https://yatramore.com/stories/the-electric-brainstorm-aquarius-gemini</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-    <!-- Story: The Symphony of the Mind -->
+  <!-- Story: The Symphony of the Mind -->
   <url>
     <loc>https://yatramore.com/stories/the-symphony-of-the-mind-gemini-libra</loc>
     <lastmod>2026-07-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.80</priority>
   </url>
-  </urlset>
+  <!-- Story: The Architect and the Master Builder -->
+  <url>
+    <loc>https://yatramore.com/stories/the-architect-and-the-master-builder-capricorn-virgo</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Boundless Ocean -->
+  <url>
+    <loc>https://yatramore.com/stories/the-boundless-ocean-cancer-pisces</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Cosmic Meeting of the Oceans -->
+  <url>
+    <loc>https://yatramore.com/stories/the-cosmic-meeting-of-the-oceans</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Fortress of Power -->
+  <url>
+    <loc>https://yatramore.com/stories/the-fortress-of-power-scorpio-capricorn</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Magnetic Axis -->
+  <url>
+    <loc>https://yatramore.com/stories/the-magnetic-axis-taurus-scorpio</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Nurturing Haven -->
+  <url>
+    <loc>https://yatramore.com/stories/the-nurturing-haven-cancer-taurus</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Story: The Unbreakable Sanctuary -->
+  <url>
+    <loc>https://yatramore.com/stories/the-unbreakable-sanctuary-taurus-virgo</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <!-- Family Tree -->
+  <url>
+    <loc>https://yatramore.com/family-tree</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <!-- Moderators -->
+  <url>
+    <loc>https://yatramore.com/Moderators/franky</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/sara-fabri</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/aman</loc>
+    <lastmod>2026-07-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/multani</loc>
+    <lastmod>2026-07-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/puneet</loc>
+    <lastmod>2026-07-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/toxic</loc>
+    <lastmod>2026-07-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/rajeev</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://yatramore.com/Moderators/akash</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <!-- FAQ -->
+  <url>
+    <loc>https://yatramore.com/faq</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://yatramore.com/privacy-policy</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://yatramore.com/terms-of-service</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <!-- Lucky Draw -->
+  <url>
+    <loc>https://yatramore.com/collaborator#lucky-draw</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <!-- Lucky Draw Rules -->
+  <url>
+    <loc>https://yatramore.com/lucky-draw-rules</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <!-- Lucky Winner Hall -->
+  <url>
+    <loc>https://yatramore.com/lucky-hall</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+</urlset>

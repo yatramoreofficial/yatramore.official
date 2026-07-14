@@ -73,14 +73,16 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="our-journey.css">
-    <!-- SEO: Collection Page Structured Data -->
+    <!-- SEO: Collection Page + ItemList Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "name": "YatrAmore Our Journey",
-      "description": "Every destination has a story. Explore our travel diary, hidden gems, and honest experiences.",
+      "@id": "https://yatramore.com/our-journey#page",
+      "name": "Our Journey — YatrAmore Travel Diary",
+      "description": "Every place we visit leaves a mark on our hearts. Explore the travel diary of Laura and Yazavinder, an Indo-Italian couple — honest reviews, hidden gems, and beautifully documented stays across Italy, Europe, and beyond.",
       "url": "https://yatramore.com/our-journey",
+      "inLanguage": "en",
       "isPartOf": {
         "@type": "WebSite",
         "name": "YatrAmore",
@@ -88,10 +90,117 @@
       },
       "about": {
         "@type": "Thing",
-        "name": "Travel Destinations and Stories"
+        "name": "Cross-Cultural Travel Experiences"
       },
+      "author": [
+        { "@id": "https://yatramore.com/#laura" },
+        { "@id": "https://yatramore.com/#yazavinder" }
+      ],
       "publisher": {
         "@id": "https://yatramore.com/#organization"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "YatrAmore Destinations",
+        "numberOfItems": 8,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "Venice City",
+              "description": "A wonderful blend of canals, gondolas, historic architecture, and vibrant culture, where San Marco Square, delicious food, and historic places make every moment feel magical and memorable.",
+              "touristType": "History, Food, Photography",
+              "geo": { "@type": "GeoCoordinates", "latitude": 45.4408, "longitude": 12.3155 },
+              "containedInPlace": { "@type": "Country", "name": "Italy" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "Heraklion, Matala, Elafonissi, Chania — Crete",
+              "description": "Crete is a stunning island where turquoise beaches, historic towns, and relaxed charm come together beautifully, creating unforgettable moments by the sea.",
+              "touristType": "Beach, Local Life, Panoramic",
+              "geo": { "@type": "GeoCoordinates", "latitude": 35.2401, "longitude": 24.4700 },
+              "containedInPlace": { "@type": "Country", "name": "Greece" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "Folgaria",
+              "description": "A beautiful mountain destination where ski slopes, local food, and unspoiled nature come together to create a relaxing and memorable stay.",
+              "touristType": "Nature, Sports, Food",
+              "geo": { "@type": "GeoCoordinates", "latitude": 45.9167, "longitude": 11.1667 },
+              "containedInPlace": { "@type": "AdministrativeArea", "name": "Trentino-Alto Adige, Italy" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "Bolzano & Naturns",
+              "description": "A wonderful blend of mountain scenery, scenic hikes, authentic food, and pure nature, making every moment feel calm and memorable.",
+              "touristType": "Nature, Food, Panoramic",
+              "geo": { "@type": "GeoCoordinates", "latitude": 46.6500, "longitude": 10.9833 },
+              "containedInPlace": { "@type": "AdministrativeArea", "name": "Trentino-South Tyrol, Italy" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "Borgo Stazione Bike Inn",
+              "description": "A lovely place where history, comfort, and nature blend beautifully, offering a peaceful stay with genuine hospitality and a special bike-friendly spirit.",
+              "touristType": "Sports, Wellness, Food",
+              "geo": { "@type": "GeoCoordinates", "latitude": 45.4299, "longitude": 10.9916 },
+              "containedInPlace": { "@type": "AdministrativeArea", "name": "Verona, Italy" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "Turin City",
+              "description": "A vibrant city where great food, rich history, and elegant city-centre landmarks come together, with highlights like the Egyptian Museum adding a truly memorable cultural touch.",
+              "touristType": "History, Food, Photography",
+              "geo": { "@type": "GeoCoordinates", "latitude": 45.0703, "longitude": 7.6869 },
+              "containedInPlace": { "@type": "Country", "name": "Italy" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "Courmayeur — Mont Blanc",
+              "description": "A breathtaking alpine experience, combining the spectacular Skyway ascent, the beauty of the Aosta Valley, and the unique infinity table at Punta Helbronner create an unforgettable experience.",
+              "touristType": "Nature, Local Life, Panoramic",
+              "geo": { "@type": "GeoCoordinates", "latitude": 45.7967, "longitude": 6.9697 },
+              "containedInPlace": { "@type": "AdministrativeArea", "name": "Aosta Valley, Italy" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 8,
+            "item": {
+              "@type": "TouristDestination",
+              "name": "National Park of Stelvio & Adamello Brenta — Peio",
+              "description": "A lovely mountain escape where alpine beauty and peaceful charm shine, surrounded by the wonders of Stelvio and Adamello Brenta.",
+              "touristType": "Nature, Food, Wildlife",
+              "geo": { "@type": "GeoCoordinates", "latitude": 46.3631, "longitude": 10.6806 },
+              "containedInPlace": { "@type": "Country", "name": "Italy" }
+            }
+          }
+        ]
       }
     }
     </script>

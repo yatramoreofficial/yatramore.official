@@ -77,21 +77,126 @@
     <!-- Cloudflare Turnstile CAPTCHA -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-    <!-- SEO: Collection Page Structured Data -->
+    <!-- SEO: CollectionPage + Collaborator ItemList Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "name": "YatrAmore Collaborations",
-      "description": "Celebrating the partners who make our journey possible. Explore our curated collaborations and professional stays.",
+      "@id": "https://yatramore.com/collaborator#page",
+      "name": "Our Collaborators & Partners — YatrAmore",
+      "description": "Celebrating the brands, restaurants, content creators, and experiences that partner with YatrAmore. Authentic collaborations in travel, food, fashion, and cross-cultural storytelling.",
       "url": "https://yatramore.com/collaborator",
+      "inLanguage": "en",
       "isPartOf": {
         "@type": "WebSite",
         "name": "YatrAmore",
         "url": "https://yatramore.com/"
       },
+      "author": [
+        { "@id": "https://yatramore.com/#laura" },
+        { "@id": "https://yatramore.com/#yazavinder" }
+      ],
       "publisher": {
         "@id": "https://yatramore.com/#organization"
+      },
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "YatrAmore Official Partners",
+        "numberOfItems": 7,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Trend Panjab (Sidhu Closet)",
+              "description": "A premium collection of elegantly crafted traditional wear, from beautiful Lehengas and Shararas to stunning Sarees. Worldwide delivery available.",
+              "address": { "@type": "PostalAddress", "addressLocality": "Suzzara", "addressCountry": "IT" },
+              "url": "https://trendpanjab.com/"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "Yoghi Zero",
+              "description": "An innovative team that perfectly blends advanced scientific research with traditional Italian oenology, producing fine wine with 0.0% alcohol.",
+              "address": { "@type": "PostalAddress", "addressRegion": "Calabria", "addressCountry": "IT" },
+              "url": "https://yoghizero.com/"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "LocalBusiness",
+              "name": "House of Khalsa",
+              "description": "Heritage-inspired watches and refined perfumes crafted with meaning and style. Elegant details, thoughtful design, and a distinctive identity.",
+              "address": { "@type": "PostalAddress", "addressLocality": "Melbourne", "addressCountry": "AU" },
+              "url": "https://houseofkhalsa.com/yatramore/"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "Restaurant",
+              "name": "Gandhi - Ristorante Indiano",
+              "description": "Authentic Indian dining experience with dishes prepared using traditional recipes. Friendly, attentive staff create a warm and welcoming atmosphere.",
+              "address": { "@type": "PostalAddress", "addressLocality": "Padova", "addressCountry": "IT" },
+              "servesCuisine": "Indian",
+              "url": "https://www.gandhipadova.it/"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "Organization",
+              "name": "We The Humans of Equality",
+              "description": "Collaborated with YatrAmore to share a unique cross-cultural journey, crafting an inspiring reel that celebrates love without borders.",
+              "url": "https://www.instagram.com/reel/DPL6yqVj2Sr/"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "Organization",
+              "name": "Unabashed Emotions",
+              "description": "Featured YatrAmore's cross-cultural romance, beautifully bringing special moments to life in a captivating and artistic reel.",
+              "url": "https://www.instagram.com/reel/DOlq4YCAeEK/"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "item": {
+              "@type": "Organization",
+              "name": "Ourcolourfully",
+              "description": "A heartfelt collaboration narrating the Indo-Italian love story of Laura and Yazavinder, celebrating blending two distinct cultures into one shared adventure.",
+              "url": "https://www.instagram.com/reel/DKcghubo0eU/"
+            }
+          }
+        ]
+      }
+    }
+    </script>
+
+    <!-- SEO: ContactPoint for Partnership Inquiries -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://yatramore.com/#organization",
+      "name": "YatrAmore",
+      "url": "https://yatramore.com",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Partnership & Collaboration Inquiries",
+        "email": "collab@yatramore.com",
+        "availableLanguage": ["English", "Italian", "Hindi", "Punjabi"]
       }
     }
     </script>
@@ -118,6 +223,9 @@
       ]
 }
     </script>
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6715930730875600"
+     crossorigin="anonymous"></script>
 </head>
 
 <body>

@@ -2939,3 +2939,80 @@ body {
         gap: 1rem !important;
     }
 }
+
+/* ==========================================================================
+   Lucky Winner Hall Styles (Elegant Redesign)
+   ========================================================================== */
+
+@keyframes winnerPulse {
+    0% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(0,0,0,0.1); }
+    50% { box-shadow: 0 0 35px rgba(212, 175, 55, 0.6), inset 0 0 15px rgba(0,0,0,0.15); }
+    100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(0,0,0,0.1); }
+}
+
+.lucky-draw-wheel-container.winner-edition {
+    filter: none;
+    transform: scale(1.1);
+    margin: 2rem auto;
+    animation: winnerPulse 4s infinite ease-in-out;
+    border-radius: 50%;
+}
+
+/* Allow the wheel to slowly spin so it looks like a real lucky wheel */
+.lucky-draw-wheel-container.winner-edition .lucky-draw-wheel {
+    animation: wheelSpin 20s linear infinite;
+}
+
+/* Elegant Center Plaque */
+.wheel-center.winner-center {
+    width: 130px;
+    height: 130px;
+    background: var(--brand-white);
+    border: 3px solid var(--brand-gold);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    z-index: 15;
+    position: relative;
+}
+
+.winner-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    color: var(--brand-brown);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    padding: 0 10px;
+}
+
+
+/* Responsive Adjustments for Winner Wheel */
+@media (max-width: 768px) {
+    .lucky-draw-wheel-container.winner-edition {
+        transform: scale(0.95);
+        margin: 1rem auto;
+    }
+    .wheel-center.winner-center {
+        width: 110px;
+        height: 110px;
+    }
+    .winner-name {
+        font-size: 1.2rem;
+    }
+}
+/* Premium Icon Styling for Winner Edition Wheel */
+.lucky-draw-wheel-container.winner-edition .wheel-text i {
+    display: block;
+    margin-top: 15px; 
+    font-size: 1.5rem;
+    color: var(--brand-brown);
+    filter: drop-shadow(0 1px 2px rgba(255,255,255,0.8));
+}
+
+[data-theme="dark"] .lucky-draw-wheel-container.winner-edition .wheel-text i {
+    color: #D4AF37;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+}

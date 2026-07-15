@@ -253,9 +253,36 @@
 
 /* ── 2. Distraction-Free Reading Layout (Medium-style) ──────────────── */
 
+/* Hide main navigation on individual story pages */
+body:has(.post-layout-wrapper) #navbar {
+    display: none !important;
+}
+
+/* Make the breadcrumb act as the page nav bar */
+body:has(.post-layout-wrapper) .post-breadcrumb {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 1.2rem 2rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    justify-content: center; /* Center the breadcrumbs */
+    z-index: 1000;
+}
+
+[data-theme="dark"] body:has(.post-layout-wrapper) .post-breadcrumb {
+    background: rgba(18, 18, 18, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .post-layout-wrapper {
-    margin-top: 80px; /* Offset fixed header */
-    padding: 5rem 0 3rem;
+    /* Offset for the fixed breadcrumb nav */
+    margin-top: 65px; 
+    padding: 4rem 0 3rem;
     background-color: var(--bg-main);
 }
 

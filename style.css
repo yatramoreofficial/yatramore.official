@@ -1780,7 +1780,6 @@ body {
 @media (max-width: 768px) {
     .container {
         padding: 0 1rem;
-        overflow-x: hidden;
     }
 
 
@@ -2556,7 +2555,8 @@ body {
     font-weight: 500;
 }
 
-.post-breadcrumb a {
+.post-breadcrumb a,
+.breadcrumb-series {
     color: var(--brand-brown);
     text-decoration: none;
     transition: var(--transition-slow);

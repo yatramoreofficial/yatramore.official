@@ -387,8 +387,8 @@ function setupUIListeners() {
                 if (panel) panel.classList.add('open');
                 const fab = document.getElementById('mobile-filter-fab');
                 if (fab) fab.classList.add('hide-fab');
-                const fg = document.querySelector('.fab-group');
-                if (fg) fg.classList.add('hide-fab');
+                const ac = document.querySelector('.accessibility-container');
+                if (ac) ac.classList.add('hide-fab');
             }, 10);
         });
     }
@@ -397,8 +397,8 @@ function setupUIListeners() {
         if (panel) panel.classList.remove('open');
         const fab = document.getElementById('mobile-filter-fab');
         if (fab) fab.classList.remove('hide-fab');
-        const fg = document.querySelector('.fab-group');
-        if (fg) fg.classList.remove('hide-fab');
+        const ac = document.querySelector('.accessibility-container');
+        if (ac) ac.classList.remove('hide-fab');
         setTimeout(() => {
             if (panel) panel.style.display = 'none';
         }, 300);
@@ -1562,6 +1562,11 @@ function setupProfileForm() {
                 } else {
                     alert("Your update request has been submitted and is pending admin review.");
                 }
+
+                // Cleanup session data
+                window.croppedImageBlob = null;
+                if (photoInput) photoInput.value = '';
+
                 document.getElementById('edit-modal').classList.remove('active');
             } else {
                 // New Profile Creation / Incomplete Profile Fixing Flow
@@ -1597,6 +1602,11 @@ function setupProfileForm() {
                 } else {
                     alert("Profile submitted! It is now pending admin review.");
                 }
+
+                // Cleanup session data
+                window.croppedImageBlob = null;
+                if (photoInput) photoInput.value = '';
+
                 // Hard reload ignoring cache
                 window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
             }

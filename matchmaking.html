@@ -123,27 +123,27 @@
         <section class="hero" style="width: 100%; margin-bottom: 4rem;">
             <div class="container text-center" style="display: flex; flex-direction: column; align-items: center;">
                 <img src="Images/logo.svg" alt="YatrAmore Official Logo" class="hero-logo"
-                    style="width: min(250px, 60vw); height: auto; aspect-ratio: 1/1; margin-top: 0; margin-bottom: 4.5rem; border-radius: 50%; object-fit: cover; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.1)); display: block; cursor: pointer;">
+                    style="width: clamp(150px, 45vw, 250px); height: auto; aspect-ratio: 1/1; margin-top: 0; margin-bottom: clamp(2rem, 5vw, 4.5rem); border-radius: 50%; object-fit: cover; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.1)); display: block; cursor: pointer;">
 
                 <div class="hero-meaning glass-card"
-                    style="max-width: 750px; width: 100%; margin: 0 auto; padding: 3.5rem 2rem; border-radius: 24px; margin-bottom: 3rem;">
-                    <h1 style="font-size: 3.2rem; margin-bottom: 1.5rem; line-height: 1.2;">Find Your <span
+                    style="max-width: 750px; width: 100%; margin: 0 auto; padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 2rem); border-radius: 24px; margin-bottom: 3rem;">
+                    <h1 style="font-size: clamp(2rem, 8vw, 3.2rem); margin-bottom: 1.5rem; line-height: 1.2;">Find Your <span
                             class="brand-text">Soulmate</span></h1>
 
                     <p
-                        style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 2.5rem; line-height: 1.7; opacity: 0.9;">
+                        style="font-size: clamp(1rem, 3vw, 1.25rem); color: var(--text-main); margin-bottom: 2.5rem; line-height: 1.7; opacity: 0.9;">
                         Welcome to the exclusive YatrAmore Matchmaking community. A safe, curated space dedicated to
                         genuine connections, cultural blending, and discovering love across borders. Join our family
                         today.
                     </p>
 
-                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                         <button class="btn trigger-signup"
-                            style="width: 260px; background: var(--brand-brown); color: white; padding: 1.2rem 0; border-radius: 50px; font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(107, 66, 38, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            style="flex: 1; min-width: 200px; max-width: 260px; background: var(--brand-brown); color: white; padding: 1.2rem 0; border-radius: 50px; font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(107, 66, 38, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
                             Create Your Profile
                         </button>
                         <button class="btn trigger-login"
-                            style="width: 260px; background: var(--brand-brown); color: white; padding: 1.2rem 0; border-radius: 50px; font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(107, 66, 38, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            style="flex: 1; min-width: 200px; max-width: 260px; background: var(--brand-brown); color: white; padding: 1.2rem 0; border-radius: 50px; font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(107, 66, 38, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
                             Member Login
                         </button>
                     </div>
@@ -185,14 +185,14 @@
         <div id="gate-approved-grid" class="container matchmaking-layout" style="display: none;">
 
             <!-- Mobile Filter FAB (Hidden on desktop) -->
-            <button id="mobile-filter-fab" class="mobile-filter-fab" onclick="document.querySelector('.filter-sidebar').classList.add('mobile-open'); this.classList.add('hide-fab'); document.querySelector('.fab-group')?.classList.add('hide-fab');">
+            <button id="mobile-filter-fab" class="mobile-filter-fab" onclick="document.querySelector('.filter-sidebar').classList.add('mobile-open'); this.classList.add('hide-fab'); document.querySelector('.accessibility-container')?.classList.add('hide-fab');">
                 <i class="fa-solid fa-sliders"></i> Filters
             </button>
 
             <!-- Filter Sidebar -->
             <aside class="filter-sidebar glass-card">
                 <!-- Close Button for Mobile (Hidden on desktop) -->
-                <button class="mobile-filter-close" onclick="document.querySelector('.filter-sidebar').classList.remove('mobile-open'); document.getElementById('mobile-filter-fab').classList.remove('hide-fab'); document.querySelector('.fab-group')?.classList.remove('hide-fab');"><i class="fa-solid fa-times"></i></button>
+                <button class="mobile-filter-close" onclick="document.querySelector('.filter-sidebar').classList.remove('mobile-open'); document.getElementById('mobile-filter-fab').classList.remove('hide-fab'); document.querySelector('.accessibility-container')?.classList.remove('hide-fab');"><i class="fa-solid fa-times"></i></button>
                 <h2>Filter Matches</h2>
 
                 <div class="filter-group">
@@ -887,7 +887,7 @@
     </div>
 
     <!-- Cropper Modal -->
-    <div id="cropper-modal" class="chat-modal-container" style="display: none; z-index: 20000; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+    <div id="cropper-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 20000; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
         <div style="background: var(--bg-main); width: 100%; max-width: 500px; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
             <h3 style="color: var(--text-main); margin-bottom: 15px; font-weight: 600; text-align: center;">Adjust Profile Picture</h3>
             <div style="width: 100%; max-height: 60vh; background: #000; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">

@@ -1138,6 +1138,43 @@ window.showToast = function (message) {
 
 
 // ==========================================
+// Account Deletion Logic (User Side)
+// ==========================================
+window.requestAccountDeletion = async () => {
+    if (!confirm("Are you sure you want to permanently delete your account? This action cannot be undone. \n\nClick OK to hide your profile and send a deletion request to the Admin.")) return;
+
+    try {
+        if (!window.firebaseHelpers || !window.firebaseDb || !window.firebaseAuth) throw new Error("Firebase not initialized");
+        const { doc, updateDoc, serverTimestamp } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+        const user = window.firebaseAuth.currentUser;
+        if (!user) throw new Error("Not logged in");
+
+        await updateDoc(doc(db, "profiles", user.uid), {
+            DeletionRequested: true,
+            Approved: false,
+            updatedAt: serverTimestamp()
+        });
+
+        // Try updating the users metadata as well if permitted
+        try {
+            await updateDoc(doc(db, "users", user.uid), {
+                DeletionRequested: true
+            });
+        } catch (e) {
+            console.warn("Could not update users doc, proceeding anyway.");
+        }
+
+        alert("Your deletion request has been sent to the Admin. Your profile is now hidden from the directory.");
+        window.location.reload();
+    } catch (err) {
+        console.error("Deletion request failed:", err);
+        alert("Could not process request. Please check your connection or contact support.");
+    }
+};
+
+
+// ==========================================
 // matchmaking.js
 // ==========================================
 
@@ -1273,6 +1310,18 @@ function initMatchmaking() {
         }
 
         // ALL GATES PASSED!
+        // Check if user is blocked
+        if (profileData['Blocked'] === true) {
+            document.body.innerHTML = `
+                <div style="display: flex; height: 100vh; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; font-family: system-ui, sans-serif; color: #333;">
+                    <i class="fa-solid fa-ban" style="font-size: 4rem; color: #f44336; margin-bottom: 1rem;"></i>
+                    <h1 style="margin: 0 0 10px 0; font-size: 1.5rem;">Access Denied</h1>
+                    <p style="margin: 0; color: #666;">Your account has been blocked by the YatrAmore Matchmaking Team.</p>
+                </div>
+            `;
+            return;
+        }
+
         if (elGrid) elGrid.style.display = 'flex'; // It's a flex container
 
         // Fetch metadata from Firestore
@@ -1450,7 +1499,8 @@ function setupProfileForm() {
                 'Religion': document.getElementById('profile-religion').value,
                 'Location': document.getElementById('profile-location').value.trim(),
                 'Bio': document.getElementById('profile-bio').value.trim(),
-                'Profile Picture': photoUrl
+                'Profile Picture': photoUrl,
+                'DeletionRequested': false
             };
             const { setDoc, doc, getDoc } = window.firebaseHelpers;
             const db = window.firebaseDb;
@@ -1777,7 +1827,9 @@ function renderProfiles(profiles) {
             }
             const safePhoto = encodeURIComponent(photoUrl).replace(/'/g, "%27");
 
-            btnHtml = `<button onclick="expressInterest('${firebaseUid}', '${safeName}', decodeURIComponent('${safePhoto}'), this)" class="btn-interest btn-send">
+            // Safely encode user generated variables for inline JS handler
+            const safeJsName = encodeURIComponent(name).replace(/'/g, "%27");
+            btnHtml = `<button onclick="expressInterest('${firebaseUid}', decodeURIComponent('${safeJsName}'), decodeURIComponent('${safePhoto}'), this)" class="btn-interest btn-send">
                 <i class="fa-solid fa-paper-plane" style="color: #1a1a1a;"></i> Send Chat Request
             </button>`;
         }
@@ -2010,7 +2062,8 @@ window.updateProfileButtons = () => {
                     }
                 }
             }
-            newBtnHtml = `<button onclick="expressInterest('${firebaseUid}', '${name}', decodeURIComponent('${encodeURIComponent(photo).replace(/'/g, "%27")}'), this)" class="btn-interest btn-send">
+            const safeJsName = encodeURIComponent(name).replace(/'/g, "%27");
+            newBtnHtml = `<button onclick="expressInterest('${firebaseUid}', decodeURIComponent('${safeJsName}'), decodeURIComponent('${encodeURIComponent(photo).replace(/'/g, "%27")}'), this)" class="btn-interest btn-send">
                 <i class="fa-solid fa-paper-plane" style="color: #1a1a1a;"></i> Send Chat Request
             </button>`;
         }
@@ -2044,13 +2097,17 @@ window.switchAdminTab = function (tab) {
     const listUsers = document.getElementById('admin-users-list');
     const listUpdates = document.getElementById('admin-updates-list');
     const listReports = document.getElementById('admin-reports-list');
+    const tabDeletions = document.getElementById('admin-tab-deletions');
+    const listDeletions = document.getElementById('admin-deletions-list');
 
     if (tabUsers) { tabUsers.style.borderBottomColor = 'transparent'; tabUsers.style.color = 'var(--text-muted)'; }
     if (tabUpdates) { tabUpdates.style.borderBottomColor = 'transparent'; tabUpdates.style.color = 'var(--text-muted)'; }
     if (tabReports) { tabReports.style.borderBottomColor = 'transparent'; tabReports.style.color = 'var(--text-muted)'; }
+    if (tabDeletions) { tabDeletions.style.borderBottomColor = 'transparent'; tabDeletions.style.color = 'var(--text-muted)'; }
     if (listUsers) listUsers.style.display = 'none';
     if (listUpdates) listUpdates.style.display = 'none';
     if (listReports) listReports.style.display = 'none';
+    if (listDeletions) listDeletions.style.display = 'none';
 
     if (tab === 'users') {
         if (tabUsers) { tabUsers.style.borderBottomColor = 'var(--brand-brown)'; tabUsers.style.color = 'var(--brand-brown)'; }
@@ -2060,6 +2117,10 @@ window.switchAdminTab = function (tab) {
         if (tabUpdates) { tabUpdates.style.borderBottomColor = 'var(--brand-brown)'; tabUpdates.style.color = 'var(--brand-brown)'; }
         if (listUpdates) listUpdates.style.display = 'flex';
         loadAdminUpdates();
+    } else if (tab === 'deletions') {
+        if (tabDeletions) { tabDeletions.style.borderBottomColor = '#f44336'; tabDeletions.style.color = '#f44336'; }
+        if (listDeletions) listDeletions.style.display = 'flex';
+        loadAdminDeletions();
     } else {
         if (tabReports) { tabReports.style.borderBottomColor = 'var(--brand-brown)'; tabReports.style.color = 'var(--brand-brown)'; }
         if (listReports) listReports.style.display = 'flex';
@@ -2126,6 +2187,9 @@ async function loadAdminUsers() {
             const hasPhoto = photoUrl ? `<a href="${photoUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;"><img src="${photoUrl}" style="height: 24px; border-radius: 4px; cursor: pointer; border: 1px solid #ccc; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" /></a>` : '';
 
             const isApproved = data['Approved'] === true;
+            const isBlocked = data['Blocked'] === true;
+            const isDeletionRequested = data['DeletionRequested'] === true;
+
             const isComplete = Boolean(
                 data['First Name'] &&
                 data['Age'] &&
@@ -2136,12 +2200,16 @@ async function loadAdminUsers() {
                 photoUrl
             );
 
+            let rowBg = '#ffffff';
+            if (isBlocked) rowBg = '#ffebee';
+            else if (isDeletionRequested) rowBg = '#fff8e1';
+
             html += `
-                <tr style="background: #ffffff;">
-                    <td style="border: 1px solid #d3d3d3; padding: 6px 8px; text-align: center; color: #888; font-size: 11px; background: #fafafa;">
+                <tr style="background: ${rowBg};">
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 8px; text-align: center; color: #888; font-size: 11px; background: rgba(0,0,0,0.02);">
                         ${rowIndex} <input type="checkbox" style="margin-left: 4px;" />
                     </td>
-                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;">${name}</td>
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;">${name} ${isDeletionRequested ? '<span style="color:red; font-size:10px;">(Del Req)</span>' : ''}</td>
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;">${window.escapeHtml(String(data['Age'] || ''))}</td>
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;">${window.escapeHtml(data['Location'] || '')}</td>
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;">${window.escapeHtml(data['Gender'] || '')}</td>
@@ -2149,10 +2217,13 @@ async function loadAdminUsers() {
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;">${hasPhoto}</td>
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111; font-family: monospace;">${uid}</td>
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; text-align: center; cursor: pointer; user-select: none;" onclick="toggleUserApproval('${uid}', ${isApproved}, ${isComplete})">
-                        ${isApproved ? '<i class="fa-solid fa-check" style="color: #4CAF50;"></i>' : (!isComplete ? '<i class="fa-solid fa-exclamation-circle" style="color: #ff9800;" title="Incomplete Profile"></i>' : '')}
+                        ${isApproved ? '<i class="fa-solid fa-check" style="color: #4CAF50;" title="Approved"></i>' : (!isComplete ? '<i class="fa-solid fa-exclamation-circle" style="color: #ff9800;" title="Incomplete Profile"></i>' : '<i class="fa-solid fa-clock" style="color: #888;" title="Pending"></i>')}
                     </td>
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;">${window.escapeHtml(data['Religion'] || '')}</td>
-                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; text-align: center; cursor: pointer; color: #f44336;" onclick="deleteUserProfile('${uid}')"><i class="fa-solid fa-trash" style="opacity: 0.5;"></i></td>
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; text-align: center;">
+                        <i class="fa-solid ${isBlocked ? 'fa-unlock' : 'fa-ban'}" style="color: ${isBlocked ? '#4caf50' : '#f44336'}; cursor: pointer; margin-right: 10px;" onclick="blockUserProfile('${uid}', ${isBlocked})" title="${isBlocked ? 'Unblock User' : 'Block User'}"></i>
+                        <i class="fa-solid fa-trash" style="color: #f44336; opacity: 0.5; cursor: pointer;" onclick="deleteUserProfile('${uid}')" title="Delete Data"></i>
+                    </td>
                 </tr>
             `;
             rowIndex++;
@@ -2178,7 +2249,8 @@ window.toggleUserApproval = async (uid, currentApprovedStatus, isComplete) => {
         const db = window.firebaseDb;
         const newStatus = !currentApprovedStatus;
         await updateDoc(doc(db, "profiles", uid), {
-            Approved: newStatus
+            Approved: newStatus,
+            Blocked: false // Approving unblocks them
         });
 
         try {
@@ -2214,28 +2286,135 @@ window.deleteUserProfile = async (uid) => {
         loadAdminUsers();
         fetchProfiles();
     } catch (e) {
-        console.error("Error deleting profile:", e);
-        alert("Failed to delete profile.");
+        console.error("Error deleting user profile:", e);
+        alert("Error deleting user profile. Check console.");
     }
-};
+}
 
-window.blockUser = async (uid) => {
-    if (!confirm("Are you sure you want to block this user? They will be hidden from matchmaking.")) return;
+window.blockUserProfile = async (uid, currentBlockStatus) => {
+    const isBlocking = !currentBlockStatus;
+    if (isBlocking && !confirm("Are you sure you want to BLOCK this user? They will be unable to access the app and hidden from the directory.")) return;
+    if (!isBlocking && !confirm("Are you sure you want to UNBLOCK this user?")) return;
+
     try {
         const { doc, updateDoc } = window.firebaseHelpers;
         const db = window.firebaseDb;
-        await updateDoc(doc(db, "profiles", uid), {
-            Approved: false,
-            Blocked: true
-        });
-        alert("User has been blocked successfully.");
+        
+        const updateData = { Blocked: isBlocking };
+        if (isBlocking) {
+            updateData.Approved = false; // Automatically hide their profile
+        }
+
+        await updateDoc(doc(db, "profiles", uid), updateData);
+        alert(`User has been ${isBlocking ? 'blocked' : 'unblocked'} successfully.`);
         loadAdminUsers();
         fetchProfiles();
     } catch (e) {
-        console.error("Error blocking user:", e);
-        alert("Failed to block user. They might already be deleted.");
+        console.error("Error blocking/unblocking user:", e);
+        alert("Error updating block status. Check console.");
     }
-};
+}
+
+window.loadAdminDeletions = async () => {
+    const listContainer = document.getElementById('admin-deletions-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);"><i class="fas fa-circle-notch fa-spin"></i> Fetching deletion requests...</div>';
+
+    try {
+        const { collection, getDocs, doc, getDoc } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+
+        // Fetch all profiles and filter locally to avoid needing a composite index for now
+        const querySnapshot = await getDocs(collection(db, "profiles"));
+        const deletionRequests = [];
+
+        querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            if (data.DeletionRequested === true) {
+                deletionRequests.push({ uid: docSnap.id, data });
+            }
+        });
+
+        if (deletionRequests.length === 0) {
+            listContainer.innerHTML = '<div style="padding: 3rem; text-align: center; color: var(--text-muted); font-size: 1.1rem;"><i class="fa-regular fa-face-smile" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i> No pending account deletion requests.</div>';
+            return;
+        }
+
+        let html = `
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <thead>
+                    <tr style="background: #f44336; color: white;">
+                        <th style="padding: 10px; border: 1px solid #d3d3d3;">Name</th>
+                        <th style="padding: 10px; border: 1px solid #d3d3d3;">User ID (UID)</th>
+                        <th style="padding: 10px; border: 1px solid #d3d3d3;">Auth Email (Fetches from users collection)</th>
+                        <th style="padding: 10px; border: 1px solid #d3d3d3; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        for (const req of deletionRequests) {
+            const name = window.escapeHtml(req.data['First Name'] || 'Unknown');
+            
+            // Try to fetch email from users collection
+            let email = 'Unknown (Not in users db)';
+            try {
+                const userDoc = await getDoc(doc(db, "users", req.uid));
+                if (userDoc.exists()) {
+                    email = window.escapeHtml(userDoc.data().email || 'Unknown');
+                }
+            } catch(e) {
+                console.warn("Could not fetch user doc for email", e);
+            }
+
+            const safeJsEmail = encodeURIComponent(email).replace(/'/g, "%27");
+            html += `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px 10px; color: #111;"><strong>${name}</strong></td>
+                    <td style="padding: 12px 10px; font-family: monospace; color: #111; user-select: all; cursor: copy;" title="Double click to copy">${req.uid}</td>
+                    <td style="padding: 12px 10px; color: #111; user-select: all; cursor: copy;" title="Double click to copy">${email}</td>
+                    <td style="padding: 12px 10px; text-align: center;">
+                        <button onclick="window.approveDeletionRequest('${req.uid}', decodeURIComponent('${safeJsEmail}'))" style="background: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-fire"></i> Approve & Wipe Data</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        html += `</tbody></table>`;
+        html += `<p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);"><i class="fa-solid fa-circle-info"></i> <strong>Note:</strong> Clicking "Approve & Wipe Data" will delete their profile and user metadata from Firestore. However, due to security limitations, you must manually delete their email (<strong>${deletionRequests.length > 0 ? 'above' : 'listed'}</strong>) from your Firebase Authentication console, and delete their image from Cloudinary.</p>`;
+
+        listContainer.innerHTML = html;
+
+    } catch (e) {
+        console.error("Error fetching deletion requests:", e);
+        listContainer.innerHTML = '<div style="text-align: center; color: var(--status-error, #f44336);">Error loading deletion requests.</div>';
+    }
+}
+
+window.approveDeletionRequest = async (uid, email) => {
+    if (!confirm(`Are you sure you want to completely wipe the data for user ${uid}? \n\nAfter doing this, remember to go to your Firebase Console and delete their authentication email: ${email}`)) return;
+
+    try {
+        const { deleteDoc, doc } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+
+        await deleteDoc(doc(db, "profiles", uid));
+        
+        try {
+            await deleteDoc(doc(db, "users", uid));
+        } catch(e) {
+            console.warn("User document already deleted or inaccessible.", e);
+        }
+
+        alert("Profile and User Database Records Wiped Successfully!");
+        window.loadAdminDeletions(); // Refresh list
+        loadAdminUsers();
+
+    } catch (e) {
+        console.error("Error approving deletion request:", e);
+        alert("Error wiping data. Check console.");
+    }
+}
 
 async function loadAdminUpdates() {
     const listContainer = document.getElementById('admin-updates-list');

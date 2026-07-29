@@ -100,6 +100,16 @@ function initAuthSystem() {
         currentUser = user;
         window.firebaseCurrentUser = user; // Expose globally
 
+        // Save email to users collection for Admin dashboard visibility
+        if (user && window.firebaseHelpers && window.firebaseDb) {
+            try {
+                const { doc, setDoc } = window.firebaseHelpers;
+                await setDoc(doc(window.firebaseDb, 'users', user.uid), { email: user.email }, { merge: true });
+            } catch (err) {
+                console.warn("Could not sync email to users collection:", err);
+            }
+        }
+
         // Admin Button Toggle
         const adminBtn = document.getElementById('admin-dashboard-btn');
         if (adminBtn) {

@@ -41,7 +41,10 @@
     <link rel="canonical" href="https://yatramore.com/matchmaking">
 
     <!-- High-Level Security: Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://ui-avatars.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://firestore.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://api.cloudinary.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://cdnjs.cloudflare.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://ui-avatars.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://firestore.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://api.cloudinary.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com; base-uri 'self'; form-action 'self';">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-cyzxRvewl+FOKTtpBzYjW6x6IAYUCZy3sGP40hn+DQkqeluGRCax7qztK2ImL64SA+C7kVWdLI6wvdlStawhyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Immediate Theme Application -->
     <script>
@@ -120,7 +123,7 @@
         <section class="hero" style="width: 100%; margin-bottom: 4rem;">
             <div class="container text-center" style="display: flex; flex-direction: column; align-items: center;">
                 <img src="Images/logo.svg" alt="YatrAmore Official Logo" class="hero-logo"
-                    style="width: 250px; height: 250px; margin-top: 0; margin-bottom: 4.5rem; border-radius: 50%; object-fit: cover; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.1)); display: block; cursor: pointer;">
+                    style="width: min(250px, 60vw); height: auto; aspect-ratio: 1/1; margin-top: 0; margin-bottom: 4.5rem; border-radius: 50%; object-fit: cover; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.1)); display: block; cursor: pointer;">
 
                 <div class="hero-meaning glass-card"
                     style="max-width: 750px; width: 100%; margin: 0 auto; padding: 3.5rem 2rem; border-radius: 24px; margin-bottom: 3rem;">
@@ -134,7 +137,7 @@
                         today.
                     </p>
 
-                    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                         <button class="btn trigger-signup"
                             style="width: 260px; background: var(--brand-brown); color: white; padding: 1.2rem 0; border-radius: 50px; font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(107, 66, 38, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
                             Create Your Profile
@@ -869,6 +872,20 @@
                     <!-- Populated by JS -->
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- Cropper Modal -->
+    <div id="cropper-modal" class="chat-modal-container" style="display: none; z-index: 20000; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: var(--bg-main); width: 100%; max-width: 500px; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
+            <h3 style="color: var(--text-main); margin-bottom: 15px; font-weight: 600; text-align: center;">Adjust Profile Picture</h3>
+            <div style="width: 100%; max-height: 60vh; background: #000; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                <img id="cropper-image" style="max-width: 100%; display: block;" src="" alt="Crop Image">
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: space-between;">
+                <button type="button" id="cropper-cancel-btn" style="flex: 1; padding: 12px; background: rgba(0,0,0,0.05); border: 1px solid var(--glass-border); color: var(--text-main); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+                <button type="button" id="cropper-save-btn" style="flex: 1; padding: 12px; background: var(--brand-brown); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-crop"></i> Crop & Save</button>
             </div>
         </div>
     </div>

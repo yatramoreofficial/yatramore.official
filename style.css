@@ -3816,7 +3816,7 @@ select.filter-input {
     }
 
     /* Hide FAB using JS class */
-    .mobile-filter-fab.hide-fab {
+    .mobile-filter-fab.hide-fab, .fab-group.hide-fab {
         display: none !important;
     }
 

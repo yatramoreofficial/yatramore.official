@@ -906,7 +906,10 @@ window.openChat = (docId, otherUserJson) => {
 
 // Global function called by profile card buttons
 window.sendChatRequest = async (targetUserId, targetUserName, targetUserPhoto) => {
-    if (!window.firebaseCurrentUser) return alert("Please log in first!");
+    if (!window.firebaseCurrentUser) {
+        alert("Please log in first!");
+        return false;
+    }
     const currentMember = { id: window.firebaseCurrentUser.uid, email: window.firebaseCurrentUser.email };
 
     const { collection, addDoc, serverTimestamp, query, where, getDocs, doc, getDoc } = window.firebaseHelpers;
@@ -1005,6 +1008,7 @@ window.sendChatRequest = async (targetUserId, targetUserName, targetUserPhoto) =
         }
     } catch (e) {
         console.error("Error checking limits:", e);
+        alert("Error connecting to database. Please check your internet connection.");
         return false; // Fail-safe: block the request if limit check fails
     }
 
@@ -1019,7 +1023,8 @@ window.sendChatRequest = async (targetUserId, targetUserName, targetUserPhoto) =
         });
         return true;
     } catch (e) {
-        console.error(e);
+        console.error("Error sending request:", e);
+        alert("Failed to send request due to network error or missing permissions.");
         return false;
     }
 };
@@ -1337,7 +1342,46 @@ function setupProfileForm() {
 
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    photoPreview.src = e.target.result;
+                    // Initialize Cropper Modal
+                    const cropperModal = document.getElementById('cropper-modal');
+                    const cropperImage = document.getElementById('cropper-image');
+                    const cancelBtn = document.getElementById('cropper-cancel-btn');
+                    const saveBtn = document.getElementById('cropper-save-btn');
+                    
+                    cropperImage.src = e.target.result;
+                    cropperModal.style.display = 'flex';
+                    
+                    if (window.cropperInstance) {
+                        window.cropperInstance.destroy();
+                    }
+                    
+                    window.cropperInstance = new Cropper(cropperImage, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        background: false,
+                        zoomable: true
+                    });
+                    
+                    cancelBtn.onclick = () => {
+                        cropperModal.style.display = 'none';
+                        if (window.cropperInstance) window.cropperInstance.destroy();
+                        photoInput.value = ''; // clear
+                    };
+                    
+                    saveBtn.onclick = () => {
+                        if (window.cropperInstance) {
+                            // Extract compressed WebP blob (<150kb)
+                            window.cropperInstance.getCroppedCanvas({
+                                width: 500,
+                                height: 500
+                            }).toBlob((blob) => {
+                                window.croppedImageBlob = blob;
+                                photoPreview.src = URL.createObjectURL(blob);
+                                cropperModal.style.display = 'none';
+                                window.cropperInstance.destroy();
+                            }, 'image/webp', 0.8);
+                        }
+                    };
                 }
                 reader.readAsDataURL(file);
             }
@@ -1357,8 +1401,8 @@ function setupProfileForm() {
             const uid = window.firebaseCurrentUser.uid;
 
             let photoUrl = '';
-            if (photoInput && photoInput.files.length > 0) {
-                const file = photoInput.files[0];
+            if ((photoInput && photoInput.files.length > 0) || window.croppedImageBlob) {
+                const file = window.croppedImageBlob || photoInput.files[0];
 
                 const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
                 if (!validTypes.includes(file.type)) {
@@ -1372,7 +1416,11 @@ function setupProfileForm() {
 
                 // Upload to Cloudinary with a 15-second timeout
                 const formData = new FormData();
-                formData.append('file', file);
+                if (window.croppedImageBlob) {
+                    formData.append('file', file, 'profile.webp');
+                } else {
+                    formData.append('file', file);
+                }
                 formData.append('upload_preset', 'yatramore_profiles');
 
                 const uploadPromise = fetch('https://api.cloudinary.com/v1_1/kitnycjp/image/upload', {
@@ -1743,7 +1791,7 @@ function renderProfiles(profiles) {
 
         card.innerHTML = `
             <div class="profile-image-wrapper">
-                <img src="${photoUrl}" alt="${name}" class="profile-image">
+                <img src="${photoUrl}" alt="${name}" class="profile-image" loading="lazy">
             </div>
             <div class="profile-content" style="padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; background: transparent;">
                 <div class="profile-name" style="color: var(--text-main); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.2rem;">${name}</div>
@@ -1870,7 +1918,7 @@ window.expressInterest = async function expressInterest(targetUserId, targetName
                 btnElement.style.opacity = '1';
                 btnElement.disabled = false;
             }
-            alert('Failed to send request. Please ensure you are logged in.');
+            // Alert is now handled inside sendChatRequest, so we don't show a generic misleading one here.
         }
     } else {
         alert('Chat system is currently initializing. Please try again in a moment.');

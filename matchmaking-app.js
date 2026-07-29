@@ -311,6 +311,8 @@ function setupAuthUIListeners() {
             if (submitBtn) submitBtn.textContent = 'Login';
             const confirmGroup = document.getElementById('auth-confirm-password-group');
             if (confirmGroup) confirmGroup.style.display = 'none';
+            const forgotLink = document.getElementById('auth-forgot-password-link');
+            if (forgotLink) forgotLink.style.display = 'inline-block';
         });
 
         tabSignup.addEventListener('click', () => {
@@ -320,6 +322,8 @@ function setupAuthUIListeners() {
             if (submitBtn) submitBtn.textContent = 'Create Account';
             const confirmGroup = document.getElementById('auth-confirm-password-group');
             if (confirmGroup) confirmGroup.style.display = 'block';
+            const forgotLink = document.getElementById('auth-forgot-password-link');
+            if (forgotLink) forgotLink.style.display = 'none';
         });
     }
 }
@@ -987,21 +991,26 @@ window.sendChatRequest = async (targetUserId, targetUserName, targetUserPhoto) =
 
 
 
-
         for (const docSnap of checkSnap.docs) {
             const data = docSnap.data();
 
-            // Check daily limit (requests created in the last 24 hours)
-            if (data.createdAt) {
-                const createdDate = data.createdAt.toDate();
-                if (now - createdDate < oneDayMs) {
-                    requestsToday++;
+            if (data.status !== 'revoked' && data.status !== 'declined') {
+                if (data.participants.includes(targetUserId)) {
+                    alert('You already have an active or pending chat with this person.');
+                    return false;
+                }
+
+                if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+                    const createdDate = data.createdAt.toDate();
+                    if (now - createdDate < oneDayMs) {
+                        requestsToday++;
+                    }
                 }
             }
 
             // Check 7-day cooldown for revoked or declined requests to this specific user
             if ((data.status === 'revoked' || data.status === 'declined') && data.participants.includes(targetUserId)) {
-                if (data.updatedAt) {
+                if (data.updatedAt && typeof data.updatedAt.toDate === 'function') {
                     const updatedDate = data.updatedAt.toDate();
                     if (now - updatedDate < sevenDaysMs) {
                         const daysLeft = Math.ceil((sevenDaysMs - (now - updatedDate)) / (1000 * 60 * 60 * 24));
@@ -1730,6 +1739,8 @@ async function fetchProfiles() {
             if (!hasProfile) {
                 const modalTitle = document.querySelector('#edit-modal h2');
                 if (modalTitle) modalTitle.textContent = "Complete Your Profile";
+                const deleteLink = document.getElementById('delete-account-link');
+                if (deleteLink) deleteLink.style.display = 'none';
                 const editModal = document.getElementById('edit-modal');
                 if (editModal) {
                     editModal.classList.add('active');
@@ -1740,6 +1751,8 @@ async function fetchProfiles() {
             } else {
                 const modalTitle = document.querySelector('#edit-modal h2');
                 if (modalTitle) modalTitle.textContent = "Edit Your Profile";
+                const deleteLink = document.getElementById('delete-account-link');
+                if (deleteLink) deleteLink.style.display = 'block';
             }
         }
     } catch (error) {

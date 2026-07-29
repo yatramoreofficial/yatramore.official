@@ -72,6 +72,14 @@ const YatrAmore = {
             ? 'class="brand brand-text"'
             : 'href="/" class="brand brand-text" style="text-decoration: none; color: inherit;"';
 
+        const isMatchmaking = window.location.pathname.includes('matchmaking');
+        const chatInboxIconHTML = isMatchmaking ? `
+                <!-- Chat Inbox Icon -->
+                <button id="nav-inbox-btn" class="nav-icon-link" title="Inbox" aria-label="Inbox" style="background:none; border:none; padding:0; cursor:pointer; position:relative; color:var(--brand-brown); margin-right: 10px; display:inline-flex; align-items:center; justify-content:center; font-size:1.15rem; transition: transform var(--transition-slow), color var(--transition-slow);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                    <i class="fa-solid fa-comment-dots" style="font-size: 1.4rem;"></i>
+                    <span id="nav-inbox-badge" style="display:none; position:absolute; top:-6px; right:-10px; background:var(--brand-red, #e74c3c); color:white; font-size:0.7rem; font-weight:bold; border-radius:50%; width:18px; height:18px; align-items:center; justify-content:center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">0</span>
+                </button>` : '';
+
         nav.innerHTML = `
         <a href="#main-content" class="skip-link">Skip to content</a>
         <div class="container nav-content">
@@ -86,6 +94,7 @@ const YatrAmore = {
 
             <div class="nav-right-controls">
                 ${iconLinksHTML}
+                ${chatInboxIconHTML}
                 <div class="nav-lang-wrapper" id="nav-lang-wrapper">
                     <button class="nav-lang-btn" id="nav-lang-btn" title="Translate this page" aria-label="Open language selector" aria-expanded="false">
                         <i class="fas fa-globe"></i>
@@ -256,5 +265,56 @@ const YatrAmore = {
         const script = document.createElement('script');
         script.src = `/script.js?v=SECURITY_${CORE_VERSION}`;
         document.body.appendChild(script);
+    },
+
+    // ── Firebase Auth Modal ─────────────────────────────
+    renderAuthModal() {
+        if (document.getElementById('auth-modal')) return;
+
+        const container = document.createElement('div');
+        container.innerHTML = `
+        <div id="auth-overlay" class="auth-overlay"></div>
+        <div id="auth-modal" class="auth-modal glass-card">
+            <button id="auth-close-btn" class="auth-close-btn" title="Close" aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="auth-header">
+                <h2 style="margin: 0; color: var(--brand-brown); font-family: 'Playfair Display', serif;">Welcome to YatrAmore</h2>
+                <p style="color: var(--text-muted); margin-top: 5px;">Join the community today.</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button id="auth-tab-login" class="auth-tab active">Login</button>
+                <button id="auth-tab-signup" class="auth-tab">Sign Up</button>
+            </div>
+
+            <form id="auth-form" data-mode="login">
+                <div id="auth-error" class="auth-error" style="display: none; background: rgba(244, 67, 54, 0.1); color: #F44336; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem;"></div>
+                
+                <div class="auth-input-group">
+                    <label for="auth-email">Email Address</label>
+                    <input type="email" id="auth-email" required placeholder="you@example.com">
+                </div>
+                
+                <div class="auth-input-group">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••">
+                </div>
+
+                <div id="auth-forgot-password-container" style="text-align: right; margin-top: -10px; margin-bottom: 15px; font-size: 0.85rem;">
+                    <a href="#" id="auth-forgot-password-link" style="color: var(--brand-brown); text-decoration: none;">Forgot Password?</a>
+                </div>
+
+                <div class="auth-input-group" id="auth-confirm-password-group" style="display: none;">
+                    <label for="auth-confirm-password">Confirm Password</label>
+                    <input type="password" id="auth-confirm-password" placeholder="••••••••">
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="auth-submit-btn">
+                    Login
+                </button>
+            </form>
+        </div>`;
+        document.body.appendChild(container);
     }
 };

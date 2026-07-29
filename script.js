@@ -573,11 +573,32 @@ function initializeYatrAmore() {
             });
         }
 
-        // Auto-verify when 6 digits are entered
+        // Auto-verify when 6 digits are entered — now checks against server
         if (otpInput) {
-            otpInput.addEventListener("input", () => {
+            otpInput.addEventListener("input", async () => {
                 if (otpInput.value.length === 6) {
-                    markVerified(emailInput.value.toLowerCase().trim());
+                    const fp = await YatrAmoreSecurity.getFingerprint();
+                    try {
+                        const resp = await fetch(gasUrl('contact'), {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                action: "verifyCode",
+                                email: emailInput.value.toLowerCase().trim(),
+                                code: otpInput.value,
+                                fingerprint: fp
+                            })
+                        });
+                        const result = await resp.json();
+                        if (result.success && result.verified) {
+                            markVerified(emailInput.value.toLowerCase().trim());
+                        } else {
+                            otpInput.value = '';
+                            alert("Invalid or expired code. Please check your email and try again.");
+                        }
+                    } catch (e) {
+                        // If server check fails, fall through to submitContact which will also verify
+                        markVerified(emailInput.value.toLowerCase().trim());
+                    }
                 }
             });
         }
@@ -883,7 +904,8 @@ function initializeYatrAmore() {
         // Copy Link
         const showToast = (msg) => {
             if (!shareToast) return;
-            shareToast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+            shareToast.innerHTML = `<i class="fas fa-check-circle"></i> `;
+            shareToast.appendChild(document.createTextNode(msg));
             shareToast.classList.add("show");
             setTimeout(() => shareToast.classList.remove("show"), 2500);
         };
@@ -1401,14 +1423,22 @@ function initializeYatrAmore() {
             // Re-scroll to hash after injecting the content that shifts the page layout
             if (window.location.hash) {
                 setTimeout(() => {
-                    const hashEl = document.querySelector(window.location.hash);
-                    if (hashEl) {
-                        const navHeight = document.querySelector('.navbar') ? document.querySelector('.navbar').offsetHeight : 80;
-                        const targetPosition = hashEl.getBoundingClientRect().top + window.scrollY;
-                        window.scrollTo({
-                            top: targetPosition - navHeight - 20, // 20px extra padding
-                            behavior: "smooth"
-                        });
+                    try {
+                        const hash = window.location.hash;
+                        // Security: Only allow simple ID selectors (e.g. #lucky-draw)
+                        if (/^#[a-zA-Z][\w-]*$/.test(hash)) {
+                            const hashEl = document.getElementById(hash.slice(1));
+                            if (hashEl) {
+                                const navHeight = document.querySelector('.navbar') ? document.querySelector('.navbar').offsetHeight : 80;
+                                const targetPosition = hashEl.getBoundingClientRect().top + window.scrollY;
+                                window.scrollTo({
+                                    top: targetPosition - navHeight - 20, // 20px extra padding
+                                    behavior: "smooth"
+                                });
+                            }
+                        }
+                    } catch(e) { 
+                        // Ignored: Invalid selector in hash
                     }
                 }, 300); // 300ms allows layout to fully settle
             }

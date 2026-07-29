@@ -17,6 +17,9 @@ Disallow: /.DS_Store
 Disallow: /submission-portal
 Disallow: /submission-portal.html
 
+# Block matchmaking trial
+Disallow: /matchmaking
+Disallow: /matchmaking.html
 
 
 # Block deleted pages

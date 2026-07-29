@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Preconnect Domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LN14GGMXSK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-LN14GGMXSK');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="p:domain_verify" content="e99e550eff5a983378b5723a5b1e9ee8" />
+    <title>Matchmaking Directory | YatrAmore</title>
+    <meta name="description"
+        content="Connect with like-minded individuals through our trusted matchmaking directory. Find a partner who shares your values and lifestyle.">
+
+    <!-- Open Graph for Social Sharing -->
+    <meta property="og:title" content="Matchmaking Directory | YatrAmore">
+    <meta property="og:description" content="Connect with like-minded individuals through our trusted matchmaking directory. Find a partner who shares your values and lifestyle.">
+    <meta property="og:image" content="https://yatramore.com/Images/og-share.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yatramore.com/matchmaking">
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Matchmaking Directory | YatrAmore">
+    <meta name="twitter:description" content="Connect with like-minded individuals through our trusted matchmaking directory. Find a partner who shares your values and lifestyle.">
+    <meta name="twitter:image" content="https://yatramore.com/Images/og-share.png">
+    <link rel="canonical" href="https://yatramore.com/matchmaking">
+
+    <!-- High-Level Security: Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://ui-avatars.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://firestore.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://api.cloudinary.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com; base-uri 'self'; form-action 'self';">
+
+    <!-- Immediate Theme Application -->
+    <script>
+        (function () {
+            let theme = 'light';
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            } catch (e) {
+                console.warn("Theme storage access failed:", e);
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+    <link rel="shortcut icon" href="/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/favicon/site.webmanifest">
+
+    <!-- Font Awesome & Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chat.css">
+
+    <!-- Removed Memberstack dependencies and watchers -->
+
+    <!-- SEO: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+            {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://yatramore.com/"
+            },
+            {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Matchmaking Directory",
+                  "item": "https://yatramore.com/matchmaking"
+            }
+      ]
+    }
+    </script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6715930730875600" crossorigin="anonymous"></script>
+    <meta name="google-adsense-account" content="ca-pub-6715930730875600">
+</head>
+
+<body class="matchmaking-page">
+
+    <!-- Global Navigation -->
+    <nav id="navbar"></nav>
+
+    <!-- Matchmaking Controls (Only show when logged in) -->
+    <div class="container auth-logged-in" data-display-original="flex"
+        style="padding-top: 120px; padding-bottom: 20px; display: none; justify-content: flex-end; gap: 15px; align-items: center; position: relative; z-index: 50;">
+        <button id="admin-dashboard-btn" onclick="if(window.promptAdminAccess) window.promptAdminAccess()" style="display: none; border: 2px solid #F44336; color: #F44336; padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i class="fas fa-shield-alt"></i> Admin</button>
+        <button onclick="window.openEditProfileModal()"
+            style="border: 2px solid var(--brand-brown); color: var(--brand-brown); padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i
+                class="fas fa-user-edit"></i> Edit Profile</button>
+        <button class="trigger-logout"
+            style="border: 2px solid var(--text-muted); color: var(--text-muted); padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i
+                class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <!-- NOT LOGGED IN STATE -->
+    <main class="page-content auth-logged-out" style="padding-top: 2rem; padding-bottom: 60px;">
+        <section class="hero" style="width: 100%; margin-bottom: 4rem;">
+            <div class="container text-center" style="display: flex; flex-direction: column; align-items: center;">
+                <img src="Images/logo.svg" alt="YatrAmore Official Logo" class="hero-logo"
+                    style="width: 250px; height: 250px; margin-top: 0; margin-bottom: 4.5rem; border-radius: 50%; object-fit: cover; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.1)); display: block; cursor: pointer;">
+
+                <div class="hero-meaning glass-card"
+                    style="max-width: 750px; width: 100%; margin: 0 auto; padding: 3.5rem 2rem; border-radius: 24px; margin-bottom: 3rem;">
+                    <h1 style="font-size: 3.2rem; margin-bottom: 1.5rem; line-height: 1.2;">Find Your <span
+                            class="brand-text">Soulmate</span></h1>
+
+                    <p
+                        style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 2.5rem; line-height: 1.7; opacity: 0.9;">
+                        Welcome to the exclusive YatrAmore Matchmaking community. A safe, curated space dedicated to
+                        genuine connections, cultural blending, and discovering love across borders. Join our family
+                        today.
+                    </p>
+
+                    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn trigger-signup"
+                            style="width: 260px; background: var(--brand-brown); color: white; padding: 1.2rem 0; border-radius: 50px; font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(107, 66, 38, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            Create Your Profile
+                        </button>
+                        <button class="btn trigger-login"
+                            style="width: 260px; background: var(--brand-brown); color: white; padding: 1.2rem 0; border-radius: 50px; font-size: 1.1rem; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 8px 25px rgba(107, 66, 38, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            Member Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- LOGGED IN STATE -->
+    <main id="main-content" class="page-content auth-logged-in" style="display: none;">
+        
+        <!-- GATE: EMAIL VERIFICATION -->
+        <div id="gate-verify-email" style="display: none; padding: 100px 20px; text-align: center;">
+            <div class="glass-card" style="max-width: 500px; margin: 0 auto; padding: 40px; border-radius: 20px;">
+                <i class="fa-solid fa-envelope-open-text" style="font-size: 3rem; color: var(--brand-brown); margin-bottom: 20px;"></i>
+                <h2>Verify Your Email</h2>
+                <p style="margin: 20px 0; color: var(--text-muted);">Please check your inbox and click the verification link we sent you to continue.</p>
+                <button id="btn-resend-verification" class="btn" style="background: var(--brand-brown); color: white; padding: 10px 20px; border-radius: 50px; border: none; cursor: pointer;">Resend Verification Email</button>
+                <br><br>
+                <button onclick="window.location.reload()" class="btn" style="background: transparent; color: var(--text-main); border: 1px solid #ccc; padding: 10px 20px; border-radius: 50px; cursor: pointer;">I've verified it (Refresh)</button>
+            </div>
+        </div>
+
+        <!-- GATE: PROFILE SETUP (Handled by edit-modal in JS) -->
+
+        <!-- GATE: PENDING APPROVAL -->
+        <div id="gate-pending-approval" style="display: none; padding: 100px 20px; text-align: center;">
+            <div class="glass-card" style="max-width: 500px; margin: 0 auto; padding: 40px; border-radius: 20px;">
+                <i class="fa-solid fa-user-clock" style="font-size: 3rem; color: var(--brand-brown); margin-bottom: 20px;"></i>
+                <h2>Pending Admin Approval</h2>
+                <p style="margin: 20px 0; color: var(--text-muted);">Your profile has been submitted and is currently under review by our moderation team. You will be able to access the matchmaking grid once you are approved.</p>
+                <p style="color: #666; font-size: 0.9rem;">This usually takes 24-48 hours.</p>
+                <br>
+                <button onclick="window.location.reload()" class="btn" style="background: transparent; color: var(--text-main); border: 1px solid #ccc; padding: 10px 20px; border-radius: 50px; cursor: pointer;">Check Status (Refresh)</button>
+            </div>
+        </div>
+
+        <!-- ACTUAL GRID (Hidden until all gates passed) -->
+        <div id="gate-approved-grid" class="container matchmaking-layout" style="display: none;">
+
+            <!-- Mobile Filter FAB (Hidden on desktop) -->
+            <button id="mobile-filter-fab" class="mobile-filter-fab" onclick="document.querySelector('.filter-sidebar').classList.add('mobile-open'); this.classList.add('hide-fab'); document.querySelector('.fab-group')?.classList.add('hide-fab');">
+                <i class="fa-solid fa-sliders"></i> Filters
+            </button>
+
+            <!-- Filter Sidebar -->
+            <aside class="filter-sidebar glass-card">
+                <!-- Close Button for Mobile (Hidden on desktop) -->
+                <button class="mobile-filter-close" onclick="document.querySelector('.filter-sidebar').classList.remove('mobile-open'); document.getElementById('mobile-filter-fab').classList.remove('hide-fab'); document.querySelector('.fab-group')?.classList.remove('hide-fab');"><i class="fa-solid fa-times"></i></button>
+                <h2>Filter Matches</h2>
+
+                <div class="filter-group">
+                    <label>Gender</label>
+                    <select id="filter-gender" class="filter-input">
+                        <option value="All">Any</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Age Range</label>
+                    <div class="range-slider-container">
+                        <div class="range-slider-track"></div>
+                        <input type="range" id="filter-age-min" min="18" max="80" value="18">
+                        <input type="range" id="filter-age-max" min="18" max="80" value="80">
+                    </div>
+                    <div style="text-align: right; margin-top: 0.5rem;">
+                        <span id="age-display" class="results-badge" style="font-weight: 700;">18 - 80</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Country</label>
+                    <select id="filter-country" class="filter-input">
+                        <option value="">Any Country</option>
+                        <option value="Afghanistan">Afghanistan</option>
+                        <option value="Albania">Albania</option>
+                        <option value="Algeria">Algeria</option>
+                        <option value="Andorra">Andorra</option>
+                        <option value="Angola">Angola</option>
+                        <option value="Antigua and Barbuda">Antigua and Barbuda</option>
+                        <option value="Argentina">Argentina</option>
+                        <option value="Armenia">Armenia</option>
+                        <option value="Australia">Australia</option>
+                        <option value="Austria">Austria</option>
+                        <option value="Azerbaijan">Azerbaijan</option>
+                        <option value="Bahamas">Bahamas</option>
+                        <option value="Bahrain">Bahrain</option>
+                        <option value="Bangladesh">Bangladesh</option>
+                        <option value="Barbados">Barbados</option>
+                        <option value="Belarus">Belarus</option>
+                        <option value="Belgium">Belgium</option>
+                        <option value="Belize">Belize</option>
+                        <option value="Benin">Benin</option>
+                        <option value="Bhutan">Bhutan</option>
+                        <option value="Bolivia">Bolivia</option>
+                        <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+                        <option value="Botswana">Botswana</option>
+                        <option value="Brazil">Brazil</option>
+                        <option value="Brunei">Brunei</option>
+                        <option value="Bulgaria">Bulgaria</option>
+                        <option value="Burkina Faso">Burkina Faso</option>
+                        <option value="Burundi">Burundi</option>
+                        <option value="Cabo Verde">Cabo Verde</option>
+                        <option value="Cambodia">Cambodia</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Central African Republic">Central African Republic</option>
+                        <option value="Chad">Chad</option>
+                        <option value="Chile">Chile</option>
+                        <option value="China">China</option>
+                        <option value="Colombia">Colombia</option>
+                        <option value="Comoros">Comoros</option>
+                        <option value="Congo (Congo-Brazzaville)">Congo (Congo-Brazzaville)</option>
+                        <option value="Costa Rica">Costa Rica</option>
+                        <option value="Croatia">Croatia</option>
+                        <option value="Cuba">Cuba</option>
+                        <option value="Cyprus">Cyprus</option>
+                        <option value="Czechia (Czech Republic)">Czechia (Czech Republic)</option>
+                        <option value="Democratic Republic of the Congo">Democratic Republic of the Congo</option>
+                        <option value="Denmark">Denmark</option>
+                        <option value="Djibouti">Djibouti</option>
+                        <option value="Dominica">Dominica</option>
+                        <option value="Dominican Republic">Dominican Republic</option>
+                        <option value="Ecuador">Ecuador</option>
+                        <option value="Egypt">Egypt</option>
+                        <option value="El Salvador">El Salvador</option>
+                        <option value="Equatorial Guinea">Equatorial Guinea</option>
+                        <option value="Eritrea">Eritrea</option>
+                        <option value="Estonia">Estonia</option>
+                        <option value="Eswatini">Eswatini</option>
+                        <option value="Ethiopia">Ethiopia</option>
+                        <option value="Fiji">Fiji</option>
+                        <option value="Finland">Finland</option>
+                        <option value="France">France</option>
+                        <option value="Gabon">Gabon</option>
+                        <option value="Gambia">Gambia</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Germany">Germany</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Greece">Greece</option>
+                        <option value="Grenada">Grenada</option>
+                        <option value="Guatemala">Guatemala</option>
+                        <option value="Guinea">Guinea</option>
+                        <option value="Guinea-Bissau">Guinea-Bissau</option>
+                        <option value="Guyana">Guyana</option>
+                        <option value="Haiti">Haiti</option>
+                        <option value="Honduras">Honduras</option>
+                        <option value="Hungary">Hungary</option>
+                        <option value="Iceland">Iceland</option>
+                        <option value="India">India</option>
+                        <option value="Indonesia">Indonesia</option>
+                        <option value="Iran">Iran</option>
+                        <option value="Iraq">Iraq</option>
+                        <option value="Ireland">Ireland</option>
+                        <option value="Israel">Israel</option>
+                        <option value="Italy">Italy</option>
+                        <option value="Jamaica">Jamaica</option>
+                        <option value="Japan">Japan</option>
+                        <option value="Jordan">Jordan</option>
+                        <option value="Kazakhstan">Kazakhstan</option>
+                        <option value="Kenya">Kenya</option>
+                        <option value="Kiribati">Kiribati</option>
+                        <option value="Kuwait">Kuwait</option>
+                        <option value="Kyrgyzstan">Kyrgyzstan</option>
+                        <option value="Laos">Laos</option>
+                        <option value="Latvia">Latvia</option>
+                        <option value="Lebanon">Lebanon</option>
+                        <option value="Lesotho">Lesotho</option>
+                        <option value="Liberia">Liberia</option>
+                        <option value="Libya">Libya</option>
+                        <option value="Liechtenstein">Liechtenstein</option>
+                        <option value="Lithuania">Lithuania</option>
+                        <option value="Luxembourg">Luxembourg</option>
+                        <option value="Madagascar">Madagascar</option>
+                        <option value="Malawi">Malawi</option>
+                        <option value="Malaysia">Malaysia</option>
+                        <option value="Maldives">Maldives</option>
+                        <option value="Mali">Mali</option>
+                        <option value="Malta">Malta</option>
+                        <option value="Marshall Islands">Marshall Islands</option>
+                        <option value="Mauritania">Mauritania</option>
+                        <option value="Mauritius">Mauritius</option>
+                        <option value="Mexico">Mexico</option>
+                        <option value="Micronesia">Micronesia</option>
+                        <option value="Moldova">Moldova</option>
+                        <option value="Monaco">Monaco</option>
+                        <option value="Mongolia">Mongolia</option>
+                        <option value="Montenegro">Montenegro</option>
+                        <option value="Morocco">Morocco</option>
+                        <option value="Mozambique">Mozambique</option>
+                        <option value="Myanmar (formerly Burma)">Myanmar (formerly Burma)</option>
+                        <option value="Namibia">Namibia</option>
+                        <option value="Nauru">Nauru</option>
+                        <option value="Nepal">Nepal</option>
+                        <option value="Netherlands">Netherlands</option>
+                        <option value="New Zealand">New Zealand</option>
+                        <option value="Nicaragua">Nicaragua</option>
+                        <option value="Niger">Niger</option>
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="North Korea">North Korea</option>
+                        <option value="North Macedonia">North Macedonia</option>
+                        <option value="Norway">Norway</option>
+                        <option value="Oman">Oman</option>
+                        <option value="Pakistan">Pakistan</option>
+                        <option value="Palau">Palau</option>
+                        <option value="Palestine State">Palestine State</option>
+                        <option value="Panama">Panama</option>
+                        <option value="Papua New Guinea">Papua New Guinea</option>
+                        <option value="Paraguay">Paraguay</option>
+                        <option value="Peru">Peru</option>
+                        <option value="Philippines">Philippines</option>
+                        <option value="Poland">Poland</option>
+                        <option value="Portugal">Portugal</option>
+                        <option value="Qatar">Qatar</option>
+                        <option value="Romania">Romania</option>
+                        <option value="Russia">Russia</option>
+                        <option value="Rwanda">Rwanda</option>
+                        <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
+                        <option value="Saint Lucia">Saint Lucia</option>
+                        <option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
+                        <option value="Samoa">Samoa</option>
+                        <option value="San Marino">San Marino</option>
+                        <option value="Sao Tome and Principe">Sao Tome and Principe</option>
+                        <option value="Saudi Arabia">Saudi Arabia</option>
+                        <option value="Senegal">Senegal</option>
+                        <option value="Serbia">Serbia</option>
+                        <option value="Seychelles">Seychelles</option>
+                        <option value="Sierra Leone">Sierra Leone</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="Slovakia">Slovakia</option>
+                        <option value="Slovenia">Slovenia</option>
+                        <option value="Solomon Islands">Solomon Islands</option>
+                        <option value="Somalia">Somalia</option>
+                        <option value="South Africa">South Africa</option>
+                        <option value="South Korea">South Korea</option>
+                        <option value="South Sudan">South Sudan</option>
+                        <option value="Spain">Spain</option>
+                        <option value="Sri Lanka">Sri Lanka</option>
+                        <option value="Sudan">Sudan</option>
+                        <option value="Suriname">Suriname</option>
+                        <option value="Sweden">Sweden</option>
+                        <option value="Switzerland">Switzerland</option>
+                        <option value="Syria">Syria</option>
+                        <option value="Tajikistan">Tajikistan</option>
+                        <option value="Tanzania">Tanzania</option>
+                        <option value="Thailand">Thailand</option>
+                        <option value="Timor-Leste">Timor-Leste</option>
+                        <option value="Togo">Togo</option>
+                        <option value="Tonga">Tonga</option>
+                        <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+                        <option value="Tunisia">Tunisia</option>
+                        <option value="Turkey">Turkey</option>
+                        <option value="Turkmenistan">Turkmenistan</option>
+                        <option value="Tuvalu">Tuvalu</option>
+                        <option value="Uganda">Uganda</option>
+                        <option value="Ukraine">Ukraine</option>
+                        <option value="United Arab Emirates">United Arab Emirates</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="United States of America">United States of America</option>
+                        <option value="Uruguay">Uruguay</option>
+                        <option value="Uzbekistan">Uzbekistan</option>
+                        <option value="Vanuatu">Vanuatu</option>
+                        <option value="Vatican City">Vatican City</option>
+                        <option value="Venezuela">Venezuela</option>
+                        <option value="Vietnam">Vietnam</option>
+                        <option value="Yemen">Yemen</option>
+                        <option value="Zambia">Zambia</option>
+                        <option value="Zimbabwe">Zimbabwe</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Religion</label>
+                    <select id="filter-religion" class="filter-input">
+                        <option value="All">All Religions</option>
+                        <option value="Christianity">Christianity</option>
+                        <option value="Islam">Islam</option>
+                        <option value="Hinduism">Hinduism</option>
+                        <option value="Buddhism">Buddhism</option>
+                        <option value="Sikhism">Sikhism</option>
+                        <option value="Judaism">Judaism</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <button id="apply-filters" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Apply Filters
+                </button>
+            </aside>
+
+            <!-- Directory Grid -->
+            <div class="matchmaking-main">
+                <div class="matchmaking-header">
+                    <h1 id="admin-trigger" style="user-select: none; cursor: default;">Approved Profiles</h1>
+                    <span id="results-count" class="results-badge">0 Profiles</span>
+                </div>
+
+                <div id="profiles-grid" class="profiles-grid">
+                    <!-- Loading State -->
+                    <div
+                        style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 4rem 0;">
+                        <i class="fas fa-circle-notch fa-spin"
+                            style="font-size: 2rem; color: var(--brand-brown); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text-muted); font-weight: 600;" id="loading-text">Securely loading
+                            approved profiles...</p>
+                    </div>
+                </div>
+        </div>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-modal" class="edit-modal-overlay">
+        <div class="edit-modal-content glass-card" style="border-radius: 20px; overflow: hidden; max-height: 90vh;">
+            <button onclick="document.getElementById('edit-modal').classList.remove('active')" class="edit-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div style="padding: 2rem; flex-grow: 1; overflow-y: auto;">
+                <h2 style="color: var(--brand-brown); margin-bottom: 0.5rem; text-align: center;">Your Profile</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">Please fill out your details to join the directory.</p>
+                
+                <form id="native-profile-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">First Name *</label>
+                            <input type="text" id="profile-firstName" required maxlength="50" pattern="[a-zA-Z\s\-']+" title="Only letters, spaces, hyphens, and apostrophes are allowed" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main);">
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">Gender *</label>
+                            <select id="profile-gender" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main);">
+                                <option value="">Select Gender...</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <label style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">Age *</label>
+                            <input type="number" id="profile-age" required min="18" max="80" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main);">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">Religion *</label>
+                            <select id="profile-religion" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main);">
+                                <option value="">Select Religion...</option>
+                                <option value="Christianity">Christianity</option>
+                                <option value="Islam">Islam</option>
+                                <option value="Hinduism">Hinduism</option>
+                                <option value="Buddhism">Buddhism</option>
+                                <option value="Sikhism">Sikhism</option>
+                                <option value="Judaism">Judaism</option>
+                                <option value="Other">Other</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">Location (Country) *</label>
+                        <input list="countries-list" id="profile-location" required maxlength="100" placeholder="Type to search or scroll..." style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main);">
+                        <datalist id="countries-list">
+                            <option value="Afghanistan">
+                            <option value="Albania">
+                            <option value="Algeria">
+                            <option value="Andorra">
+                            <option value="Angola">
+                            <option value="Antigua and Barbuda">
+                            <option value="Argentina">
+                            <option value="Armenia">
+                            <option value="Australia">
+                            <option value="Austria">
+                            <option value="Azerbaijan">
+                            <option value="Bahamas">
+                            <option value="Bahrain">
+                            <option value="Bangladesh">
+                            <option value="Barbados">
+                            <option value="Belarus">
+                            <option value="Belgium">
+                            <option value="Belize">
+                            <option value="Benin">
+                            <option value="Bhutan">
+                            <option value="Bolivia">
+                            <option value="Bosnia and Herzegovina">
+                            <option value="Botswana">
+                            <option value="Brazil">
+                            <option value="Brunei">
+                            <option value="Bulgaria">
+                            <option value="Burkina Faso">
+                            <option value="Burundi">
+                            <option value="Côte d'Ivoire">
+                            <option value="Cabo Verde">
+                            <option value="Cambodia">
+                            <option value="Cameroon">
+                            <option value="Canada">
+                            <option value="Central African Republic">
+                            <option value="Chad">
+                            <option value="Chile">
+                            <option value="China">
+                            <option value="Colombia">
+                            <option value="Comoros">
+                            <option value="Congo (Congo-Brazzaville)">
+                            <option value="Costa Rica">
+                            <option value="Croatia">
+                            <option value="Cuba">
+                            <option value="Cyprus">
+                            <option value="Czechia (Czech Republic)">
+                            <option value="Democratic Republic of the Congo">
+                            <option value="Denmark">
+                            <option value="Djibouti">
+                            <option value="Dominica">
+                            <option value="Dominican Republic">
+                            <option value="Ecuador">
+                            <option value="Egypt">
+                            <option value="El Salvador">
+                            <option value="Equatorial Guinea">
+                            <option value="Eritrea">
+                            <option value="Estonia">
+                            <option value="Eswatini">
+                            <option value="Ethiopia">
+                            <option value="Fiji">
+                            <option value="Finland">
+                            <option value="France">
+                            <option value="Gabon">
+                            <option value="Gambia">
+                            <option value="Georgia">
+                            <option value="Germany">
+                            <option value="Ghana">
+                            <option value="Greece">
+                            <option value="Grenada">
+                            <option value="Guatemala">
+                            <option value="Guinea">
+                            <option value="Guinea-Bissau">
+                            <option value="Guyana">
+                            <option value="Haiti">
+                            <option value="Holy See">
+                            <option value="Honduras">
+                            <option value="Hungary">
+                            <option value="Iceland">
+                            <option value="India">
+                            <option value="Indonesia">
+                            <option value="Iran">
+                            <option value="Iraq">
+                            <option value="Ireland">
+                            <option value="Israel">
+                            <option value="Italy">
+                            <option value="Jamaica">
+                            <option value="Japan">
+                            <option value="Jordan">
+                            <option value="Kazakhstan">
+                            <option value="Kenya">
+                            <option value="Kiribati">
+                            <option value="Kuwait">
+                            <option value="Kyrgyzstan">
+                            <option value="Laos">
+                            <option value="Latvia">
+                            <option value="Lebanon">
+                            <option value="Lesotho">
+                            <option value="Liberia">
+                            <option value="Libya">
+                            <option value="Liechtenstein">
+                            <option value="Lithuania">
+                            <option value="Luxembourg">
+                            <option value="Madagascar">
+                            <option value="Malawi">
+                            <option value="Malaysia">
+                            <option value="Maldives">
+                            <option value="Mali">
+                            <option value="Malta">
+                            <option value="Marshall Islands">
+                            <option value="Mauritania">
+                            <option value="Mauritius">
+                            <option value="Mexico">
+                            <option value="Micronesia">
+                            <option value="Moldova">
+                            <option value="Monaco">
+                            <option value="Mongolia">
+                            <option value="Montenegro">
+                            <option value="Morocco">
+                            <option value="Mozambique">
+                            <option value="Myanmar (formerly Burma)">
+                            <option value="Namibia">
+                            <option value="Nauru">
+                            <option value="Nepal">
+                            <option value="Netherlands">
+                            <option value="New Zealand">
+                            <option value="Nicaragua">
+                            <option value="Niger">
+                            <option value="Nigeria">
+                            <option value="North Korea">
+                            <option value="North Macedonia">
+                            <option value="Norway">
+                            <option value="Oman">
+                            <option value="Pakistan">
+                            <option value="Palau">
+                            <option value="Palestine State">
+                            <option value="Panama">
+                            <option value="Papua New Guinea">
+                            <option value="Paraguay">
+                            <option value="Peru">
+                            <option value="Philippines">
+                            <option value="Poland">
+                            <option value="Portugal">
+                            <option value="Qatar">
+                            <option value="Romania">
+                            <option value="Russia">
+                            <option value="Rwanda">
+                            <option value="Saint Kitts and Nevis">
+                            <option value="Saint Lucia">
+                            <option value="Saint Vincent and the Grenadines">
+                            <option value="Samoa">
+                            <option value="San Marino">
+                            <option value="Sao Tome and Principe">
+                            <option value="Saudi Arabia">
+                            <option value="Senegal">
+                            <option value="Serbia">
+                            <option value="Seychelles">
+                            <option value="Sierra Leone">
+                            <option value="Singapore">
+                            <option value="Slovakia">
+                            <option value="Slovenia">
+                            <option value="Solomon Islands">
+                            <option value="Somalia">
+                            <option value="South Africa">
+                            <option value="South Korea">
+                            <option value="South Sudan">
+                            <option value="Spain">
+                            <option value="Sri Lanka">
+                            <option value="Sudan">
+                            <option value="Suriname">
+                            <option value="Sweden">
+                            <option value="Switzerland">
+                            <option value="Syria">
+                            <option value="Tajikistan">
+                            <option value="Tanzania">
+                            <option value="Thailand">
+                            <option value="Timor-Leste">
+                            <option value="Togo">
+                            <option value="Tonga">
+                            <option value="Trinidad and Tobago">
+                            <option value="Tunisia">
+                            <option value="Turkey">
+                            <option value="Turkmenistan">
+                            <option value="Tuvalu">
+                            <option value="Uganda">
+                            <option value="Ukraine">
+                            <option value="United Arab Emirates">
+                            <option value="United Kingdom">
+                            <option value="United States of America">
+                            <option value="Uruguay">
+                            <option value="Uzbekistan">
+                            <option value="Vanuatu">
+                            <option value="Venezuela">
+                            <option value="Vietnam">
+                            <option value="Yemen">
+                            <option value="Zambia">
+                            <option value="Zimbabwe">
+                        </datalist>
+                    </div>
+
+                    <div style="position: relative;">
+                        <label style="display: flex; justify-content: space-between; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
+                            <span>Bio *</span>
+                            <span id="bio-counter" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 400;">0/800</span>
+                        </label>
+                        <textarea id="profile-bio" required maxlength="800" rows="4" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main); resize: vertical;"></textarea>
+                    </div>
+
+                    <div>
+                        <label style="display: flex; justify-content: space-between; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
+                            <span>Profile Picture *</span>
+                            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 400;">Max 5MB (JPG/PNG/WEBP)</span>
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <img id="profile-photo-preview" src="https://ui-avatars.com/api/?name=U&background=random" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-brown);">
+                            <input type="file" id="profile-photo" accept="image/png, image/jpeg, image/webp" style="flex: 1; padding: 0.5rem; color: var(--text-main);">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="profile-submit-btn" class="btn" style="background: var(--brand-brown); color: white; border-radius: 50px; padding: 1rem 2rem; font-weight: 600; border: none; cursor: pointer; margin-top: 1rem; width: 100%; transition: all 0.3s ease;">
+                        Submit Profile
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Footer -->
+    <footer id="footer"></footer>
+    <div class="accessibility-container"></div>
+
+    <!-- Chat & Inbox Slide-out Panel -->
+    <div id="chat-inbox-panel" class="chat-panel"
+        style="display: none; position: fixed; bottom: 0; top: auto; right: -400px; width: 400px; height: 60vh; z-index: 1999; flex-direction: column; border-top-left-radius: 20px; overflow: hidden;">
+
+        <!-- Header -->
+        <div class="chat-panel-header">
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600; display: flex; align-items: center;"><i
+                    class="fa-solid fa-comment-dots" style="margin-right: 8px; font-size: 1.2rem;"></i> Inbox</h3>
+            <button id="close-inbox-btn"
+                style="background: none; border: none; color: var(--bg-main); font-size: 1.2rem; cursor: pointer; transition: transform 0.2s;"
+                onmouseover="this.style.transform='rotate(90deg)';" onmouseout="this.style.transform='rotate(0deg)';"><i
+                    class="fa-solid fa-times"></i></button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="chat-panel-tabs">
+            <button id="tab-chats" class="chat-tab active">Chats
+                <span id="chats-badge"
+                    style="background: var(--brand-brown); color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; margin-left: 4px; display: none;">0</span></button>
+            <button id="tab-requests" class="chat-tab">Requests
+                <span id="requests-badge"
+                    style="background: var(--brand-brown); color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; margin-left: 4px; display: none;">0</span></button>
+        </div>
+
+        <!-- Content Area -->
+        <div id="inbox-content" style="flex: 1; overflow-y: auto; padding: 1rem;">
+            <!-- Chats List (Default) -->
+            <div id="chats-list">
+                <div style="text-align: center; color: var(--text-muted); margin-top: 2rem; font-size: 0.95rem;">
+                    <i class="fa-regular fa-comments"
+                        style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i>
+                    Loading chats...
+                </div>
+            </div>
+
+            <!-- Requests List (Hidden) -->
+            <div id="requests-list" style="display: none;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Active Chat Interface (Overlay) -->
+        <div id="active-chat-view"
+            style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); flex-direction: column; z-index: 10;">
+            <!-- Active Chat Header -->
+            <div class="chat-panel-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button id="back-to-inbox"
+                        style="background: none; border: none; color: var(--bg-main); cursor: pointer; font-size: 1.2rem;"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <div style="display: flex; flex-direction: column;">
+                        <span id="active-chat-name" style="font-weight: 600; font-size: 1.1rem;">User Name</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <button id="block-user-btn"
+                        style="background: transparent; border: none; color: var(--bg-main); font-size: 1.1rem; cursor: pointer; transition: opacity 0.2s; opacity: 0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Block User">
+                        <i class="fa-solid fa-ban"></i>
+                    </button>
+                    <button id="unblock-user-btn"
+                        style="display: none; background: transparent; border: none; color: #4caf50; font-size: 1.1rem; cursor: pointer; transition: opacity 0.2s; opacity: 0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Unblock User">
+                        <i class="fa-solid fa-unlock"></i>
+                    </button>
+                    <button id="report-user-btn"
+                        style="background: transparent; border: none; color: #f44336; font-size: 1.1rem; cursor: pointer; transition: opacity 0.2s; opacity: 0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Report User">
+                        <i class="fa-solid fa-flag"></i>
+                    </button>
+                    <div style="width: 1px; height: 16px; background: var(--bg-main); opacity: 0.2;"></div>
+                    <button id="close-chat-btn"
+                        style="background: transparent; border: none; color: var(--bg-main); font-size: 1.3rem; cursor: pointer; transition: opacity 0.2s; opacity: 0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Close Chat">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chat-messages"
+                style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; background: transparent;">
+                <!-- Messages populated by JS -->
+            </div>
+
+            <!-- Message Input Area -->
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type a message..." class="chat-input-field">
+                <button id="send-msg-btn"
+                    style="background: var(--brand-brown); color: var(--bg-main); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;"><i
+                        class="fa-solid fa-paper-plane" style="margin-left: -2px;"></i></button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Hidden Admin Modal (Easter Egg) -->
+    <div id="admin-reports-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
+        <div
+            style="background: var(--bg-main); width: 95%; max-width: 1400px; max-height: 85vh; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div
+                style="padding: 1.5rem; background: var(--brand-brown); color: var(--bg-main); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 700;"><i class="fa-solid fa-shield-halved"></i>
+                    Admin Dashboard</h3>
+                <button onclick="document.getElementById('admin-reports-modal').style.display='none'"
+                    style="background: none; border: none; color: var(--bg-main); font-size: 1.2rem; cursor: pointer;"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <!-- Tabs -->
+            <div style="display: flex; border-bottom: 1px solid rgba(107, 66, 38, 0.1); background: rgba(0,0,0,0.02);">
+                <button id="admin-tab-users" onclick="switchAdminTab('users')"
+                    style="flex: 1; padding: 1rem; background: none; border: none; border-bottom: 3px solid var(--brand-brown); color: var(--brand-brown); font-weight: 600; cursor: pointer; transition: all 0.2s;">User Database</button>
+                <button id="admin-tab-updates" onclick="switchAdminTab('updates')"
+                    style="flex: 1; padding: 1rem; background: none; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; transition: all 0.2s;">Update Requests</button>
+                <button id="admin-tab-reports" onclick="switchAdminTab('reports')"
+                    style="flex: 1; padding: 1rem; background: none; border: none; border-bottom: 3px solid transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; transition: all 0.2s;">Reported Chats</button>
+            </div>
+
+            <div style="flex: 1; overflow-y: auto; padding: 1.5rem; background: transparent; position: relative;">
+                
+                <!-- Users List -->
+                <div id="admin-users-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Update Requests List -->
+                <div id="admin-updates-list" style="display: none; flex-direction: column; gap: 1rem;">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Reports List -->
+                <div id="admin-reports-list" style="display: none; flex-direction: column; gap: 1rem;">
+                    <!-- Populated by JS -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="components.js"></script>
+    <script type="module" src="matchmaking-app.js?v=5"></script>
+
+    <script>
+        // Render Yatramore Components
+        YatrAmore.renderNav('community');
+        YatrAmore.renderFooter();
+        YatrAmore.renderAccessibility();
+        YatrAmore.loadCore();
+        YatrAmore.renderAuthModal();
+
+
+    </script>
+</body>
+
+</html>

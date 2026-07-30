@@ -3923,6 +3923,14 @@ select.filter-input {
         padding: 0.7rem !important;
         text-overflow: ellipsis;
         white-space: nowrap;
+        overflow: hidden;
+    }
+
+    /* iOS WebKit Glitch Fix: iOS already truncates natively, so we disable CSS ellipsis to prevent the selection bug */
+    @supports (-webkit-touch-callout: none) {
+        select {
+            text-overflow: clip !important;
+        }
     }
 
     /* Top Action Buttons */

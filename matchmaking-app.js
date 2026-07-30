@@ -3,7 +3,7 @@
 // ==========================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy, updateDoc, doc, getDocs, getDoc, setDoc, deleteDoc, arrayRemove, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy, updateDoc, doc, getDocs, getDoc, setDoc, deleteDoc, arrayRemove, arrayUnion, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
@@ -60,7 +60,7 @@ window.firebaseDb = db;
 window.firebaseAuth = auth;
 window.firebaseStorage = storage;
 window.firebaseAuthHelpers = { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, sendEmailVerification };
-window.firebaseHelpers = { collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy, updateDoc, doc, getDocs, getDoc, setDoc, deleteDoc, arrayRemove, arrayUnion };
+window.firebaseHelpers = { collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy, updateDoc, doc, getDocs, getDoc, setDoc, deleteDoc, arrayRemove, arrayUnion, deleteField };
 window.firebaseStorageHelpers = { ref, uploadBytes, getDownloadURL };
 
 window.escapeHtml = (str) => {
@@ -144,22 +144,32 @@ function initAuthSystem() {
     setupAuthUIListeners();
 }
 
-async function checkUserNotifications(uid) {
+let notificationListenerUnsubscribe = null;
+function checkUserNotifications(uid) {
     try {
-        const { doc, getDoc, deleteDoc } = window.firebaseHelpers;
+        const { doc, onSnapshot, deleteDoc } = window.firebaseHelpers;
         const db = window.firebaseDb;
-        const notifDoc = await getDoc(doc(db, "notifications", uid));
-        if (notifDoc.exists()) {
-            const data = notifDoc.data();
-            setTimeout(() => {
-                if (window.showToast) {
-                    window.showToast(data.message);
-                } else {
-                    alert(data.message);
-                }
-                deleteDoc(doc(db, "notifications", uid));
-            }, 1500); // Small delay to let UI load completely
+        
+        if (notificationListenerUnsubscribe) {
+            notificationListenerUnsubscribe();
         }
+
+        notificationListenerUnsubscribe = onSnapshot(doc(db, "notifications", uid), (notifDoc) => {
+            if (notifDoc.exists()) {
+                const data = notifDoc.data();
+                setTimeout(() => {
+                    if (window.showToast) {
+                        window.showToast(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                    deleteDoc(doc(db, "notifications", uid));
+                    
+                    // Auto-refresh the page after 3 seconds so their profile/grid updates
+                    setTimeout(() => window.location.reload(), 3000);
+                }, 1500); // Small delay to let UI load completely
+            }
+        });
     } catch (e) {
         console.error("Error checking notifications:", e);
     }
@@ -399,10 +409,12 @@ function setupUIListeners() {
             if (panel) panel.style.display = 'flex';
             setTimeout(() => {
                 if (panel) panel.classList.add('open');
-                const fab = document.getElementById('mobile-filter-fab');
-                if (fab) fab.classList.add('hide-fab');
-                const ac = document.querySelector('.accessibility-container');
-                if (ac) ac.classList.add('hide-fab');
+                if (window.innerWidth <= 768) {
+                    const fab = document.getElementById('mobile-filter-fab');
+                    if (fab) fab.classList.add('hide-fab');
+                    const ac = document.querySelector('.accessibility-container');
+                    if (ac) ac.classList.add('hide-fab');
+                }
             }, 10);
         });
     }
@@ -450,6 +462,15 @@ function setupUIListeners() {
 
     // Chat Interface Actions
     document.getElementById('back-to-inbox').addEventListener('click', closeActiveChat);
+    document.getElementById('close-chat-btn').addEventListener('click', closeActiveChat);
+
+    document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+        if (window.cancelEditMessage) window.cancelEditMessage();
+    });
+
+    document.getElementById('delete-chat-btn').addEventListener('click', () => {
+        if (window.deleteConversation) window.deleteConversation();
+    });
 
     // Send Message
     const sendBtn = document.getElementById('send-msg-btn');
@@ -459,10 +480,24 @@ function setupUIListeners() {
         const text = inputField.value.trim();
         if (!text || !currentChatId) return;
 
-        inputField.value = '';
-
-        const { collection, addDoc, serverTimestamp, updateDoc, doc } = window.firebaseHelpers;
+        const { collection, addDoc, serverTimestamp, updateDoc, doc, deleteField } = window.firebaseHelpers;
         const db = window.firebaseDb;
+
+        if (window.editingMessageId) {
+            try {
+                await updateDoc(doc(db, "conversations", currentChatId, "messages", window.editingMessageId), {
+                    text: text,
+                    isEdited: true
+                });
+                window.cancelEditMessage();
+            } catch (e) {
+                console.error("Error editing message:", e);
+                if (window.showToast) window.showToast("Failed to edit message. You might not have permission.");
+            }
+            return;
+        }
+
+        inputField.value = '';
 
         // Add to subcollection
         await addDoc(collection(db, "conversations", currentChatId, "messages"), {
@@ -476,7 +511,9 @@ function setupUIListeners() {
             lastMessage: text,
             lastMessageSenderId: currentMember.id,
             unreadBy: [currentChatOtherUser.id],
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
+            [`deletedAt.${currentMember.id}`]: deleteField(),
+            [`deletedAt.${currentChatOtherUser.id}`]: deleteField()
         });
 
         // Play sound for outgoing message
@@ -685,19 +722,32 @@ function listenForInboxUpdates() {
 
                 // Active Chat
                 let timeStr = '';
+                let updatedAtMs = 0;
                 if (data.updatedAt) {
                     const date = data.updatedAt.toDate();
+                    updatedAtMs = date.getTime();
                     timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
 
+                const myDeletedAt = data.deletedAt && data.deletedAt[currentMember.id] ? data.deletedAt[currentMember.id] : 0;
+                if (myDeletedAt && updatedAtMs <= myDeletedAt) {
+                    return; // Skip rendering this chat because user deleted it and no new messages arrived
+                }
+
+                const safeUserStr = encodeURIComponent(JSON.stringify(otherUser)).replace(/'/g, "%27");
                 activeChatsHtml += `
-                    <div class="inbox-chat-item" onclick="openChat('${data.id}', '${encodeURIComponent(JSON.stringify(otherUser)).replace(/'/g, "%27")}')" style="${isUnread ? 'background: rgba(107, 66, 38, 0.08); border-left: 3px solid var(--brand-brown);' : ''}">
-                        <img src="${window.escapeHtml(otherUser.photo)}" class="inbox-avatar">
-                        <div class="inbox-details">
-                            <div class="inbox-name">${window.escapeHtml(otherUser.name)} <span class="inbox-time">${timeStr}</span></div>
-                            <div class="inbox-preview" style="${isUnread ? 'font-weight: bold; color: var(--brand-brown);' : ''}">${window.escapeHtml(data.lastMessage || 'Tap to chat...')}</div>
+                    <div class="swipe-chat-container">
+                        <div class="inbox-chat-item swipe-content" onclick="openChat('${data.id}', '${safeUserStr}')" style="${isUnread ? 'background: rgba(107, 66, 38, 0.08); border-left: 3px solid var(--brand-brown);' : ''}">
+                            <img src="${window.escapeHtml(otherUser.photo)}" class="inbox-avatar">
+                            <div class="inbox-details">
+                                <div class="inbox-name">${window.escapeHtml(otherUser.name)} <span class="inbox-time">${timeStr}</span></div>
+                                <div class="inbox-preview" style="${isUnread ? 'font-weight: bold; color: var(--brand-brown);' : ''}">${window.escapeHtml(data.lastMessage || 'Tap to chat...')}</div>
+                            </div>
+                            ${isUnread ? '<div style="width: 10px; height: 10px; background: var(--brand-brown); border-radius: 50%; margin-left: 10px;"></div>' : ''}
                         </div>
-                        ${isUnread ? '<div style="width: 10px; height: 10px; background: var(--brand-brown); border-radius: 50%; margin-left: 10px;"></div>' : ''}
+                        <div class="swipe-action-delete" onclick="window.deleteConversationById('${data.id}')">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
                     </div>
                 `;
             }
@@ -809,7 +859,55 @@ window.handleRequest = async (docId, newStatus) => {
     });
 };
 
-window.openChat = (docId, otherUserJson) => {
+// ==========================================
+// Advanced Chat Features (Edit/Delete)
+// ==========================================
+
+window.editingMessageId = null;
+
+window.startEditMessage = (msgId, rawText) => {
+    window.editingMessageId = msgId;
+    const input = document.getElementById('chat-input');
+    input.value = rawText;
+    input.focus();
+    document.getElementById('chat-edit-banner').style.display = 'flex';
+};
+
+window.cancelEditMessage = () => {
+    window.editingMessageId = null;
+    document.getElementById('chat-input').value = '';
+    document.getElementById('chat-edit-banner').style.display = 'none';
+};
+
+window.deleteConversationById = async (chatId) => {
+    if (!chatId || !window.firebaseCurrentUser) return;
+    if (!confirm("Are you sure you want to delete this chat? This will clear the chat history for you.")) return;
+
+    const { doc, updateDoc } = window.firebaseHelpers;
+    const db = window.firebaseDb;
+
+    try {
+        await updateDoc(doc(db, "conversations", chatId), {
+            [`deletedAt.${window.firebaseCurrentUser.uid}`]: Date.now()
+        });
+        if (currentChatId === chatId) {
+            closeActiveChat();
+        }
+        if (window.showToast) window.showToast("Conversation deleted.");
+    } catch (e) {
+        console.error("Error deleting conversation:", e);
+        alert("Failed to delete conversation.");
+    }
+};
+
+window.deleteConversation = async () => {
+    if (currentChatId) {
+        await window.deleteConversationById(currentChatId);
+    }
+};
+
+
+window.openChat = async (docId, otherUserJson) => {
     const otherUser = JSON.parse(decodeURIComponent(otherUserJson));
     currentChatId = docId;
     currentChatOtherUser = otherUser;
@@ -867,6 +965,21 @@ window.openChat = (docId, otherUserJson) => {
         }).catch(e => console.error("Error fetching block status:", e));
     }
 
+    // Get deletedAt timestamp for this chat for the current user
+    let chatDeletedAt = 0;
+    try {
+        const { doc, getDoc } = window.firebaseHelpers;
+        const chatDocSnap = await getDoc(doc(window.firebaseDb, "conversations", docId));
+        if (chatDocSnap.exists()) {
+            const cData = chatDocSnap.data();
+            if (cData.deletedAt && cData.deletedAt[currentMember.id]) {
+                chatDeletedAt = cData.deletedAt[currentMember.id];
+            }
+        }
+    } catch (e) {
+        console.error("Error fetching chat deletedAt:", e);
+    }
+
     // Listen for messages
     const { collection, query, orderBy, onSnapshot } = window.firebaseHelpers;
     const db = window.firebaseDb;
@@ -879,7 +992,12 @@ window.openChat = (docId, otherUserJson) => {
 
     unsubscribeMessages = onSnapshot(q, (snapshot) => {
         const msgContainer = document.getElementById('chat-messages');
-        let html = '';
+        let html = `
+            <div style="text-align: center; margin: 15px; padding: 12px 15px; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                <div style="font-weight: 600; margin-bottom: 5px; color: #b78a00;"><i class="fa-solid fa-shield-halved"></i> YatrAmore Safety Notice</div>
+                For your protection, never share sensitive personal information, passwords, or financial details. YatrAmore is not responsible for your interactions or real-life meetings. If this user makes you uncomfortable, please use the top right menu to block (<i class="fa-solid fa-ban"></i>) or report (<i class="fa-solid fa-flag"></i>) them.
+            </div>
+        `;
 
         let hasNewIncoming = false;
         if (!isInitialLoad) {
@@ -899,22 +1017,84 @@ window.openChat = (docId, otherUserJson) => {
 
         snapshot.docs.forEach(doc => {
             const data = doc.data();
-            const isMe = data.senderId === currentMember.id;
-            let timeStr = '';
-            if (data.createdAt) {
-                timeStr = data.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const msgId = doc.id;
+            
+            // Hide message if it was sent before the user cleared this conversation, or if the user deleted this specific message "for me"
+            if (data.createdAt && data.createdAt.toMillis() <= chatDeletedAt) {
+                return; 
+            }
+            if (data.hiddenFor && data.hiddenFor.includes(currentMember.id)) {
+                return;
             }
 
+            const isMe = data.senderId === currentMember.id;
+            const isStarred = data.starredBy && data.starredBy.includes(currentMember.id);
+            let timeStr = '';
+            let isWithin5Mins = false;
+            
+            if (data.createdAt) {
+                const date = data.createdAt.toDate();
+                timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const now = Date.now();
+                isWithin5Mins = (now - date.getTime()) < 5 * 60 * 1000;
+            } else {
+                timeStr = "Sending...";
+                isWithin5Mins = true; // Pending write, so it was just sent
+            }
+
+            const messageContent = data.isDeleted 
+                ? '<i class="fa-solid fa-ban" style="opacity:0.6;"></i> <span style="font-style:italic; opacity:0.6;">This message was deleted.</span>' 
+                : window.escapeHtml(data.text || '');
+
+            const encodedText = encodeURIComponent(data.text || '').replace(/'/g, "%27");
+            const starredByJson = encodeURIComponent(JSON.stringify(data.starredBy || []));
+
             html += `
-                <div class="chat-message ${isMe ? 'sent' : 'received'}">
-                    ${window.escapeHtml(data.text || '')}
-                    <span class="chat-time">${timeStr}</span>
+                <div class="chat-message ${isMe ? 'sent' : 'received'}" 
+                     data-msg-id="${msgId}" 
+                     data-raw-text="${encodedText}" 
+                     data-is-me="${isMe}" 
+                     data-is-starred="${!!isStarred}"
+                     data-is-within-5mins="${isWithin5Mins}">
+                    <div class="message-content">
+                        <div class="message-text">${messageContent}</div>
+                        <div class="message-meta" style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; font-size: 0.7rem; opacity: 0.7; gap: 6px;">
+                            <i class="fa-solid fa-star msg-star-indicator" style="display: ${isStarred ? 'inline' : 'none'};"></i>
+                            <span class="message-time">${timeStr}</span>
+                            ${data.isEdited && !data.isDeleted ? '<span class="message-edited" style="margin-left: 4px;">(edited)</span>' : ''}
+                        </div>
+                    </div>
+                    ${(() => {
+                        if (data.reactions && Object.keys(data.reactions).length > 0) {
+                            const uniqueEmojis = [...new Set(Object.values(data.reactions))];
+                            const count = Object.keys(data.reactions).length;
+                            return `<div class="message-reactions">${uniqueEmojis.map(e => window.escapeHtml(e)).join('')}${count > 1 ? `<span style="font-size: 0.65rem; margin-left: 3px; font-weight: bold;">${count}</span>` : ''}</div>`;
+                        }
+                        return '';
+                    })()}
                 </div>
             `;
         });
 
+        let previousScrollTop = 0;
+        let previousScrollHeight = 0;
+        let wasAtBottom = true;
+        
+        if (msgContainer) {
+            previousScrollTop = msgContainer.scrollTop;
+            previousScrollHeight = msgContainer.scrollHeight;
+            wasAtBottom = (previousScrollHeight - previousScrollTop - msgContainer.clientHeight) < 100;
+        }
+
         msgContainer.innerHTML = html;
-        msgContainer.scrollTop = msgContainer.scrollHeight; // Auto scroll to bottom
+        
+        if (msgContainer) {
+            if (wasAtBottom) {
+                msgContainer.scrollTop = msgContainer.scrollHeight; 
+            } else {
+                msgContainer.scrollTop = previousScrollTop; 
+            }
+        }
     });
 };
 
@@ -966,30 +1146,14 @@ window.sendChatRequest = async (targetUserId, targetUserName, targetUserPhoto) =
     }
     // Validation: Check limits, cooldowns, and duplicates
     try {
-        const checkQ = query(collection(db, "conversations"), where("user1.id", "==", currentMember.id));
+        // Use a single query on 'participants' so Firestore Security Rules allow the read
+        const checkQ = query(collection(db, "conversations"), where("participants", "array-contains", currentMember.id));
         const checkSnap = await getDocs(checkQ);
-
-        // Also check if target sent us a request (we'd be user2)
-        const reverseQ = query(collection(db, "conversations"), where("participants", "array-contains", currentMember.id));
-        const reverseSnap = await getDocs(reverseQ);
-
-        // Check for existing pending/accepted conversation with this user
-        for (const docSnap of reverseSnap.docs) {
-            const data = docSnap.data();
-            if (data.participants && data.participants.includes(targetUserId)) {
-                if (data.status === 'pending' || data.status === 'accepted') {
-                    alert('You already have an active or pending chat with this person.');
-                    return false;
-                }
-            }
-        }
 
         let requestsToday = 0;
         const now = new Date();
         const oneDayMs = 24 * 60 * 60 * 1000;
         const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-
-
 
         for (const docSnap of checkSnap.docs) {
             const data = docSnap.data();
@@ -1097,10 +1261,12 @@ window.openChatFromGrid = (targetUserId) => {
         panel.style.display = 'flex';
         setTimeout(() => {
             panel.classList.add('open');
-            const fab = document.getElementById('mobile-filter-fab');
-            if (fab) fab.classList.add('hide-fab');
-            const fg = document.querySelector('.fab-group');
-            if (fg) fg.classList.add('hide-fab');
+            if (window.innerWidth <= 768) {
+                const fab = document.getElementById('mobile-filter-fab');
+                if (fab) fab.classList.add('hide-fab');
+                const ac = document.querySelector('.accessibility-container');
+                if (ac) ac.classList.add('hide-fab');
+            }
         }, 10);
     }
 
@@ -1124,9 +1290,9 @@ window.showToast = function (message) {
     }
 
     const toast = document.createElement('div');
-    // Drop down from the top
-    toast.style.cssText = 'background: var(--brand-brown); color: white; padding: 12px 32px; border-radius: 50px; font-weight: 600; box-shadow: 0 8px 25px rgba(0,0,0,0.25); transform: translateY(-150%) scale(0.9); opacity: 0; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 12px; cursor: pointer; white-space: nowrap;';
-    toast.innerHTML = `<i class="fas fa-bell"></i> ${window.escapeHtml(message)}`;
+    // Drop down from the top (Premium Design with Spring Animation and Adaptive Text)
+    toast.style.cssText = 'background: linear-gradient(135deg, var(--brand-brown), #5D4037); color: #ffffff; padding: clamp(12px, 2.5vw, 16px) clamp(16px, 4vw, 24px); font-size: clamp(0.75rem, 3.5vw, 0.95rem); border-radius: 16px; font-weight: 500; letter-spacing: 0.3px; box-shadow: 0 15px 35px rgba(0,0,0,0.25), 0 5px 15px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.15); transform: translateY(-150%) scale(0.95); opacity: 0; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; gap: 14px; cursor: pointer; width: max-content; max-width: 96vw; border: 1px solid rgba(255,255,255,0.08); font-family: system-ui, -apple-system, sans-serif;';
+    toast.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;"><i class="fas fa-bell" style="font-size: 0.9rem; color: #fff;"></i></div> <span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; word-break: break-word; line-height: 1.4;">${window.escapeHtml(message)}</span>`;
 
 
     toast.onclick = () => {
@@ -1312,6 +1478,10 @@ function initMatchmaking() {
                 // Hide the close button to force them to complete it
                 const closeBtn = document.querySelector('.edit-modal-close');
                 if (closeBtn) closeBtn.style.display = 'none';
+                
+                // Hide the delete account link
+                const deleteLink = document.getElementById('delete-account-link');
+                if (deleteLink) deleteLink.style.display = 'none';
 
                 // Update the text to reflect setup mode
                 const title = editModal.querySelector('h2');
@@ -1357,12 +1527,24 @@ function initMatchmaking() {
             console.error("Error fetching user metadata:", error);
         }
 
-        fetchProfiles();
+        window.startProfilesListener();
         setupEventListeners();
     });
 }
 
-document.addEventListener('DOMContentLoaded', initMatchmaking);
+document.addEventListener('DOMContentLoaded', () => {
+    initMatchmaking();
+    
+    // Move the filter FAB into the fab-group so it sits next to the other FABs
+    setTimeout(() => {
+        const fabGroup = document.querySelector('.fab-group');
+        const filterFab = document.getElementById('mobile-filter-fab');
+        if (fabGroup && filterFab) {
+            // Append at the end of the fab-group (right side)
+            fabGroup.appendChild(filterFab);
+        }
+    }, 50);
+});
 
 function setupProfileForm() {
     const form = document.getElementById('native-profile-form');
@@ -1577,9 +1759,9 @@ function setupProfileForm() {
                 await Promise.race([setDocPromise, timeoutPromise]);
 
                 if (window.showToast) {
-                    window.showToast("Your update request has been submitted and is pending admin review.");
+                    window.showToast("Your update request has been submitted and is pending review by the YA-Matchmaking Team.");
                 } else {
-                    alert("Your update request has been submitted and is pending admin review.");
+                    alert("Your update request has been submitted and is pending review by the YA-Matchmaking Team.");
                 }
 
                 // Cleanup session data
@@ -1617,9 +1799,9 @@ function setupProfileForm() {
                 await Promise.race([setDocPromise, timeoutPromise]);
 
                 if (window.showToast) {
-                    window.showToast("Profile submitted! It is now pending admin review.");
+                    window.showToast("Profile submitted! It is now pending review by the YA-Matchmaking Team.");
                 } else {
-                    alert("Profile submitted! It is now pending admin review.");
+                    alert("Profile submitted! It is now pending review by the YA-Matchmaking Team.");
                 }
 
                 // Cleanup session data
@@ -1684,88 +1866,111 @@ window.openEditProfileModal = async function () {
     }
 }
 
-async function fetchProfiles() {
+window.profilesUnsubscribe = null;
+
+window.forceReRenderProfiles = function() {
+    if (!window.firebaseProfiles) return;
+    
+    let currentUserId = null;
+    if (window.firebaseCurrentUser) {
+        currentUserId = window.firebaseCurrentUser.uid;
+    }
+    
+    allProfiles = window.firebaseProfiles.filter(p => {
+        return p['Firebase UID'] && p['Firebase UID'] !== currentUserId && p['Approved'];
+    });
+
+    renderProfiles(allProfiles);
+}
+
+window.startProfilesListener = function() {
     try {
         let currentUserId = null;
         if (window.firebaseCurrentUser) {
             currentUserId = window.firebaseCurrentUser.uid;
         }
 
-        const { collection, getDocs, query, where, doc, getDoc } = window.firebaseHelpers;
+        const { collection, onSnapshot, query, where, doc, getDoc } = window.firebaseHelpers;
         const db = window.firebaseDb;
 
         const profilesRef = collection(db, 'profiles');
         const q = query(profilesRef, where("Approved", "==", true));
 
-        const snapshot = await getDocs(q);
-
-        let rawProfiles = [];
-        let hasProfile = false;
-
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            data['Firebase UID'] = docSnap.id;
-            rawProfiles.push(data);
-        });
-
-        if (currentUserId) {
-            const myProfileDoc = await getDoc(doc(db, 'profiles', currentUserId));
-            if (myProfileDoc.exists()) {
-                hasProfile = true;
-                if (!myProfileDoc.data().Approved) {
-                    const myData = myProfileDoc.data();
-                    myData['Firebase UID'] = currentUserId;
-                    rawProfiles.push(myData);
-                }
-            }
+        if (window.profilesUnsubscribe) {
+            window.profilesUnsubscribe();
         }
 
-        rawProfiles = rawProfiles.filter((p, index, self) =>
-            index === self.findIndex((t) => (
-                t['Firebase UID'] === p['Firebase UID']
-            ))
-        );
+        window.profilesUnsubscribe = onSnapshot(q, async (snapshot) => {
+            let rawProfiles = [];
+            let hasProfile = false;
 
-        window.firebaseProfiles = rawProfiles;
-        window.rawAirtableProfiles = rawProfiles;
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                data['Firebase UID'] = docSnap.id;
+                rawProfiles.push(data);
+            });
 
-        allProfiles = rawProfiles.filter(p => {
-            return p['Firebase UID'] && p['Firebase UID'] !== currentUserId && p['Approved'];
-        });
-
-        renderProfiles(allProfiles);
-
-        if (currentUserId) {
-            if (!hasProfile) {
-                const modalTitle = document.querySelector('#edit-modal h2');
-                if (modalTitle) modalTitle.textContent = "Complete Your Profile";
-                const deleteLink = document.getElementById('delete-account-link');
-                if (deleteLink) deleteLink.style.display = 'none';
-                const editModal = document.getElementById('edit-modal');
-                if (editModal) {
-                    editModal.classList.add('active');
-                    if (window.showToast) {
-                        window.showToast("Welcome! Please complete your profile to continue.");
+            if (currentUserId) {
+                const myProfileDoc = await getDoc(doc(db, 'profiles', currentUserId));
+                if (myProfileDoc.exists()) {
+                    hasProfile = true;
+                    if (!myProfileDoc.data().Approved) {
+                        const myData = myProfileDoc.data();
+                        myData['Firebase UID'] = currentUserId;
+                        rawProfiles.push(myData);
                     }
                 }
-            } else {
-                const modalTitle = document.querySelector('#edit-modal h2');
-                if (modalTitle) modalTitle.textContent = "Edit Your Profile";
-                const deleteLink = document.getElementById('delete-account-link');
-                if (deleteLink) deleteLink.style.display = 'block';
             }
-        }
+
+            rawProfiles = rawProfiles.filter((p, index, self) =>
+                index === self.findIndex((t) => (
+                    t['Firebase UID'] === p['Firebase UID']
+                ))
+            );
+
+            window.firebaseProfiles = rawProfiles;
+            window.rawAirtableProfiles = rawProfiles;
+
+            allProfiles = rawProfiles.filter(p => {
+                return p['Firebase UID'] && p['Firebase UID'] !== currentUserId && p['Approved'];
+            });
+
+            renderProfiles(allProfiles);
+
+            if (currentUserId) {
+                if (!hasProfile) {
+                    const modalTitle = document.querySelector('#edit-modal h2');
+                    if (modalTitle) modalTitle.textContent = "Complete Your Profile";
+                    const deleteLink = document.getElementById('delete-account-link');
+                    if (deleteLink) deleteLink.style.display = 'none';
+                    const editModal = document.getElementById('edit-modal');
+                    if (editModal) {
+                        editModal.classList.add('active');
+                        if (window.showToast) {
+                            window.showToast("Welcome! Please complete your profile to continue.");
+                        }
+                    }
+                } else {
+                    const modalTitle = document.querySelector('#edit-modal h2');
+                    if (modalTitle) modalTitle.textContent = "Edit Your Profile";
+                    const deleteLink = document.getElementById('delete-account-link');
+                    if (deleteLink) deleteLink.style.display = 'block';
+                }
+            }
+        }, (error) => {
+            console.error('Error in profiles listener:', error);
+            const grid = document.getElementById('profiles-grid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; padding: 2rem; background: rgba(244, 67, 54, 0.1); border: 1px solid var(--status-error); color: var(--status-error); border-radius: 12px; text-align: center;">
+                        <p style="font-weight: 700; margin-bottom: 0.5rem;">Failed to load profiles.</p>
+                        <p style="font-size: 0.875rem;">${error.message}</p>
+                    </div>
+                `;
+            }
+        });
     } catch (error) {
-        console.error('Error fetching profiles:', error);
-        const grid = document.getElementById('profiles-grid');
-        if (grid) {
-            grid.innerHTML = `
-                <div style="grid-column: 1 / -1; padding: 2rem; background: rgba(244, 67, 54, 0.1); border: 1px solid var(--status-error); color: var(--status-error); border-radius: 12px; text-align: center;">
-                    <p style="font-weight: 700; margin-bottom: 0.5rem;">Failed to load profiles.</p>
-                    <p style="font-size: 0.875rem;">${error.message}</p>
-                </div>
-            `;
-        }
+        console.error('Error setting up profile listener:', error);
     }
 }
 
@@ -1879,7 +2084,7 @@ function renderProfiles(profiles) {
                 <img src="${photoUrl}" alt="${name}" class="profile-image" loading="lazy">
             </div>
             <div class="profile-content" style="padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; background: transparent;">
-                <div class="profile-name" style="color: var(--text-main); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.2rem;">${name}</div>
+                <div class="profile-name" style="color: var(--text-main); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.8rem;">${name}</div>
                 <div style="display: flex; gap: 15px; margin-bottom: 1.2rem; flex-wrap: wrap; color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">
                     <div class="profile-location" style="display: flex; align-items: center; gap: 6px;">
                         <i class="fas fa-map-marker-alt" style="color: var(--brand-brown);"></i> ${location}
@@ -2036,7 +2241,7 @@ window.revokeInterest = async (targetUserId, btnElement) => {
         }
 
         // 3. Reset Button UI by re-rendering
-        fetchProfiles();
+        window.forceReRenderProfiles();
     }
 }
 
@@ -2183,7 +2388,7 @@ async function loadAdminUsers() {
         const snapshot = await getDocs(q);
 
         let html = `
-            <div style="overflow: auto; width: 100%; height: 60vh; background: #ffffff; border: 1px solid #d3d3d3; position: relative;">
+            <div style="overflow: auto; width: 100%; max-width: 100%; box-sizing: border-box; height: 60vh; background: #ffffff; border: 1px solid #d3d3d3; position: relative;">
             <table style="width: max-content; min-width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                 <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr style="color: #333333;">
@@ -2303,7 +2508,7 @@ window.toggleUserApproval = async (uid, currentApprovedStatus, isComplete) => {
         }
 
         loadAdminUsers();
-        fetchProfiles();
+        // fetchProfiles(); (Listener handles this automatically)
     } catch (e) {
         console.error("Error updating approval:", e);
         alert("Failed to update status.");
@@ -2317,7 +2522,7 @@ window.deleteUserProfile = async (uid) => {
         const db = window.firebaseDb;
         await deleteDoc(doc(db, "profiles", uid));
         loadAdminUsers();
-        fetchProfiles();
+        // fetchProfiles();
     } catch (e) {
         console.error("Error deleting user profile:", e);
         alert("Error deleting user profile. Check console.");
@@ -2341,7 +2546,7 @@ window.blockUserProfile = async (uid, currentBlockStatus) => {
         await updateDoc(doc(db, "profiles", uid), updateData);
         alert(`User has been ${isBlocking ? 'blocked' : 'unblocked'} successfully.`);
         loadAdminUsers();
-        fetchProfiles();
+        // fetchProfiles();
     } catch (e) {
         console.error("Error blocking/unblocking user:", e);
         alert("Error updating block status. Check console.");
@@ -2374,6 +2579,7 @@ window.loadAdminDeletions = async () => {
         }
 
         let html = `
+            <div style="overflow-x: auto; max-width: 100%; box-sizing: border-box;">
             <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
                 <thead>
                     <tr style="background: #f44336; color: white;">
@@ -2413,7 +2619,7 @@ window.loadAdminDeletions = async () => {
             `;
         }
 
-        html += `</tbody></table>`;
+        html += `</tbody></table></div>`;
         html += `<p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);"><i class="fa-solid fa-circle-info"></i> <strong>Note:</strong> Clicking "Approve & Wipe Data" will delete their profile and user metadata from Firestore. However, due to security limitations, you must manually delete their email (<strong>${deletionRequests.length > 0 ? 'above' : 'listed'}</strong>) from your Firebase Authentication console, and delete their image from Cloudinary.</p>`;
 
         listContainer.innerHTML = html;
@@ -2464,7 +2670,7 @@ async function loadAdminUpdates() {
         const snapshot = await getDocs(q);
 
         let html = `
-            <div style="overflow: auto; width: 100%; height: 60vh; background: #ffffff; border: 1px solid #d3d3d3; position: relative;">
+            <div style="overflow: auto; width: 100%; max-width: 100%; box-sizing: border-box; height: 60vh; background: #ffffff; border: 1px solid #d3d3d3; position: relative;">
             <table style="width: max-content; min-width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                 <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr style="color: #333333;">
@@ -2589,7 +2795,7 @@ window.approveProfileUpdate = async (uid) => {
         });
 
         loadAdminUpdates();
-        fetchProfiles();
+        // fetchProfiles();
     } catch (e) {
         console.error("Error approving update:", e);
         alert("Failed to approve update.");
@@ -2631,7 +2837,7 @@ async function loadAdminReports() {
         const snapshot = await getDocs(q);
 
         let html = `
-            <div style="overflow: auto; width: 100%; height: 60vh; background: #ffffff; border: 1px solid #d3d3d3; position: relative;">
+            <div style="overflow: auto; width: 100%; max-width: 100%; box-sizing: border-box; height: 60vh; background: #ffffff; border: 1px solid #d3d3d3; position: relative;">
             <table style="width: max-content; min-width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                 <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr style="color: #333333;">
@@ -2802,5 +3008,447 @@ window.dismissReport = async (reportId, conversationId) => {
     } catch (e) {
         console.error("Error dismissing report:", e);
         alert("Failed to dismiss report. Check console for details.");
+    }
+};
+
+// ==========================================
+// LONG PRESS CONTEXT MENU (WHATSAPP STYLE)
+// ==========================================
+
+let pressTimer = null;
+let currentTargetMsgId = null;
+let currentTargetMsgElement = null;
+
+const chatMessagesContainer = document.getElementById('chat-messages');
+const chatOverlay = document.getElementById('chat-overlay');
+const reactionBar = document.getElementById('ctx-reaction-bar');
+const actionMenu = document.getElementById('ctx-action-menu');
+let clonedMsgElement = null;
+
+if (chatMessagesContainer) {
+    chatMessagesContainer.addEventListener('touchstart', handlePressStart, { passive: true });
+    chatMessagesContainer.addEventListener('mousedown', handlePressStart);
+    chatMessagesContainer.addEventListener('touchend', handlePressEnd);
+    chatMessagesContainer.addEventListener('mouseup', handlePressEnd);
+    chatMessagesContainer.addEventListener('mouseleave', handlePressEnd);
+    chatMessagesContainer.addEventListener('touchmove', handlePressEnd, { passive: true });
+}
+
+function handlePressStart(e) {
+    const msgElement = e.target.closest('.chat-message');
+    if (!msgElement) return;
+    
+    // Ignore if already deleted
+    if (msgElement.dataset.isDeleted === 'true') return;
+
+    // Start timer for 500ms
+    pressTimer = setTimeout(() => {
+        showContextMenu(msgElement, e);
+    }, 500);
+}
+
+function handlePressEnd(e) {
+    if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+    }
+}
+
+function showContextMenu(msgElement, event) {
+    currentTargetMsgElement = msgElement;
+    currentTargetMsgId = msgElement.dataset.msgId;
+
+    const isMe = msgElement.getAttribute('data-is-me') === 'true';
+    const isWithin5Mins = msgElement.getAttribute('data-is-within-5mins') === 'true';
+    const isStarred = msgElement.getAttribute('data-is-starred') === 'true';
+    const rawText = decodeURIComponent(msgElement.dataset.rawText);
+
+    // DEFENSIVE FIX: Move UI elements directly to body to escape ANY CSS containing blocks (transforms, filters) from ancestors like .chat-panel
+    if (chatOverlay && chatOverlay.parentNode !== document.body) document.body.appendChild(chatOverlay);
+    if (reactionBar && reactionBar.parentNode !== document.body) document.body.appendChild(reactionBar);
+    if (actionMenu && actionMenu.parentNode !== document.body) document.body.appendChild(actionMenu);
+
+    // Vibrate if on mobile
+    if (navigator.vibrate) navigator.vibrate(50);
+
+    // Update Star context menu button
+    const starBtn = document.getElementById('ctx-star-btn');
+    if (isStarred) {
+        starBtn.querySelector('span').innerText = 'Unstar';
+        starBtn.querySelector('i').classList.remove('fa-regular');
+        starBtn.querySelector('i').classList.add('fa-solid');
+    } else {
+        starBtn.querySelector('span').innerText = 'Star';
+        starBtn.querySelector('i').classList.remove('fa-solid');
+        starBtn.querySelector('i').classList.add('fa-regular');
+    }
+
+    // Hide context menu buttons based on context
+    document.getElementById('ctx-edit-btn').style.display = (isMe && isWithin5Mins) ? 'flex' : 'none';
+    document.getElementById('ctx-del-everyone-btn').style.display = (isMe && isWithin5Mins) ? 'flex' : 'none';
+    
+    // Get exact coordinates of the message
+    const rect = msgElement.getBoundingClientRect();
+    
+    // Create clone for highlight
+    clonedMsgElement = msgElement.cloneNode(true);
+    clonedMsgElement.style.position = 'fixed';
+    clonedMsgElement.style.top = `${rect.top}px`;
+    clonedMsgElement.style.left = `${rect.left}px`;
+    clonedMsgElement.style.width = `${rect.width}px`;
+    clonedMsgElement.style.margin = '0';
+    clonedMsgElement.style.zIndex = '9999';
+    clonedMsgElement.style.boxShadow = '0 5px 25px rgba(0,0,0,0.3)';
+    clonedMsgElement.style.transform = 'scale(1)'; // Initial state
+    clonedMsgElement.style.transition = 'top 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // Smooth pop up and translation
+    
+    // Ensure the clone doesn't trigger its own touch events
+    clonedMsgElement.style.pointerEvents = 'none';
+    document.body.appendChild(clonedMsgElement);
+
+    // Show overlay
+    if (chatOverlay) chatOverlay.style.display = 'block';
+    
+    // Setup initial positions (hidden to calculate size)
+    if (reactionBar) {
+        reactionBar.style.display = 'flex';
+        reactionBar.style.opacity = '0';
+        reactionBar.style.transform = 'scale(0.95)';
+        reactionBar.style.margin = '0px';
+        void reactionBar.offsetHeight; // Force layout flush for WebKit
+    }
+
+    if (actionMenu) {
+        actionMenu.style.display = 'flex';
+        actionMenu.style.opacity = '0';
+        actionMenu.style.transform = 'scale(0.95)';
+        actionMenu.style.margin = '0px';
+        void actionMenu.offsetHeight; // Force layout flush for WebKit
+    }
+
+    // Define safe bounds for the 'sandwich' (Emoji Bar + Message + Action Menu)
+    const chatPanelHeader = document.querySelector('.chat-panel-header');
+    const navBarHeight = chatPanelHeader ? chatPanelHeader.offsetHeight : 65; 
+    const chatInputArea = document.querySelector('.chat-input-area');
+    const inputBarHeight = chatInputArea ? chatInputArea.offsetHeight : 80;
+    const maxBottom = Number(window.innerHeight) - inputBarHeight;
+
+    // Foolproof height calculation based on visible items
+    const emojiHeight = 50;
+    let visibleButtons = 0;
+    ['ctx-star-btn', 'ctx-copy-btn', 'ctx-edit-btn', 'ctx-del-me-btn', 'ctx-del-everyone-btn'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn && btn.style.display !== 'none') visibleButtons++;
+    });
+    const actionHeight = visibleButtons > 0 ? (visibleButtons * 48) : 150; 
+    const padding = 8; // Tighter gap for native feel
+
+    const safeRectTop = Number(rect.top) || 0;
+    const safeRectHeight = Number(rect.height) || Number(rect.bottom - rect.top) || 0;
+    const safeRectRight = Number(rect.right) || 0;
+    const safeRectLeft = Number(rect.left) || 0;
+
+    // Store original position to animate back on close
+    window.originalMsgTop = safeRectTop;
+    
+    // Ideal sandwich layout: Emoji on top, Message in middle, Action on bottom
+    let msgTop = safeRectTop;
+    
+    // Check if sandwich overflows top
+    const sandwichTop = msgTop - emojiHeight - padding;
+    if (sandwichTop < navBarHeight) {
+        msgTop += (navBarHeight - sandwichTop);
+    }
+
+    // Check if sandwich overflows bottom
+    const sandwichBottom = msgTop + safeRectHeight + padding + actionHeight;
+    if (sandwichBottom > maxBottom) {
+        msgTop -= (sandwichBottom - maxBottom);
+    }
+
+    // Final positions for the sandwich elements
+    const reactionTop = msgTop - emojiHeight - padding;
+    const actionTop = msgTop + rect.height + padding;
+
+    // Apply strict top positioning
+    if (reactionBar) {
+        reactionBar.style.setProperty('position', 'fixed', 'important');
+        reactionBar.style.setProperty('bottom', 'auto', 'important');
+        reactionBar.style.setProperty('top', `${reactionTop}px`, 'important');
+    }
+    if (actionMenu) {
+        actionMenu.style.setProperty('position', 'fixed', 'important');
+        actionMenu.style.setProperty('bottom', 'auto', 'important');
+        actionMenu.style.setProperty('top', `${actionTop}px`, 'important');
+    }
+
+    // Apply horizontal alignments
+    const applyHorizontalAlign = (el) => {
+        if (!el) return;
+        if (isMe) {
+            el.style.setProperty('right', `${Number(window.innerWidth) - safeRectRight}px`, 'important');
+            el.style.setProperty('left', 'auto', 'important');
+            el.style.transformOrigin = 'center right';
+        } else {
+            el.style.setProperty('left', `${safeRectLeft}px`, 'important');
+            el.style.setProperty('right', 'auto', 'important');
+            el.style.transformOrigin = 'bottom left';
+        }
+    };
+
+    applyHorizontalAlign(reactionBar);
+    applyHorizontalAlign(actionMenu);
+
+    // Animate in
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            if (clonedMsgElement) {
+                clonedMsgElement.style.top = `${msgTop}px`;
+                clonedMsgElement.style.transform = 'scale(1.03)';
+            }
+            if (chatOverlay) chatOverlay.style.opacity = '1';
+            if (reactionBar) {
+                reactionBar.style.opacity = '1';
+                reactionBar.style.transform = 'scale(1)';
+            }
+            if (actionMenu) {
+                actionMenu.style.opacity = '1';
+                actionMenu.style.transform = 'scale(1)';
+            }
+        }, 10);
+    });
+
+    // Setup Emoji Bar
+    document.querySelectorAll('.ctx-emoji-btn').forEach(btn => {
+        btn.onclick = () => {
+            hideContextMenu();
+            if (currentTargetMsgId) {
+                window.reactToMessage(currentTargetMsgId, btn.dataset.emoji);
+            }
+        };
+    });
+
+    const emojiInput = document.getElementById('ctx-custom-emoji-input');
+    if (emojiInput) {
+        emojiInput.value = ''; // Reset
+        emojiInput.oninput = (ev) => {
+            const val = ev.target.value.trim();
+            if (val) {
+                hideContextMenu();
+                if (currentTargetMsgId) {
+                    window.reactToMessage(currentTargetMsgId, Array.from(val)[0] || val); 
+                }
+            }
+        };
+    }
+
+    const emojiPlusBtn = document.getElementById('ctx-emoji-plus-btn');
+    if (emojiPlusBtn) {
+        emojiPlusBtn.onclick = (ev) => {
+            ev.stopPropagation(); 
+            
+            // Show custom emoji picker
+            let picker = document.getElementById('custom-emoji-picker-overlay');
+            if (!picker) {
+                // Dynamically import the picker script
+                import('https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js').then(() => {
+                    picker = document.createElement('div');
+                    picker.id = 'custom-emoji-picker-overlay';
+                    picker.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10001; display: flex; align-items: center; justify-content: center;';
+                    
+                    const pickerElement = document.createElement('emoji-picker');
+                    picker.appendChild(pickerElement);
+                    
+                    picker.onclick = (e) => {
+                        if (e.target === picker) picker.style.display = 'none';
+                    };
+                    
+                    pickerElement.addEventListener('emoji-click', event => {
+                        picker.style.display = 'none';
+                        hideContextMenu();
+                        if (currentTargetMsgId) {
+                            window.reactToMessage(currentTargetMsgId, event.detail.unicode);
+                        }
+                    });
+                    
+                    document.body.appendChild(picker);
+                }).catch(err => {
+                    console.error("Failed to load emoji picker", err);
+                    if(window.showToast) window.showToast("Could not load emoji picker.");
+                });
+            } else {
+                picker.style.display = 'flex';
+            }
+        };
+    }
+
+    const setActionMenuClick = (id, callback) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.onclick = () => {
+                hideContextMenu();
+                if (currentTargetMsgId) callback();
+            };
+        }
+    };
+
+    setActionMenuClick('ctx-star-btn', () => window.toggleStarMessage(currentTargetMsgId, isStarred));
+    setActionMenuClick('ctx-copy-btn', () => {
+        navigator.clipboard.writeText(rawText).then(() => {
+            if(window.showToast) window.showToast("Message copied");
+        });
+    });
+    setActionMenuClick('ctx-edit-btn', () => window.startEditMessage(currentTargetMsgId, rawText));
+    setActionMenuClick('ctx-del-me-btn', () => window.deleteMessageForMe(currentTargetMsgId));
+    setActionMenuClick('ctx-del-everyone-btn', () => window.deleteMessageForEveryone(currentTargetMsgId));
+}
+
+function hideContextMenu() {
+    if (chatOverlay) chatOverlay.style.opacity = '0';
+    if (reactionBar) {
+        reactionBar.style.opacity = '0';
+        reactionBar.style.transform = 'scale(0.95)';
+    }
+    if (actionMenu) {
+        actionMenu.style.opacity = '0';
+        actionMenu.style.transform = 'scale(0.95)';
+    }
+    if (clonedMsgElement) {
+        clonedMsgElement.style.opacity = '0';
+        clonedMsgElement.style.transform = 'scale(1)'; // Revert pop
+        if (window.originalMsgTop !== undefined) {
+            clonedMsgElement.style.top = `${window.originalMsgTop}px`; // Slide back to original place
+        }
+    }
+
+    setTimeout(() => {
+        if (chatOverlay) chatOverlay.style.display = 'none';
+        if (reactionBar) reactionBar.style.display = 'none';
+        if (actionMenu) actionMenu.style.display = 'none';
+        if (clonedMsgElement) {
+            clonedMsgElement.remove();
+            clonedMsgElement = null;
+        }
+    }, 200);
+}
+
+// Hide context menu when tapping outside (on the overlay)
+if (chatOverlay) {
+    chatOverlay.addEventListener('click', hideContextMenu);
+    chatOverlay.addEventListener('touchstart', (e) => {
+        // Prevent scrolling underneath
+        e.preventDefault(); 
+        hideContextMenu();
+    });
+}
+
+window.deleteMessageForEveryone = async (msgId) => {
+    if (!currentChatId || !msgId) return;
+    try {
+        const { updateDoc, doc } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+        await updateDoc(doc(db, "conversations", currentChatId, "messages", msgId), {
+            isDeleted: true
+        });
+        if(window.showToast) window.showToast("Message deleted for everyone");
+    } catch (e) {
+        console.error("Error deleting message:", e);
+        if(window.showToast) window.showToast("Failed to delete message");
+    }
+};
+
+window.deleteMessageForMe = async (msgId) => {
+    if (!currentChatId || !msgId) return;
+    try {
+        const { updateDoc, doc, arrayUnion } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+        await updateDoc(doc(db, "conversations", currentChatId, "messages", msgId), {
+            hiddenFor: arrayUnion(currentMember.id)
+        });
+        if(window.showToast) window.showToast("Message deleted for you");
+    } catch (e) {
+        console.error("Error deleting message for me:", e);
+        if(window.showToast) window.showToast("Failed to delete. Did you update Firebase rules?");
+    }
+};
+
+window.toggleStarMessage = async (msgId, currentlyStarred) => {
+    if (!currentChatId || !msgId) return;
+    try {
+        const { updateDoc, doc, arrayUnion, arrayRemove } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+        await updateDoc(doc(db, "conversations", currentChatId, "messages", msgId), {
+            starredBy: currentlyStarred ? arrayRemove(currentMember.id) : arrayUnion(currentMember.id)
+        });
+    } catch (e) {
+        console.error("Error toggling star:", e);
+        if(window.showToast) window.showToast("Failed to update star. Did you update Firebase rules?");
+    }
+};
+
+let showStarredOnly = false;
+document.getElementById('toggle-starred-btn')?.addEventListener('click', (e) => {
+    showStarredOnly = !showStarredOnly;
+    const btn = e.currentTarget;
+    const icon = btn.querySelector('i');
+    const container = document.getElementById('chat-messages');
+    
+    if (showStarredOnly) {
+        icon.classList.remove('fa-regular');
+        icon.classList.add('fa-solid');
+        icon.style.color = ''; 
+        container.classList.add('show-starred-only');
+    } else {
+        icon.classList.remove('fa-solid');
+        icon.classList.add('fa-regular');
+        icon.style.color = ''; 
+        container.classList.remove('show-starred-only');
+        setTimeout(() => {
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }, 50);
+    }
+});
+
+// React to a message
+window.reactToMessage = async (msgId, emoji) => {
+    if (!window.firebaseCurrentUser || !currentChatId) return;
+    try {
+        const { doc, updateDoc, deleteField } = window.firebaseHelpers;
+        const msgRef = doc(db, "conversations", currentChatId, "messages", msgId);
+        
+        // Take just the first emoji character if they pasted multiple
+        const finalEmoji = Array.from(emoji)[0] || '👍';
+        
+        // Need to know if they already reacted with this emoji to toggle it off
+        // Since we don't have the full reactions map in the DOM easily, we will 
+        // optimistically update it. If they want to toggle, they tap it again.
+        // Actually, we can fetch the document or keep it simple: always set it.
+        // If they want to remove their reaction, they tap the same emoji.
+        
+        // Let's get the current message data to check if we are toggling
+        const { getDoc } = window.firebaseHelpers;
+        const msgSnap = await getDoc(msgRef);
+        
+        if (msgSnap.exists()) {
+            const data = msgSnap.data();
+            const currentReaction = (data.reactions || {})[window.firebaseCurrentUser.uid];
+            
+            if (currentReaction === finalEmoji) {
+                // Toggle off
+                await updateDoc(msgRef, {
+                    [`reactions.${window.firebaseCurrentUser.uid}`]: deleteField()
+                });
+            } else {
+                // Set new reaction
+                await updateDoc(msgRef, {
+                    [`reactions.${window.firebaseCurrentUser.uid}`]: finalEmoji
+                });
+            }
+        }
+    } catch (e) {
+        console.error("Error reacting to message: ", e);
+        showToast("Failed to react to message.");
     }
 };

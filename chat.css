@@ -248,3 +248,32 @@
     box-shadow: 0 0 0 2px rgba(107, 66, 38, 0.1);
 }
 
+/* Swipe to Delete */
+.swipe-chat-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    display: flex;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+.swipe-chat-container::-webkit-scrollbar { 
+    display: none; 
+}
+.swipe-action-delete {
+    flex: 0 0 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dc3545;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    scroll-snap-align: end;
+}
+.swipe-content {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    margin-bottom: 0 !important;
+}

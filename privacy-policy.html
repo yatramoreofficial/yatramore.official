@@ -27,7 +27,7 @@
         content="Read the YatrAmore Privacy Policy. We are committed to transparency and protecting your world while you explore ours.">
 
     <!-- High-Level Security: Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://*.adtrafficquality.google https://www.googletagservices.com https://bat.bing.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://*.adtrafficquality.google https://*.doubleclick.net https://unpkg.com https://adservice.google.com https://bat.bing.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com https://*.adtrafficquality.google; base-uri 'self'; form-action 'self';">
 
     <!-- Immediate Theme Application -->
     <script>
@@ -185,6 +185,15 @@
                     <li>Your name and email address</li>
                     <li>Your country of residence</li>
                     <li>A non-personal Device Fingerprint and Cloudflare Turnstile verification token (used strictly for fraud prevention, bot blocking, and enforcing the one-entry-per-cycle rule)</li>
+                </ul>
+
+                <h3>E. Matchmaking & Community Platform</h3>
+                <p>When you participate in our exclusive matchmaking service, we collect:</p>
+                <ul>
+                    <li><strong>Profile Data:</strong> Information you voluntarily provide to construct your public matchmaking profile, including your name, age, gender, location, religion, bio, and profile picture. This data is visible to other verified members of the community.</li>
+                    <li><strong>Authentication Data:</strong> Your login credentials and authentication state, which are securely managed via Firebase Authentication.</li>
+                    <li><strong>Communications & Chat Logs:</strong> Private messages, chat requests, and interaction timestamps sent through our platform are securely stored in our cloud databases (Firebase/Firestore) to facilitate communication between users.</li>
+                    <li><strong>Reporting & Moderation:</strong> Data related to user blocks and reports (including relevant chat history context) is collected to maintain a safe environment.</li>
                 </ul>
             </div>
 

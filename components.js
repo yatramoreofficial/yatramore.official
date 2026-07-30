@@ -291,6 +291,12 @@ const YatrAmore = {
             <form id="auth-form" data-mode="login">
                 <div id="auth-error" class="auth-error" style="display: none; background: rgba(244, 67, 54, 0.1); color: #F44336; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem;"></div>
                 
+                <!-- MULTI-HONEYPOT (Bots will fill this, humans won't see it) -->
+                <div style="position: absolute; opacity: 0; left: -9999px; pointer-events: none;" aria-hidden="true">
+                    <input type="text" id="auth-hp-website" name="website" tabindex="-1" autocomplete="off">
+                    <input type="text" id="auth-hp-phone" name="phone-ext" tabindex="-1" autocomplete="off">
+                </div>
+
                 <div class="auth-input-group">
                     <label for="auth-email">Email Address</label>
                     <input type="email" id="auth-email" required placeholder="you@example.com">
@@ -308,6 +314,12 @@ const YatrAmore = {
                 <div class="auth-input-group" id="auth-confirm-password-group" style="display: none;">
                     <label for="auth-confirm-password">Confirm Password</label>
                     <input type="password" id="auth-confirm-password" placeholder="••••••••">
+                </div>
+
+                <!-- MATH CAPTCHA -->
+                <div class="auth-input-group" id="auth-captcha-group" style="margin-top: 15px; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 15px;">
+                    <label id="auth-captcha-label" for="auth-captcha-answer" style="color: var(--brand-brown); font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-shield-halved"></i> Security Check: What is 0 + 0?</label>
+                    <input type="number" id="auth-captcha-answer" required placeholder="Enter the sum">
                 </div>
 
                 <button type="submit" id="auth-submit-btn" class="auth-submit-btn">

@@ -100,15 +100,8 @@ function initAuthSystem() {
         currentUser = user;
         window.firebaseCurrentUser = user; // Expose globally
 
-        // Save email to users collection for Admin dashboard visibility
-        if (user && window.firebaseHelpers && window.firebaseDb) {
-            try {
-                const { doc, setDoc } = window.firebaseHelpers;
-                await setDoc(doc(window.firebaseDb, 'users', user.uid), { email: user.email }, { merge: true });
-            } catch (err) {
-                console.warn("Could not sync email to users collection:", err);
-            }
-        }
+        // Intentionally NOT writing to 'users' collection here to save database writes!
+        // The email is saved during registration instead.
 
         // Admin Button Toggle
         const adminBtn = document.getElementById('admin-dashboard-btn');
@@ -233,6 +226,23 @@ function setupAuthUIListeners() {
 
             errorContainer.style.display = 'none';
             errorContainer.textContent = '';
+            
+            // Honeypot Check
+            const hpWebsite = document.getElementById('auth-hp-website');
+            const hpPhone = document.getElementById('auth-hp-phone');
+            if ((hpWebsite && hpWebsite.value) || (hpPhone && hpPhone.value)) {
+                return; // Silently fail for bots
+            }
+
+            // Math CAPTCHA Check
+            const captchaInput = document.getElementById('auth-captcha-answer');
+            if (captchaInput && parseInt(captchaInput.value) !== window.authCaptchaAnswer) {
+                errorContainer.style.display = 'block';
+                errorContainer.textContent = 'Incorrect Security Check answer. Please try again.';
+                window.generateAuthCaptcha();
+                return;
+            }
+
             const originalBtnText = submitBtn.textContent;
             submitBtn.textContent = 'Please wait...';
             submitBtn.disabled = true;
@@ -250,6 +260,13 @@ function setupAuthUIListeners() {
                         throw new Error("Passwords do not match.");
                     }
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    
+                    // Save email to users collection (only once on registration to save writes!)
+                    if (window.firebaseHelpers && window.firebaseDb) {
+                        const { doc, setDoc } = window.firebaseHelpers;
+                        await setDoc(doc(window.firebaseDb, 'users', userCredential.user.uid), { email: userCredential.user.email }, { merge: true });
+                    }
+                    
                     await sendEmailVerification(userCredential.user);
                     // Do not sign out! They will be sent to the Verify Email gate.
                 }
@@ -289,6 +306,22 @@ function setupAuthUIListeners() {
             if (!email) {
                 errorContainer.style.display = 'block';
                 errorContainer.textContent = 'Please enter your email address first to reset your password.';
+                return;
+            }
+            
+            // Honeypot Check
+            const hpWebsite = document.getElementById('auth-hp-website');
+            const hpPhone = document.getElementById('auth-hp-phone');
+            if ((hpWebsite && hpWebsite.value) || (hpPhone && hpPhone.value)) {
+                return; // Silently fail for bots
+            }
+
+            // Math CAPTCHA Check
+            const captchaInput = document.getElementById('auth-captcha-answer');
+            if (captchaInput && parseInt(captchaInput.value) !== window.authCaptchaAnswer) {
+                errorContainer.style.display = 'block';
+                errorContainer.textContent = 'Incorrect Security Check answer. Please try again.';
+                window.generateAuthCaptcha();
                 return;
             }
 
@@ -342,12 +375,25 @@ function setupAuthUIListeners() {
     }
 }
 
+window.generateAuthCaptcha = () => {
+    const label = document.getElementById('auth-captcha-label');
+    const answerInput = document.getElementById('auth-captcha-answer');
+    if (!label || !answerInput) return;
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    window.authCaptchaAnswer = num1 + num2;
+    label.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Security Check: What is ${num1} + ${num2}?`;
+    answerInput.value = '';
+};
+
 function openAuthModal(mode = 'login') {
     const authModal = document.getElementById('auth-modal');
     const authOverlay = document.getElementById('auth-overlay');
     if (authModal && authOverlay) {
         authModal.classList.add('active');
         authOverlay.classList.add('active');
+        
+        if (window.generateAuthCaptcha) window.generateAuthCaptcha();
 
         const tabLogin = document.getElementById('auth-tab-login');
         const tabSignup = document.getElementById('auth-tab-signup');
@@ -413,6 +459,7 @@ function setupUIListeners() {
             if (panel) panel.style.display = 'flex';
             setTimeout(() => {
                 if (panel) panel.classList.add('open');
+                document.body.style.overflow = 'hidden';
                 if (window.innerWidth <= 768) {
                     const fab = document.getElementById('mobile-filter-fab');
                     if (fab) fab.classList.add('hide-fab');
@@ -425,6 +472,7 @@ function setupUIListeners() {
 
     const closePanel = () => {
         if (panel) panel.classList.remove('open');
+        document.body.style.overflow = '';
         const fab = document.getElementById('mobile-filter-fab');
         if (fab) fab.classList.remove('hide-fab');
         const ac = document.querySelector('.accessibility-container');
@@ -468,6 +516,29 @@ function setupUIListeners() {
     document.getElementById('back-to-inbox').addEventListener('click', closeActiveChat);
     document.getElementById('close-chat-btn').addEventListener('click', closeActiveChat);
 
+    const chatMenuBtn = document.getElementById('chat-menu-btn');
+    if (chatMenuBtn) {
+        chatMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dropdown = document.getElementById('chat-menu-dropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('chat-menu-dropdown');
+            if (dropdown && dropdown.style.display === 'flex' && !e.target.closest('#chat-menu-dropdown')) {
+                dropdown.style.display = 'none';
+            }
+        });
+        
+        // Close dropdown when an item is clicked
+        document.querySelectorAll('.chat-dropdown-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById('chat-menu-dropdown').style.display = 'none';
+            });
+        });
+    }
+
     document.getElementById('cancel-edit-btn').addEventListener('click', () => {
         if (window.cancelEditMessage) window.cancelEditMessage();
     });
@@ -502,13 +573,22 @@ function setupUIListeners() {
         }
 
         inputField.value = '';
+        inputField.style.height = '44px';
 
         // Add to subcollection
-        await addDoc(collection(db, "conversations", currentChatId, "messages"), {
+        const msgData = {
             senderId: currentMember.id,
             text: text,
             createdAt: serverTimestamp()
-        });
+        };
+        
+        if (window.replyingToMessageId) {
+            msgData.replyTo = window.replyingToMessageId;
+            msgData.replyToText = window.replyingToRawText;
+            window.cancelReplyMessage();
+        }
+        
+        await addDoc(collection(db, "conversations", currentChatId, "messages"), msgData);
 
         // Update parent doc
         await updateDoc(doc(db, "conversations", currentChatId), {
@@ -527,8 +607,16 @@ function setupUIListeners() {
     };
 
     sendBtn.addEventListener('click', sendMessage);
-    inputField.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
+    inputField.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // Prevent adding a new line
+            sendMessage();
+        }
+    });
+
+    inputField.addEventListener('input', function() {
+        this.style.height = '44px'; // Reset to min-height to calculate correct scrollHeight
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
     });
 
     // Report User
@@ -614,6 +702,10 @@ function closeActiveChat() {
     if (unsubscribeMessages) {
         unsubscribeMessages();
         unsubscribeMessages = null;
+    }
+    if (window.unsubscribeChatConv) {
+        window.unsubscribeChatConv();
+        window.unsubscribeChatConv = null;
     }
 }
 
@@ -888,6 +980,39 @@ window.cancelEditMessage = () => {
     document.getElementById('chat-edit-banner').style.display = 'none';
 };
 
+window.replyingToMessageId = null;
+window.replyingToRawText = null;
+
+window.triggerReplyToMessage = (msgElement) => {
+    const msgId = msgElement.dataset.msgId;
+    const rawText = decodeURIComponent(msgElement.dataset.rawText);
+    const isMe = msgElement.dataset.isMe === 'true';
+    
+    window.replyingToMessageId = msgId;
+    window.replyingToRawText = rawText;
+    
+    document.getElementById('reply-banner-name').textContent = isMe ? 'You' : (currentChatOtherUser ? currentChatOtherUser.name : 'User');
+    document.getElementById('reply-banner-text').textContent = rawText;
+    document.getElementById('chat-reply-banner').style.display = 'flex';
+    document.getElementById('chat-input').focus();
+    
+    // Hide edit banner if active
+    window.cancelEditMessage();
+};
+
+window.cancelReplyMessage = () => {
+    window.replyingToMessageId = null;
+    window.replyingToRawText = null;
+    document.getElementById('chat-reply-banner').style.display = 'none';
+};
+
+const cancelReplyBtn = document.getElementById('cancel-reply-btn');
+if (cancelReplyBtn) {
+    cancelReplyBtn.addEventListener('click', () => {
+        window.cancelReplyMessage();
+    });
+}
+
 window.deleteConversationById = async (chatId) => {
     if (!chatId || !window.firebaseCurrentUser) return;
     if (!confirm("Are you sure you want to delete this chat? This will clear the chat history for you.")) return;
@@ -925,6 +1050,9 @@ window.openChat = async (docId, otherUserJson) => {
     document.getElementById('active-chat-view').style.display = 'flex';
     document.getElementById('chat-input').focus();
 
+    // Listen to conversation for block status, deletedAt, and real-time Read Receipts
+    let chatDeletedAt = 0;
+    
     // Clear unread status and check block status
     const { updateDoc, doc, arrayRemove, getDoc } = window.firebaseHelpers;
     if (updateDoc && doc && arrayRemove) {
@@ -932,10 +1060,32 @@ window.openChat = async (docId, otherUserJson) => {
             unreadBy: arrayRemove(currentMember.id)
         }).catch(e => console.error(e));
 
-        // Fetch conversation to check block status
-        getDoc(doc(window.firebaseDb, "conversations", docId)).then(docSnap => {
+        window.conversationReadState = false; // Tracks if the OTHER user has read our messages
+        
+        window.unsubscribeChatConv = window.firebaseHelpers.onSnapshot(doc(window.firebaseDb, "conversations", docId), (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
+                
+                // Track deletedAt
+                if (data.deletedAt && data.deletedAt[currentMember.id]) {
+                    chatDeletedAt = data.deletedAt[currentMember.id];
+                }
+                
+                // Track Read Receipts (if otherUser is NOT in unreadBy, they have read it)
+                const unreadBy = data.unreadBy || [];
+                const previousReadState = window.conversationReadState;
+                window.conversationReadState = !unreadBy.includes(otherUser.id);
+                
+                // If it just transitioned to READ, instantly update the checkmarks on screen
+                if (window.conversationReadState && !previousReadState) {
+                    document.querySelectorAll('.msg-checkmarks.sent').forEach(el => {
+                        el.classList.remove('sent');
+                        el.classList.add('read');
+                        el.innerHTML = '<i class="fa-solid fa-check-double"></i>';
+                    });
+                }
+                
+                // Track Block Status
                 const blockedBy = data.blockedBy || [];
                 const amIBlocked = blockedBy.includes(otherUser.id);
                 const didIBlock = blockedBy.includes(currentMember.id);
@@ -971,22 +1121,9 @@ window.openChat = async (docId, otherUserJson) => {
                     if (sendBtn) sendBtn.disabled = false;
                 }
             }
-        }).catch(e => console.error("Error fetching block status:", e));
-    }
-
-    // Get deletedAt timestamp for this chat for the current user
-    let chatDeletedAt = 0;
-    try {
-        const { doc, getDoc } = window.firebaseHelpers;
-        const chatDocSnap = await getDoc(doc(window.firebaseDb, "conversations", docId));
-        if (chatDocSnap.exists()) {
-            const cData = chatDocSnap.data();
-            if (cData.deletedAt && cData.deletedAt[currentMember.id]) {
-                chatDeletedAt = cData.deletedAt[currentMember.id];
-            }
-        }
-    } catch (e) {
-        console.error("Error fetching chat deletedAt:", e);
+        }, (error) => {
+            console.error("Error listening to conversation:", error);
+        });
     }
 
     // Listen for messages
@@ -1020,9 +1157,21 @@ window.openChat = async (docId, otherUserJson) => {
         }
         isInitialLoad = false;
 
-        if (hasNewIncoming && window.playChatSound) {
-            window.playChatSound('receive');
+        if (hasNewIncoming) {
+            if (window.playChatSound) window.playChatSound('receive');
+            
+            // Debounce Read Receipt Update (saves database writes on rapid-fire messaging)
+            if (window.readReceiptDebounceTimer) clearTimeout(window.readReceiptDebounceTimer);
+            window.readReceiptDebounceTimer = setTimeout(() => {
+                if (window.firebaseHelpers && window.firebaseHelpers.updateDoc) {
+                    window.firebaseHelpers.updateDoc(window.firebaseHelpers.doc(window.firebaseDb, "conversations", docId), {
+                        unreadBy: window.firebaseHelpers.arrayRemove(currentMember.id)
+                    }).catch(e => console.error("Error updating read state:", e));
+                }
+            }, 3000);
         }
+
+        let lastDateStr = null;
 
         snapshot.docs.forEach(doc => {
             const data = doc.data();
@@ -1041,14 +1190,35 @@ window.openChat = async (docId, otherUserJson) => {
             let timeStr = '';
             let isWithin5Mins = false;
             
+            let currentDateStr = '';
+
             if (data.createdAt) {
                 const date = data.createdAt.toDate();
                 timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const now = Date.now();
                 isWithin5Mins = (now - date.getTime()) < 5 * 60 * 1000;
+                
+                // Format Date Separator
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (date.toDateString() === today.toDateString()) {
+                    currentDateStr = "Today";
+                } else if (date.toDateString() === yesterday.toDateString()) {
+                    currentDateStr = "Yesterday";
+                } else {
+                    currentDateStr = date.toLocaleDateString([], { month: 'short', day: 'numeric', year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined });
+                }
             } else {
                 timeStr = "Sending...";
                 isWithin5Mins = true; // Pending write, so it was just sent
+                currentDateStr = "Today";
+            }
+            
+            if (currentDateStr !== lastDateStr) {
+                html += `<div class="chat-date-separator"><span>${currentDateStr}</span></div>`;
+                lastDateStr = currentDateStr;
             }
 
             const messageContent = data.isDeleted 
@@ -1066,18 +1236,32 @@ window.openChat = async (docId, otherUserJson) => {
                      data-is-starred="${!!isStarred}"
                      data-is-within-5mins="${isWithin5Mins}">
                     <div class="message-content">
+                        ${data.replyToText && !data.isDeleted ? `
+                        <div style="background: rgba(0,0,0,0.08); border-left: 3px solid ${isMe ? 'rgba(255,255,255,0.6)' : 'var(--brand-brown)'}; padding: 6px 10px; margin-bottom: 8px; border-radius: 6px; font-size: 0.85rem; opacity: 0.85;">
+                            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic;">${window.escapeHtml(data.replyToText)}</div>
+                        </div>
+                        ` : ''}
                         <div class="message-text">${messageContent}</div>
                         <div class="message-meta" style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px; font-size: 0.7rem; opacity: 0.7; gap: 6px;">
                             <i class="fa-solid fa-star msg-star-indicator" style="display: ${isStarred ? 'inline' : 'none'};"></i>
                             <span class="message-time">${timeStr}</span>
                             ${data.isEdited && !data.isDeleted ? '<span class="message-edited" style="margin-left: 4px;">(edited)</span>' : ''}
+                            ${isMe ? `<span class="msg-checkmarks ${data.createdAt ? (window.conversationReadState ? 'read' : 'sent') : 'pending'}">${data.createdAt ? (window.conversationReadState ? '<i class="fa-solid fa-check-double"></i>' : '<i class="fa-solid fa-check-double"></i>') : '<i class="fa-regular fa-clock"></i>'}</span>` : ''}
                         </div>
                     </div>
                     ${(() => {
                         if (data.reactions && Object.keys(data.reactions).length > 0) {
-                            const uniqueEmojis = [...new Set(Object.values(data.reactions))];
-                            const count = Object.keys(data.reactions).length;
-                            return `<div class="message-reactions">${uniqueEmojis.map(e => window.escapeHtml(e)).join('')}${count > 1 ? `<span style="font-size: 0.65rem; margin-left: 3px; font-weight: bold;">${count}</span>` : ''}</div>`;
+                            const allEmojis = Object.values(data.reactions);
+                            const uniqueEmojis = [...new Set(allEmojis)];
+                            const count = allEmojis.length;
+                            
+                            if (count > 1 && uniqueEmojis.length === 1) {
+                                // Both reacted with the exact same emoji
+                                return `<div class="message-reactions">${window.escapeHtml(uniqueEmojis[0])}<span style="font-size: 0.65rem; margin-left: 3px; font-weight: bold;">${count}</span></div>`;
+                            } else {
+                                // Different emojis, just show them side by side
+                                return `<div class="message-reactions">${uniqueEmojis.map(e => window.escapeHtml(e)).join('')}</div>`;
+                            }
                         }
                         return '';
                     })()}
@@ -1270,6 +1454,7 @@ window.openChatFromGrid = (targetUserId) => {
         panel.style.display = 'flex';
         setTimeout(() => {
             panel.classList.add('open');
+            document.body.style.overflow = 'hidden';
             if (window.innerWidth <= 768) {
                 const fab = document.getElementById('mobile-filter-fab');
                 if (fab) fab.classList.add('hide-fab');
@@ -3028,38 +3213,137 @@ let currentTargetMsgId = null;
 let currentTargetMsgElement = null;
 
 const chatMessagesContainer = document.getElementById('chat-messages');
-const chatOverlay = document.getElementById('chat-overlay');
+const chatOverlay = document.getElementById('ctx-overlay');
 const reactionBar = document.getElementById('ctx-reaction-bar');
 const actionMenu = document.getElementById('ctx-action-menu');
 let clonedMsgElement = null;
 
+let touchStartX = 0;
+let touchStartY = 0;
+let isSwiping = false;
+
 if (chatMessagesContainer) {
-    chatMessagesContainer.addEventListener('touchstart', handlePressStart, { passive: true });
-    chatMessagesContainer.addEventListener('mousedown', handlePressStart);
-    chatMessagesContainer.addEventListener('touchend', handlePressEnd);
-    chatMessagesContainer.addEventListener('mouseup', handlePressEnd);
-    chatMessagesContainer.addEventListener('mouseleave', handlePressEnd);
-    chatMessagesContainer.addEventListener('touchmove', handlePressEnd, { passive: true });
+    chatMessagesContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+    chatMessagesContainer.addEventListener('mousedown', handleTouchStart);
+    chatMessagesContainer.addEventListener('touchend', handleTouchEnd);
+    chatMessagesContainer.addEventListener('mouseup', handleTouchEnd);
+    chatMessagesContainer.addEventListener('mouseleave', handleTouchEnd);
+    chatMessagesContainer.addEventListener('touchmove', handleTouchMove, { passive: true });
 }
 
-function handlePressStart(e) {
+let lastTapTime = 0;
+let lastTapMsgId = null;
+
+function handleTouchStart(e) {
     const msgElement = e.target.closest('.chat-message');
     if (!msgElement) return;
     
     // Ignore if already deleted
     if (msgElement.dataset.isDeleted === 'true') return;
 
+    touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
+    isSwiping = false;
+
+    const msgId = msgElement.dataset.msgId;
+    const now = Date.now();
+    
+    // Double tap detection (within 300ms)
+    if (now - lastTapTime < 300 && lastTapMsgId === msgId) {
+        // Prevent long press
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+        lastTapTime = 0; // Reset
+        
+        // Bounce animation
+        msgElement.style.transition = 'transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        msgElement.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            msgElement.style.transform = 'scale(1)';
+        }, 150);
+        
+        // Trigger reaction
+        if (window.reactToMessage) {
+            window.reactToMessage(msgId, '❤️');
+        }
+        return;
+    }
+    
+    lastTapTime = now;
+    lastTapMsgId = msgId;
+
     // Start timer for 500ms
     pressTimer = setTimeout(() => {
-        showContextMenu(msgElement, e);
+        if (!isSwiping) {
+            showContextMenu(msgElement, e);
+        }
     }, 500);
 }
 
-function handlePressEnd(e) {
+function handleTouchMove(e) {
+    if (!touchStartX) return;
+    
+    const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    const deltaX = currentX - touchStartX;
+    const deltaY = Math.abs(currentY - touchStartY);
+    
+    // Cancel swipe if moving vertically more than horizontally
+    if (deltaY > 15) {
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+        return;
+    }
+    
+    if (deltaX > 15) { // Swiping right
+        isSwiping = true;
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+        const msgElement = e.target.closest('.chat-message');
+        if (msgElement) {
+            const maxSwipe = 60;
+            const swipeDist = Math.min(deltaX, maxSwipe);
+            msgElement.style.transition = 'none';
+            msgElement.style.transform = `translateX(${swipeDist}px)`;
+        }
+    }
+}
+
+function handleTouchEnd(e) {
     if (pressTimer) {
         clearTimeout(pressTimer);
         pressTimer = null;
     }
+    
+    if (!touchStartX) return;
+    
+    const currentX = (e.changedTouches && e.changedTouches.length > 0) ? e.changedTouches[0].clientX : (e.clientX || touchStartX);
+    const deltaX = currentX - touchStartX;
+    
+    const msgElement = e.target.closest('.chat-message');
+    
+    if (isSwiping && msgElement) {
+        if (deltaX > 40) {
+            // Trigger reply
+            if (window.triggerReplyToMessage) {
+                window.triggerReplyToMessage(msgElement);
+            }
+        }
+        // Snap back
+        msgElement.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        msgElement.style.transform = 'translateX(0)';
+    }
+    
+    touchStartX = 0;
+    touchStartY = 0;
+    isSwiping = false;
 }
 
 function showContextMenu(msgElement, event) {

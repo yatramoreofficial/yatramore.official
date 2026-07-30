@@ -119,6 +119,8 @@
     display: flex;
     gap: 8px;
     margin-top: 12px;
+    position: relative;
+    z-index: 10;
 }
 
 /* Expandable Profile Section */

@@ -255,8 +255,12 @@ function setupAuthUIListeners() {
                 }
                 closeModal();
                 // Only redirect if they logged in successfully (not on signup, because they need to verify)
-                if (mode === 'login' && authForm.dataset.redirect) {
-                    window.location.href = authForm.dataset.redirect;
+                if (mode === 'login') {
+                    if (authForm.dataset.redirect) {
+                        window.location.href = authForm.dataset.redirect;
+                    } else {
+                        window.location.reload();
+                    }
                 }
             } catch (error) {
                 errorContainer.style.display = 'block';
@@ -690,8 +694,8 @@ function listenForInboxUpdates() {
                                     <i class="fas fa-user"></i> View Profile
                                 </button>
                                 ` : ''}
-                                <button class="btn-request-action" onclick="event.stopPropagation(); handleRequest('${data.id}', 'declined')">Decline</button>
-                                <button class="btn-request-action" onclick="event.stopPropagation(); handleRequest('${data.id}', 'accepted')">Accept</button>
+                                <button class="btn-request-action" onclick="if(event) event.stopPropagation(); handleRequest('${data.id}', 'declined')">Decline</button>
+                                <button class="btn-request-action" onclick="if(event) event.stopPropagation(); handleRequest('${data.id}', 'accepted')">Accept</button>
                             </div>
                         </div>
                     `;
@@ -851,12 +855,17 @@ function listenForInboxUpdates() {
 
 // Global functions for inline onclick handlers
 window.handleRequest = async (docId, newStatus) => {
-    const { updateDoc, doc, serverTimestamp } = window.firebaseHelpers;
-    const db = window.firebaseDb;
-    await updateDoc(doc(db, "conversations", docId), {
-        status: newStatus,
-        updatedAt: serverTimestamp()
-    });
+    try {
+        const { updateDoc, doc, serverTimestamp } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+        await updateDoc(doc(db, "conversations", docId), {
+            status: newStatus,
+            updatedAt: serverTimestamp()
+        });
+    } catch (error) {
+        console.error("Firebase permission error during handleRequest:", error);
+        alert("Action failed: Missing or insufficient permissions. Please check your Firebase Security Rules.");
+    }
 };
 
 // ==========================================
@@ -2050,7 +2059,7 @@ function renderProfiles(profiles) {
                 <i class="fa-solid fa-clock"></i> Request Pending...
             </button>`;
         } else if (isCooldown || (window.pendingChatUserIds && window.pendingChatUserIds.has(firebaseUid))) {
-            btnHtml = `<button onclick="revokeInterest('${firebaseUid}', this)" class="btn-interest btn-revoke">
+            btnHtml = `<button onclick="if(event) event.stopPropagation(); revokeInterest('${firebaseUid}', this)" class="btn-interest btn-revoke">
                 <i class="fas fa-undo"></i> Revoke Request
             </button>`;
         } else {
@@ -2097,7 +2106,7 @@ function renderProfiles(profiles) {
                 </div>
                 
                 <p class="profile-bio" style="color: var(--text-main); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; opacity: 0.9; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">"${bio}"</p>
-                <div style="margin-top: auto;">
+                <div style="margin-top: auto; position: relative; z-index: 10;">
                     ${btnHtml}
                 </div>
             </div>
@@ -2222,26 +2231,33 @@ window.expressInterest = async function expressInterest(targetUserId, targetName
 
 window.revokeInterest = async (targetUserId, btnElement) => {
     if (confirm("Are you sure you want to revoke this chat request?")) {
-        const originalHtml = btnElement.innerHTML;
-        btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Revoking...';
+        const btnHtmlOriginal = btnElement.innerHTML;
+        btnElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Revoking...`;
         btnElement.style.opacity = '0.7';
 
-        // 1. Clear local and cloud cooldown
-        localStorage.removeItem('interest_' + targetUserId);
-        if (window.firebaseCurrentUser && window.firebaseHelpers) {
-            const { doc, setDoc } = window.firebaseHelpers;
-            const db = window.firebaseDb;
-            delete currentUserMetaData['interest_' + targetUserId];
-            setDoc(doc(db, 'users', window.firebaseCurrentUser.uid), { metaData: currentUserMetaData }, { merge: true }).catch(e => console.error(e));
-        }
+        try {
+            // 1. Clear local and cloud cooldown
+            localStorage.removeItem('interest_' + targetUserId);
+            if (window.firebaseCurrentUser && window.firebaseHelpers) {
+                const { doc, setDoc } = window.firebaseHelpers;
+                const db = window.firebaseDb;
+                delete currentUserMetaData['interest_' + targetUserId];
+                setDoc(doc(db, 'users', window.firebaseCurrentUser.uid), { metaData: currentUserMetaData }, { merge: true }).catch(e => console.error(e));
+            }
 
-        // 2. Tell chat.js to delete the pending request from Firebase
-        if (window.revokeChatRequest) {
-            await window.revokeChatRequest(targetUserId);
-        }
+            // 2. Tell chat.js to delete the pending request from Firebase
+            if (window.revokeChatRequest) {
+                await window.revokeChatRequest(targetUserId);
+            }
 
-        // 3. Reset Button UI by re-rendering
-        window.forceReRenderProfiles();
+            // 3. Reset Button UI by re-rendering
+            window.forceReRenderProfiles();
+        } catch (error) {
+            console.error("Firebase error revoking request:", error);
+            alert("Revoke failed: Missing or insufficient permissions. Please check your Firebase Security Rules.");
+            btnElement.innerHTML = btnHtmlOriginal;
+            btnElement.style.opacity = '1';
+        }
     }
 }
 
@@ -2280,7 +2296,7 @@ window.updateProfileButtons = () => {
                 <i class="fa-solid fa-clock"></i> Request Pending...
             </button>`;
         } else if (isCooldown || isPending) {
-            newBtnHtml = `<button onclick="revokeInterest('${firebaseUid}', this)" class="btn-interest btn-revoke">
+            newBtnHtml = `<button onclick="if(event) event.stopPropagation(); revokeInterest('${firebaseUid}', this)" class="btn-interest btn-revoke">
                 <i class="fas fa-undo"></i> Revoke Request
             </button>`;
         } else {

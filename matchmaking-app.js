@@ -1004,7 +1004,7 @@ window.openChat = async (docId, otherUserJson) => {
         let html = `
             <div style="text-align: center; margin: 15px; padding: 12px 15px; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);">
                 <div style="font-weight: 600; margin-bottom: 5px; color: #b78a00;"><i class="fa-solid fa-shield-halved"></i> YatrAmore Safety Notice</div>
-                For your protection, never share sensitive personal information, passwords, or financial details. YatrAmore is not responsible for your interactions or real-life meetings. If this user makes you uncomfortable, please use the top right menu to block (<i class="fa-solid fa-ban"></i>) or report (<i class="fa-solid fa-flag"></i>) them.
+                For your protection, never share sensitive personal information, passwords, or financial details. YatrAmore is not responsible for your interactions or real-life meetings. If this user makes you uncomfortable, please use the top right menu to block <i class="fa-solid fa-ban"></i> or report <i class="fa-solid fa-flag"></i> them.
             </div>
         `;
 
@@ -1544,15 +1544,7 @@ function initMatchmaking() {
 document.addEventListener('DOMContentLoaded', () => {
     initMatchmaking();
     
-    // Move the filter FAB into the fab-group so it sits next to the other FABs
-    setTimeout(() => {
-        const fabGroup = document.querySelector('.fab-group');
-        const filterFab = document.getElementById('mobile-filter-fab');
-        if (fabGroup && filterFab) {
-            // Append at the end of the fab-group (right side)
-            fabGroup.appendChild(filterFab);
-        }
-    }, 50);
+    // Keep filter FAB separate from fab-group so it can be fixed to bottom-right
 });
 
 function setupProfileForm() {

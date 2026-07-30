@@ -152,12 +152,13 @@
     transition: all 0.2s;
     font-size: 0.9rem;
 }
-
-.btn-request-action:hover {
-    background: var(--brand-brown);
-    color: var(--bg-main);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(107, 66, 38, 0.15);
+@media (hover: hover) {
+    .btn-request-action:hover {
+        background: var(--brand-brown);
+        color: var(--bg-main);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(107, 66, 38, 0.15);
+    }
 }
 
 /* Custom Scrollbar for Chat */

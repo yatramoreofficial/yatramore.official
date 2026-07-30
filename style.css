@@ -3446,8 +3446,10 @@ select.filter-input {
     color: var(--status-error, #F44336);
 }
 
-.btn-interest.btn-revoke:hover {
-    background: rgba(244, 67, 54, 0.15);
+@media (hover: hover) {
+    .btn-interest.btn-revoke:hover {
+        background: rgba(244, 67, 54, 0.15);
+    }
 }
 
 .profile-card {
@@ -3465,15 +3467,17 @@ select.filter-input {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.profile-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(107, 66, 38, 0.15);
-    border-color: rgba(107, 66, 38, 0.3);
-}
+@media (hover: hover) {
+    .profile-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(107, 66, 38, 0.15);
+        border-color: rgba(107, 66, 38, 0.3);
+    }
 
-[data-theme="dark"] .profile-card:hover {
-    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    [data-theme="dark"] .profile-card:hover {
+        box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
 }
 
 .profile-image-wrapper {
@@ -3615,20 +3619,17 @@ select.filter-input {
     font-family: inherit;
 }
 
-.btn-interest:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(107, 66, 38, 0.25);
-    background: var(--brand-brown-hover);
-}
+@media (hover: hover) {
+    .btn-interest:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(107, 66, 38, 0.25);
+        background: var(--brand-brown-hover);
+    }
 
-[data-theme="dark"] .btn-interest {
-    background: var(--brand-brown);
-    color: var(--brand-dark);
-}
-
-[data-theme="dark"] .btn-interest:hover {
-    background: var(--brand-brown-hover);
-    color: var(--brand-white);
+    [data-theme="dark"] .btn-interest:hover {
+        background: var(--brand-brown-hover);
+        color: var(--brand-white);
+    }
 }
 
 .btn-disabled {
@@ -3651,8 +3652,10 @@ select.filter-input {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.btn-interest:hover i {
-    transform: scale(1.2) rotate(15deg);
+@media (hover: hover) {
+    .btn-interest:hover i {
+        transform: scale(1.2) rotate(15deg);
+    }
 }
 
 /* Modal Styles */

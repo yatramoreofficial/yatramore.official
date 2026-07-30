@@ -690,8 +690,8 @@ function listenForInboxUpdates() {
                                     <i class="fas fa-user"></i> View Profile
                                 </button>
                                 ` : ''}
-                                <button class="btn-request-action" onclick="handleRequest('${data.id}', 'declined')">Decline</button>
-                                <button class="btn-request-action" onclick="handleRequest('${data.id}', 'accepted')">Accept</button>
+                                <button class="btn-request-action" onclick="event.stopPropagation(); handleRequest('${data.id}', 'declined')">Decline</button>
+                                <button class="btn-request-action" onclick="event.stopPropagation(); handleRequest('${data.id}', 'accepted')">Accept</button>
                             </div>
                         </div>
                     `;

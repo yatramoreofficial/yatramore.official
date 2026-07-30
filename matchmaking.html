@@ -23,7 +23,7 @@
     </script>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <meta name="robots" content="noindex, nofollow">
     <meta name="p:domain_verify" content="e99e550eff5a983378b5723a5b1e9ee8" />
     <title>Matchmaking Directory | YatrAmore</title>
@@ -73,7 +73,7 @@
 
     <!-- Font Awesome & Styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="style.css?v=16">
     <link rel="stylesheet" href="chat.css?v=15">
 
     <!-- Removed Memberstack dependencies and watchers -->
@@ -464,23 +464,23 @@
     </main>
 
     <!-- Edit Profile Modal -->
-    <div id="edit-modal" class="edit-modal-overlay">
-        <div class="edit-modal-content glass-card" style="border-radius: 20px; overflow: hidden; max-height: 90vh;">
+    <div id="edit-modal" class="edit-modal-overlay" style="align-items: flex-start; overflow-y: auto; padding: 2rem 1rem;">
+        <div class="edit-modal-content glass-card" style="border-radius: 20px; margin: auto;">
             <button onclick="document.getElementById('edit-modal').classList.remove('active')" class="edit-modal-close">
                 <i class="fas fa-times"></i>
             </button>
 
-            <div style="padding: 2rem; flex-grow: 1; overflow-y: auto;">
+            <div style="padding: 2rem; flex-grow: 1;">
                 <h2 style="color: var(--brand-brown); margin-bottom: 0.5rem; text-align: center;">Your Profile</h2>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">Please fill out your details to join the directory.</p>
                 
                 <form id="native-profile-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 200px;">
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
                             <label style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">First Name *</label>
                             <input type="text" id="profile-firstName" required maxlength="50" pattern="[a-zA-Z\s\-']+" title="Only letters, spaces, hyphens, and apostrophes are allowed" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main);">
                         </div>
-                        <div style="flex: 1; min-width: 200px;">
+                        <div style="flex: 1;">
                             <label style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">Gender *</label>
                             <select id="profile-gender" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); color: var(--text-main);">
                                 <option value="">Select Gender...</option>

@@ -142,7 +142,7 @@ function checkUserNotifications(uid) {
     try {
         const { doc, onSnapshot, deleteDoc } = window.firebaseHelpers;
         const db = window.firebaseDb;
-        
+
         if (notificationListenerUnsubscribe) {
             notificationListenerUnsubscribe();
         }
@@ -157,7 +157,7 @@ function checkUserNotifications(uid) {
                         alert(data.message);
                     }
                     deleteDoc(doc(db, "notifications", uid));
-                    
+
                     // Auto-refresh the page after 3 seconds so their profile/grid updates
                     setTimeout(() => window.location.reload(), 3000);
                 }, 1500); // Small delay to let UI load completely
@@ -226,7 +226,7 @@ function setupAuthUIListeners() {
 
             errorContainer.style.display = 'none';
             errorContainer.textContent = '';
-            
+
             // Honeypot Check
             const hpWebsite = document.getElementById('auth-hp-website');
             const hpPhone = document.getElementById('auth-hp-phone');
@@ -260,13 +260,13 @@ function setupAuthUIListeners() {
                         throw new Error("Passwords do not match.");
                     }
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    
+
                     // Save email to users collection (only once on registration to save writes!)
                     if (window.firebaseHelpers && window.firebaseDb) {
                         const { doc, setDoc } = window.firebaseHelpers;
                         await setDoc(doc(window.firebaseDb, 'users', userCredential.user.uid), { email: userCredential.user.email }, { merge: true });
                     }
-                    
+
                     await sendEmailVerification(userCredential.user);
                     // Do not sign out! They will be sent to the Verify Email gate.
                 }
@@ -304,7 +304,7 @@ function setupAuthUIListeners() {
                 errorContainer.textContent = 'Please enter your email address first to reset your password.';
                 return;
             }
-            
+
             // Honeypot Check
             const hpWebsite = document.getElementById('auth-hp-website');
             const hpPhone = document.getElementById('auth-hp-phone');
@@ -388,7 +388,7 @@ function openAuthModal(mode = 'login') {
     if (authModal && authOverlay) {
         authModal.classList.add('active');
         authOverlay.classList.add('active');
-        
+
         if (window.generateAuthCaptcha) window.generateAuthCaptcha();
 
         const tabLogin = document.getElementById('auth-tab-login');
@@ -426,7 +426,7 @@ function initChatSystem() {
             if (!isChatInitialized) {
                 setupUIListeners();
                 listenForInboxUpdates();
-                
+
                 // Monitor keyboard state on iOS for safe-area fixes
                 if (window.visualViewport) {
                     window.visualViewport.addEventListener('resize', () => {
@@ -437,7 +437,7 @@ function initChatSystem() {
                         }
                     });
                 }
-                
+
                 isChatInitialized = true;
             }
         } else {
@@ -538,7 +538,7 @@ function setupUIListeners() {
                 dropdown.style.display = 'none';
             }
         });
-        
+
         // Close dropdown when an item is clicked
         document.querySelectorAll('.chat-dropdown-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -589,13 +589,13 @@ function setupUIListeners() {
             text: text,
             createdAt: serverTimestamp()
         };
-        
+
         if (window.replyingToMessageId) {
             msgData.replyTo = window.replyingToMessageId;
             msgData.replyToText = window.replyingToRawText;
             window.cancelReplyMessage();
         }
-        
+
         await addDoc(collection(db, "conversations", currentChatId, "messages"), msgData);
 
         // Update parent doc
@@ -622,7 +622,7 @@ function setupUIListeners() {
         }
     });
 
-    inputField.addEventListener('input', function() {
+    inputField.addEventListener('input', function () {
         this.style.height = '44px'; // Reset to min-height to calculate correct scrollHeight
         this.style.height = Math.min(this.scrollHeight, 120) + 'px';
     });
@@ -995,15 +995,15 @@ window.triggerReplyToMessage = (msgElement) => {
     const msgId = msgElement.dataset.msgId;
     const rawText = decodeURIComponent(msgElement.dataset.rawText);
     const isMe = msgElement.dataset.isMe === 'true';
-    
+
     window.replyingToMessageId = msgId;
     window.replyingToRawText = rawText;
-    
+
     document.getElementById('reply-banner-name').textContent = isMe ? 'You' : (currentChatOtherUser ? currentChatOtherUser.name : 'User');
     document.getElementById('reply-banner-text').textContent = rawText;
     document.getElementById('chat-reply-banner').style.display = 'flex';
     document.getElementById('chat-input').focus();
-    
+
     // Hide edit banner if active
     window.cancelEditMessage();
 };
@@ -1060,7 +1060,7 @@ window.openChat = async (docId, otherUserJson) => {
 
     // Listen to conversation for block status, deletedAt, and real-time Read Receipts
     let chatDeletedAt = 0;
-    
+
     // Clear unread status and check block status
     const { updateDoc, doc, arrayRemove, getDoc } = window.firebaseHelpers;
     if (updateDoc && doc && arrayRemove) {
@@ -1069,21 +1069,21 @@ window.openChat = async (docId, otherUserJson) => {
         }).catch(e => console.error(e));
 
         window.conversationReadState = false; // Tracks if the OTHER user has read our messages
-        
+
         window.unsubscribeChatConv = window.firebaseHelpers.onSnapshot(doc(window.firebaseDb, "conversations", docId), (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                
+
                 // Track deletedAt
                 if (data.deletedAt && data.deletedAt[currentMember.id]) {
                     chatDeletedAt = data.deletedAt[currentMember.id];
                 }
-                
+
                 // Track Read Receipts (if otherUser is NOT in unreadBy, they have read it)
                 const unreadBy = data.unreadBy || [];
                 const previousReadState = window.conversationReadState;
                 window.conversationReadState = !unreadBy.includes(otherUser.id);
-                
+
                 // If it just transitioned to READ, instantly update the checkmarks on screen
                 if (window.conversationReadState && !previousReadState) {
                     document.querySelectorAll('.msg-checkmarks.sent').forEach(el => {
@@ -1092,7 +1092,7 @@ window.openChat = async (docId, otherUserJson) => {
                         el.innerHTML = '<i class="fa-solid fa-check-double"></i>';
                     });
                 }
-                
+
                 // Track Block Status
                 const blockedBy = data.blockedBy || [];
                 const amIBlocked = blockedBy.includes(otherUser.id);
@@ -1167,7 +1167,7 @@ window.openChat = async (docId, otherUserJson) => {
 
         if (hasNewIncoming) {
             if (window.playChatSound) window.playChatSound('receive');
-            
+
             // Debounce Read Receipt Update (saves database writes on rapid-fire messaging)
             if (window.readReceiptDebounceTimer) clearTimeout(window.readReceiptDebounceTimer);
             window.readReceiptDebounceTimer = setTimeout(() => {
@@ -1184,10 +1184,10 @@ window.openChat = async (docId, otherUserJson) => {
         snapshot.docs.forEach(doc => {
             const data = doc.data();
             const msgId = doc.id;
-            
+
             // Hide message if it was sent before the user cleared this conversation, or if the user deleted this specific message "for me"
             if (data.createdAt && data.createdAt.toMillis() <= chatDeletedAt) {
-                return; 
+                return;
             }
             if (data.hiddenFor && data.hiddenFor.includes(currentMember.id)) {
                 return;
@@ -1197,7 +1197,7 @@ window.openChat = async (docId, otherUserJson) => {
             const isStarred = data.starredBy && data.starredBy.includes(currentMember.id);
             let timeStr = '';
             let isWithin5Mins = false;
-            
+
             let currentDateStr = '';
 
             if (data.createdAt) {
@@ -1205,12 +1205,12 @@ window.openChat = async (docId, otherUserJson) => {
                 timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const now = Date.now();
                 isWithin5Mins = (now - date.getTime()) < 5 * 60 * 1000;
-                
+
                 // Format Date Separator
                 const today = new Date();
                 const yesterday = new Date(today);
                 yesterday.setDate(yesterday.getDate() - 1);
-                
+
                 if (date.toDateString() === today.toDateString()) {
                     currentDateStr = "Today";
                 } else if (date.toDateString() === yesterday.toDateString()) {
@@ -1223,14 +1223,14 @@ window.openChat = async (docId, otherUserJson) => {
                 isWithin5Mins = true; // Pending write, so it was just sent
                 currentDateStr = "Today";
             }
-            
+
             if (currentDateStr !== lastDateStr) {
                 html += `<div class="chat-date-separator"><span>${currentDateStr}</span></div>`;
                 lastDateStr = currentDateStr;
             }
 
-            const messageContent = data.isDeleted 
-                ? '<i class="fa-solid fa-ban" style="opacity:0.6;"></i> <span style="font-style:italic; opacity:0.6;">This message was deleted.</span>' 
+            const messageContent = data.isDeleted
+                ? '<i class="fa-solid fa-ban" style="opacity:0.6;"></i> <span style="font-style:italic; opacity:0.6;">This message was deleted.</span>'
                 : window.escapeHtml(data.text || '');
 
             const encodedText = encodeURIComponent(data.text || '').replace(/'/g, "%27");
@@ -1258,21 +1258,21 @@ window.openChat = async (docId, otherUserJson) => {
                         </div>
                     </div>
                     ${(() => {
-                        if (data.reactions && Object.keys(data.reactions).length > 0) {
-                            const allEmojis = Object.values(data.reactions);
-                            const uniqueEmojis = [...new Set(allEmojis)];
-                            const count = allEmojis.length;
-                            
-                            if (count > 1 && uniqueEmojis.length === 1) {
-                                // Both reacted with the exact same emoji
-                                return `<div class="message-reactions">${window.escapeHtml(uniqueEmojis[0])}<span style="font-size: 0.65rem; margin-left: 3px; font-weight: bold;">${count}</span></div>`;
-                            } else {
-                                // Different emojis, just show them side by side
-                                return `<div class="message-reactions">${uniqueEmojis.map(e => window.escapeHtml(e)).join('')}</div>`;
-                            }
+                    if (data.reactions && Object.keys(data.reactions).length > 0) {
+                        const allEmojis = Object.values(data.reactions);
+                        const uniqueEmojis = [...new Set(allEmojis)];
+                        const count = allEmojis.length;
+
+                        if (count > 1 && uniqueEmojis.length === 1) {
+                            // Both reacted with the exact same emoji
+                            return `<div class="message-reactions">${window.escapeHtml(uniqueEmojis[0])}<span style="font-size: 0.65rem; margin-left: 3px; font-weight: bold;">${count}</span></div>`;
+                        } else {
+                            // Different emojis, just show them side by side
+                            return `<div class="message-reactions">${uniqueEmojis.map(e => window.escapeHtml(e)).join('')}</div>`;
                         }
-                        return '';
-                    })()}
+                    }
+                    return '';
+                })()}
                 </div>
             `;
         });
@@ -1280,7 +1280,7 @@ window.openChat = async (docId, otherUserJson) => {
         let previousScrollTop = 0;
         let previousScrollHeight = 0;
         let wasAtBottom = true;
-        
+
         if (msgContainer) {
             previousScrollTop = msgContainer.scrollTop;
             previousScrollHeight = msgContainer.scrollHeight;
@@ -1288,12 +1288,12 @@ window.openChat = async (docId, otherUserJson) => {
         }
 
         msgContainer.innerHTML = html;
-        
+
         if (msgContainer) {
             if (wasAtBottom) {
-                msgContainer.scrollTop = msgContainer.scrollHeight; 
+                msgContainer.scrollTop = msgContainer.scrollHeight;
             } else {
-                msgContainer.scrollTop = previousScrollTop; 
+                msgContainer.scrollTop = previousScrollTop;
             }
         }
     });
@@ -1654,7 +1654,35 @@ function initMatchmaking() {
             }
         } catch (error) {
             console.error("Error fetching user profile:", error);
+
+            window.profileRetryCount = (window.profileRetryCount || 0) + 1;
+
+            const elGrid = document.getElementById('gate-approved-grid');
+            if (elGrid) {
+                elGrid.style.display = 'flex';
+                const loadingText = document.getElementById('loading-text');
+                if (loadingText) {
+                    if (window.profileRetryCount <= 3) {
+                        loadingText.innerHTML = `Reconnecting to server (Attempt ${window.profileRetryCount}/3)...`;
+                    } else {
+                        loadingText.innerHTML = "Unable to connect. Please check your internet or <a href='#' onclick='window.location.reload()' style='color: var(--brand-brown); text-decoration: underline;'>refresh the page</a>.";
+                    }
+                }
+            }
+
+            if (window.profileRetryCount <= 3) {
+                // Retry after 2.5 seconds to let the background token refresh complete
+                setTimeout(() => {
+                    if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                        window.dispatchEvent(new CustomEvent('auth-state-changed', { detail: { user: window.firebaseAuth.currentUser } }));
+                    }
+                }, 2500);
+            }
+            return;
         }
+
+        // Reset retry count on success
+        window.profileRetryCount = 0;
 
         let photoUrl = '';
         if (profileData && profileData['Profile Picture']) {
@@ -1686,7 +1714,7 @@ function initMatchmaking() {
                 // Hide the close button to force them to complete it
                 const closeBtn = document.querySelector('.edit-modal-close');
                 if (closeBtn) closeBtn.style.display = 'none';
-                
+
                 // Hide the delete account link
                 const deleteLink = document.getElementById('delete-account-link');
                 if (deleteLink) deleteLink.style.display = 'none';
@@ -1742,7 +1770,7 @@ function initMatchmaking() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initMatchmaking();
-    
+
     // Keep filter FAB separate from fab-group so it can be fixed to bottom-right
 });
 
@@ -1797,27 +1825,27 @@ function setupProfileForm() {
                     const cropperImage = document.getElementById('cropper-image');
                     const cancelBtn = document.getElementById('cropper-cancel-btn');
                     const saveBtn = document.getElementById('cropper-save-btn');
-                    
+
                     cropperImage.src = e.target.result;
                     cropperModal.style.display = 'flex';
-                    
+
                     if (window.cropperInstance) {
                         window.cropperInstance.destroy();
                     }
-                    
+
                     window.cropperInstance = new Cropper(cropperImage, {
                         aspectRatio: 1,
                         viewMode: 1,
                         background: false,
                         zoomable: true
                     });
-                    
+
                     cancelBtn.onclick = () => {
                         cropperModal.style.display = 'none';
                         if (window.cropperInstance) window.cropperInstance.destroy();
                         photoInput.value = ''; // clear
                     };
-                    
+
                     saveBtn.onclick = () => {
                         if (window.cropperInstance) {
                             // Extract compressed WebP blob (<150kb)
@@ -2092,14 +2120,14 @@ window.openEditProfileModal = async function () {
 
 window.profilesUnsubscribe = null;
 
-window.forceReRenderProfiles = function() {
+window.forceReRenderProfiles = function () {
     if (!window.firebaseProfiles) return;
-    
+
     let currentUserId = null;
     if (window.firebaseCurrentUser) {
         currentUserId = window.firebaseCurrentUser.uid;
     }
-    
+
     allProfiles = window.firebaseProfiles.filter(p => {
         return p['Firebase UID'] && p['Firebase UID'] !== currentUserId && p['Approved'];
     });
@@ -2107,7 +2135,7 @@ window.forceReRenderProfiles = function() {
     renderProfiles(allProfiles);
 }
 
-window.startProfilesListener = function() {
+window.startProfilesListener = function () {
     try {
         let currentUserId = null;
         if (window.firebaseCurrentUser) {
@@ -2737,7 +2765,7 @@ window.blockUserProfile = async (uid, currentBlockStatus) => {
     try {
         const { doc, updateDoc } = window.firebaseHelpers;
         const db = window.firebaseDb;
-        
+
         const updateData = { Blocked: isBlocking };
         if (isBlocking) {
             updateData.Approved = false; // Automatically hide their profile
@@ -2791,7 +2819,7 @@ window.loadAdminDeletions = async () => {
 
         for (const req of deletionRequests) {
             const name = window.escapeHtml(req.data['First Name'] || 'Unknown');
-            
+
             // Try to fetch email from users collection
             let email = 'Unknown (Not in users db)';
             try {
@@ -2799,7 +2827,7 @@ window.loadAdminDeletions = async () => {
                 if (userDoc.exists()) {
                     email = window.escapeHtml(userDoc.data().email || 'Unknown');
                 }
-            } catch(e) {
+            } catch (e) {
                 console.warn("Could not fetch user doc for email", e);
             }
 
@@ -2844,10 +2872,10 @@ window.approveDeletionRequest = async (uid, email) => {
         const db = window.firebaseDb;
 
         await deleteDoc(doc(db, "profiles", uid));
-        
+
         try {
             await deleteDoc(doc(db, "users", uid));
-        } catch(e) {
+        } catch (e) {
             console.warn("User document already deleted or inaccessible.", e);
         }
 
@@ -3262,7 +3290,7 @@ let lastTapMsgId = null;
 function handleTouchStart(e) {
     const msgElement = e.target.closest('.chat-message');
     if (!msgElement) return;
-    
+
     // Ignore if already deleted
     if (msgElement.dataset.isDeleted === 'true') return;
 
@@ -3282,13 +3310,13 @@ function handleTouchStart(e) {
 
 function handleTouchMove(e) {
     if (!touchStartX) return;
-    
+
     const currentX = e.touches ? e.touches[0].clientX : e.clientX;
     const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-    
+
     const deltaX = currentX - touchStartX;
     const deltaY = Math.abs(currentY - touchStartY);
-    
+
     // Cancel swipe if moving vertically more than horizontally
     if (deltaY > 15) {
         if (pressTimer) {
@@ -3297,7 +3325,7 @@ function handleTouchMove(e) {
         }
         return;
     }
-    
+
     if (deltaX > 15) { // Swiping right
         isSwiping = true;
         if (pressTimer) {
@@ -3319,14 +3347,14 @@ function handleTouchEnd(e) {
         clearTimeout(pressTimer);
         pressTimer = null;
     }
-    
+
     if (!touchStartX) return;
-    
+
     const currentX = (e.changedTouches && e.changedTouches.length > 0) ? e.changedTouches[0].clientX : (e.clientX || touchStartX);
     const deltaX = currentX - touchStartX;
-    
+
     const msgElement = e.target.closest('.chat-message');
-    
+
     if (isSwiping && msgElement) {
         if (deltaX > 40) {
             // Trigger reply
@@ -3338,7 +3366,7 @@ function handleTouchEnd(e) {
         msgElement.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         msgElement.style.transform = 'translateX(0)';
     }
-    
+
     touchStartX = 0;
     touchStartY = 0;
     isSwiping = false;
@@ -3376,10 +3404,10 @@ function showContextMenu(msgElement, event) {
     // Hide context menu buttons based on context
     document.getElementById('ctx-edit-btn').style.display = (isMe && isWithin5Mins) ? 'flex' : 'none';
     document.getElementById('ctx-del-everyone-btn').style.display = (isMe && isWithin5Mins) ? 'flex' : 'none';
-    
+
     // Get exact coordinates of the message
     const rect = msgElement.getBoundingClientRect();
-    
+
     // Create clone for highlight
     clonedMsgElement = msgElement.cloneNode(true);
     clonedMsgElement.style.position = 'fixed';
@@ -3391,14 +3419,14 @@ function showContextMenu(msgElement, event) {
     clonedMsgElement.style.boxShadow = '0 5px 25px rgba(0,0,0,0.3)';
     clonedMsgElement.style.transform = 'scale(1)'; // Initial state
     clonedMsgElement.style.transition = 'top 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // Smooth pop up and translation
-    
+
     // Ensure the clone doesn't trigger its own touch events
     clonedMsgElement.style.pointerEvents = 'none';
     document.body.appendChild(clonedMsgElement);
 
     // Show overlay
     if (chatOverlay) chatOverlay.style.display = 'block';
-    
+
     // Setup initial positions (hidden to calculate size)
     if (reactionBar) {
         reactionBar.style.display = 'flex';
@@ -3418,7 +3446,7 @@ function showContextMenu(msgElement, event) {
 
     // Define safe bounds for the 'sandwich' (Emoji Bar + Message + Action Menu)
     const chatPanelHeader = document.querySelector('.chat-panel-header');
-    const navBarHeight = chatPanelHeader ? chatPanelHeader.offsetHeight : 65; 
+    const navBarHeight = chatPanelHeader ? chatPanelHeader.offsetHeight : 65;
     const chatInputArea = document.querySelector('.chat-input-area');
     const inputBarHeight = chatInputArea ? chatInputArea.offsetHeight : 80;
     const maxBottom = Number(window.innerHeight) - inputBarHeight;
@@ -3430,7 +3458,7 @@ function showContextMenu(msgElement, event) {
         const btn = document.getElementById(id);
         if (btn && btn.style.display !== 'none') visibleButtons++;
     });
-    const actionHeight = visibleButtons > 0 ? (visibleButtons * 48) : 150; 
+    const actionHeight = visibleButtons > 0 ? (visibleButtons * 48) : 150;
     const padding = 8; // Tighter gap for native feel
 
     const safeRectTop = Number(rect.top) || 0;
@@ -3440,10 +3468,10 @@ function showContextMenu(msgElement, event) {
 
     // Store original position to animate back on close
     window.originalMsgTop = safeRectTop;
-    
+
     // Ideal sandwich layout: Emoji on top, Message in middle, Action on bottom
     let msgTop = safeRectTop;
-    
+
     // Check if sandwich overflows top
     const sandwichTop = msgTop - emojiHeight - padding;
     if (sandwichTop < navBarHeight) {
@@ -3526,7 +3554,7 @@ function showContextMenu(msgElement, event) {
             if (val) {
                 hideContextMenu();
                 if (currentTargetMsgId) {
-                    window.reactToMessage(currentTargetMsgId, Array.from(val)[0] || val); 
+                    window.reactToMessage(currentTargetMsgId, Array.from(val)[0] || val);
                 }
             }
         };
@@ -3535,8 +3563,8 @@ function showContextMenu(msgElement, event) {
     const emojiPlusBtn = document.getElementById('ctx-emoji-plus-btn');
     if (emojiPlusBtn) {
         emojiPlusBtn.onclick = (ev) => {
-            ev.stopPropagation(); 
-            
+            ev.stopPropagation();
+
             // Show custom emoji picker
             let picker = document.getElementById('custom-emoji-picker-overlay');
             if (!picker) {
@@ -3545,14 +3573,14 @@ function showContextMenu(msgElement, event) {
                     picker = document.createElement('div');
                     picker.id = 'custom-emoji-picker-overlay';
                     picker.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10001; display: flex; align-items: center; justify-content: center;';
-                    
+
                     const pickerElement = document.createElement('emoji-picker');
                     picker.appendChild(pickerElement);
-                    
+
                     picker.onclick = (e) => {
                         if (e.target === picker) picker.style.display = 'none';
                     };
-                    
+
                     pickerElement.addEventListener('emoji-click', event => {
                         picker.style.display = 'none';
                         hideContextMenu();
@@ -3560,11 +3588,11 @@ function showContextMenu(msgElement, event) {
                             window.reactToMessage(currentTargetMsgId, event.detail.unicode);
                         }
                     });
-                    
+
                     document.body.appendChild(picker);
                 }).catch(err => {
                     console.error("Failed to load emoji picker", err);
-                    if(window.showToast) window.showToast("Could not load emoji picker.");
+                    if (window.showToast) window.showToast("Could not load emoji picker.");
                 });
             } else {
                 picker.style.display = 'flex';
@@ -3585,7 +3613,7 @@ function showContextMenu(msgElement, event) {
     setActionMenuClick('ctx-star-btn', () => window.toggleStarMessage(currentTargetMsgId, isStarred));
     setActionMenuClick('ctx-copy-btn', () => {
         navigator.clipboard.writeText(rawText).then(() => {
-            if(window.showToast) window.showToast("Message copied");
+            if (window.showToast) window.showToast("Message copied");
         });
     });
     setActionMenuClick('ctx-edit-btn', () => window.startEditMessage(currentTargetMsgId, rawText));
@@ -3627,7 +3655,7 @@ if (chatOverlay) {
     chatOverlay.addEventListener('click', hideContextMenu);
     chatOverlay.addEventListener('touchstart', (e) => {
         // Prevent scrolling underneath
-        e.preventDefault(); 
+        e.preventDefault();
         hideContextMenu();
     });
 }
@@ -3640,10 +3668,10 @@ window.deleteMessageForEveryone = async (msgId) => {
         await updateDoc(doc(db, "conversations", currentChatId, "messages", msgId), {
             isDeleted: true
         });
-        if(window.showToast) window.showToast("Message deleted for everyone");
+        if (window.showToast) window.showToast("Message deleted for everyone");
     } catch (e) {
         console.error("Error deleting message:", e);
-        if(window.showToast) window.showToast("Failed to delete message");
+        if (window.showToast) window.showToast("Failed to delete message");
     }
 };
 
@@ -3655,10 +3683,10 @@ window.deleteMessageForMe = async (msgId) => {
         await updateDoc(doc(db, "conversations", currentChatId, "messages", msgId), {
             hiddenFor: arrayUnion(currentMember.id)
         });
-        if(window.showToast) window.showToast("Message deleted for you");
+        if (window.showToast) window.showToast("Message deleted for you");
     } catch (e) {
         console.error("Error deleting message for me:", e);
-        if(window.showToast) window.showToast("Failed to delete. Did you update Firebase rules?");
+        if (window.showToast) window.showToast("Failed to delete. Did you update Firebase rules?");
     }
 };
 
@@ -3672,7 +3700,7 @@ window.toggleStarMessage = async (msgId, currentlyStarred) => {
         });
     } catch (e) {
         console.error("Error toggling star:", e);
-        if(window.showToast) window.showToast("Failed to update star. Did you update Firebase rules?");
+        if (window.showToast) window.showToast("Failed to update star. Did you update Firebase rules?");
     }
 };
 
@@ -3682,16 +3710,16 @@ document.getElementById('toggle-starred-btn')?.addEventListener('click', (e) => 
     const btn = e.currentTarget;
     const icon = btn.querySelector('i');
     const container = document.getElementById('chat-messages');
-    
+
     if (showStarredOnly) {
         icon.classList.remove('fa-regular');
         icon.classList.add('fa-solid');
-        icon.style.color = ''; 
+        icon.style.color = '';
         container.classList.add('show-starred-only');
     } else {
         icon.classList.remove('fa-solid');
         icon.classList.add('fa-regular');
-        icon.style.color = ''; 
+        icon.style.color = '';
         container.classList.remove('show-starred-only');
         setTimeout(() => {
             if (container) {
@@ -3707,24 +3735,24 @@ window.reactToMessage = async (msgId, emoji) => {
     try {
         const { doc, updateDoc, deleteField } = window.firebaseHelpers;
         const msgRef = doc(db, "conversations", currentChatId, "messages", msgId);
-        
+
         // Take just the first emoji character if they pasted multiple
         const finalEmoji = Array.from(emoji)[0] || '👍';
-        
+
         // Need to know if they already reacted with this emoji to toggle it off
         // Since we don't have the full reactions map in the DOM easily, we will 
         // optimistically update it. If they want to toggle, they tap it again.
         // Actually, we can fetch the document or keep it simple: always set it.
         // If they want to remove their reaction, they tap the same emoji.
-        
+
         // Let's get the current message data to check if we are toggling
         const { getDoc } = window.firebaseHelpers;
         const msgSnap = await getDoc(msgRef);
-        
+
         if (msgSnap.exists()) {
             const data = msgSnap.data();
             const currentReaction = (data.reactions || {})[window.firebaseCurrentUser.uid];
-            
+
             if (currentReaction === finalEmoji) {
                 // Toggle off
                 await updateDoc(msgRef, {

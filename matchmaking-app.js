@@ -923,6 +923,19 @@ function listenForInboxUpdates() {
     }
 
     window.unsubscribeInboxUpdates = onSnapshot(q, (snapshot) => {
+        window.lastInboxSnapshot = snapshot;
+        if (window.renderInboxFromSnapshot) {
+            window.renderInboxFromSnapshot(snapshot);
+        }
+    });
+
+    window.renderInboxWithCachedData = () => {
+        if (window.lastInboxSnapshot && window.renderInboxFromSnapshot) {
+            window.renderInboxFromSnapshot(window.lastInboxSnapshot);
+        }
+    };
+
+    window.renderInboxFromSnapshot = (snapshot) => {
         const chatList = document.getElementById('chats-list');
         const reqList = document.getElementById('requests-list');
         const navBadge = document.getElementById('nav-inbox-badge');
@@ -953,6 +966,14 @@ function listenForInboxUpdates() {
 
             const isUser1 = data.user1.id === currentMember.id;
             const otherUser = isUser1 ? data.user2 : data.user1;
+            
+            // Check if other user's profile is deleted or missing (if profiles have loaded)
+            if (window.rawAirtableProfiles) {
+                const actualProfile = window.rawAirtableProfiles.find(p => p['Firebase UID'] === otherUser.id);
+                if (!actualProfile || actualProfile.AccountDeleted) {
+                    return; // Skip rendering this conversation completely because the user is gone
+                }
+            }
 
             if (data.status === 'reported') return;
 
@@ -1091,13 +1112,13 @@ function listenForInboxUpdates() {
             if (window.updateProfileButtons) window.updateProfileButtons();
         }
 
-        // Update DOM
         if (activeChatsHtml) chatList.innerHTML = activeChatsHtml;
         else chatList.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 2rem; font-size: 0.95rem;">No active chats yet.</div>`;
         
-        const switcherBar = document.getElementById('fast-switcher-bar');
-        if (switcherBar) {
-            switcherBar.innerHTML = fastSwitcherHtml;
+        const fsBar = document.getElementById('fast-switcher-bar');
+        if (fsBar) {
+            fsBar.innerHTML = fastSwitcherHtml;
+            fsBar.style.display = fastSwitcherHtml ? 'flex' : 'none';
         }
 
         if (pendingRequestsHtml) reqList.innerHTML = pendingRequestsHtml;
@@ -1183,7 +1204,7 @@ function listenForInboxUpdates() {
         }
 
         isInitialLoad = false;
-    });
+    };
 }
 
 // Global functions for inline onclick handlers
@@ -2545,6 +2566,10 @@ window.startProfilesListener = function () {
 
             window.firebaseProfiles = rawProfiles;
             window.rawAirtableProfiles = rawProfiles;
+
+            if (window.renderInboxWithCachedData) {
+                window.renderInboxWithCachedData();
+            }
 
             allProfiles = rawProfiles.filter(p => {
                 return p['Firebase UID'] && p['Firebase UID'] !== currentUserId && p['Approved'];

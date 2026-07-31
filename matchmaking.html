@@ -779,10 +779,17 @@
         <div id="inbox-panel-header" class="chat-panel-header" style="cursor: pointer;">
             <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600; display: flex; align-items: center;"><i
                     class="fa-solid fa-comment-dots" style="margin-right: 8px; font-size: 1.2rem;"></i> Inbox</h3>
-            <button id="close-inbox-btn"
-                style="background: none; border: none; color: var(--bg-main); font-size: 1.2rem; cursor: pointer; transition: transform 0.2s;"
-                onmouseover="this.style.transform='rotate(90deg)';" onmouseout="this.style.transform='rotate(0deg)';"><i
-                    class="fa-solid fa-times"></i></button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="minimize-inbox-btn"
+                    style="background: none; border: none; color: var(--bg-main); font-size: 1.2rem; cursor: pointer; opacity: 0.8; transition: opacity 0.2s;" onmouseover="this.style.opacity=1;" onmouseout="this.style.opacity=0.8;" title="Minimize">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+                <div style="width: 1px; height: 18px; background: var(--bg-main); opacity: 0.3; margin: 0 2px;"></div>
+                <button id="close-inbox-btn"
+                    style="background: none; border: none; color: var(--bg-main); font-size: 1.2rem; cursor: pointer; transition: transform 0.2s;"
+                    onmouseover="this.style.transform='rotate(90deg)';" onmouseout="this.style.transform='rotate(0deg)';"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
         </div>
 
         <!-- Tabs -->
@@ -857,6 +864,11 @@
                             </button>
                         </div>
                     </div>
+                    <div style="width: 1px; height: 18px; background: var(--bg-main); opacity: 0.3; margin: 0 4px;"></div>
+                    <button id="minimize-chat-btn"
+                        style="background: transparent; border: none; color: var(--bg-main); font-size: 1.2rem; cursor: pointer; transition: opacity 0.2s; opacity: 0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Minimize Chat">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
                     <div style="width: 1px; height: 18px; background: var(--bg-main); opacity: 0.3; margin: 0 4px;"></div>
                     <button id="close-chat-btn"
                         style="background: transparent; border: none; color: var(--bg-main); font-size: 1.5rem; cursor: pointer; transition: opacity 0.2s; opacity: 0.7;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="Close Chat">

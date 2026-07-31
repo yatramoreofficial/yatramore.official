@@ -889,6 +889,8 @@ function closeActiveChat() {
     localStorage.removeItem('currentChatId');
     localStorage.removeItem('currentChatUserJson');
     document.getElementById('active-chat-view').style.display = 'none';
+    const panel = document.getElementById('chat-inbox-panel');
+    if (panel) panel.classList.remove('has-active-chat');
     currentChatId = null;
     currentChatOtherUser = null;
     if (unsubscribeMessages) {
@@ -1330,6 +1332,7 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
 
     document.getElementById('active-chat-name').textContent = otherUser.name;
     document.getElementById('active-chat-view').style.display = 'flex';
+    if (panel) panel.classList.add('has-active-chat');
     if (window.innerWidth > 768) {
         document.getElementById('chat-input').focus();
     }

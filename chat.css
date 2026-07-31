@@ -487,5 +487,9 @@ body.keyboard-open .chat-input-area {
 }
 
 .chat-panel.minimized {
+    transform: translateY(calc(100% - 56px)) !important;
+}
+
+.chat-panel.has-active-chat.minimized {
     transform: translateY(calc(100% - 138px)) !important;
 }

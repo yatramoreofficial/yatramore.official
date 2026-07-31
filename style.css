@@ -885,7 +885,7 @@ nav.scrolled {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: linear-gradient(135deg, #D4AF37, #C5A028);
+    background: linear-gradient(110deg, #D4AF37 35%, #FFDF73 50%, #D4AF37 65%);
     /* Premium Gold */
     color: white !important;
     padding: 0.4rem 1rem;
@@ -900,7 +900,7 @@ nav.scrolled {
     gap: 0.5rem;
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    animation: shimmer 2s infinite linear;
+    animation: shimmer-shine 4s infinite linear;
     background-size: 200% auto;
 }
 
@@ -1002,9 +1002,12 @@ nav.scrolled {
     margin-top: 1.5rem;
 }
 
-@keyframes shimmer {
-    to {
+@keyframes shimmer-shine {
+    0% {
         background-position: 200% center;
+    }
+    100% {
+        background-position: -200% center;
     }
 }
 

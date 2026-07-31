@@ -197,6 +197,13 @@ function setupAuthUIListeners() {
             const { signOut } = window.firebaseAuthHelpers;
             try {
                 await signOut(window.firebaseAuth);
+                if (window.unsubscribeInboxUpdates) window.unsubscribeInboxUpdates();
+                if (window.profilesUnsubscribe) window.profilesUnsubscribe();
+                if (window.unsubscribeChatConv) window.unsubscribeChatConv();
+                window.currentUserMetaData = {};
+                window.acceptedChatUserIds = new Set();
+                window.pendingChatUserIds = new Set();
+                window.reportedChatUserIds = new Set();
                 // Reload the page to show the matchmaking welcome screen
                 window.location.reload();
             } catch (error) {
@@ -905,10 +912,15 @@ function listenForInboxUpdates() {
 
     window.acceptedChatUserIds = new Set();
     window.pendingChatUserIds = new Set();
+    window.reportedChatUserIds = new Set();
 
     let isInitialLoad = true;
 
-    onSnapshot(q, (snapshot) => {
+    if (window.unsubscribeInboxUpdates) {
+        window.unsubscribeInboxUpdates();
+    }
+
+    window.unsubscribeInboxUpdates = onSnapshot(q, (snapshot) => {
         const chatList = document.getElementById('chats-list');
         const reqList = document.getElementById('requests-list');
         const navBadge = document.getElementById('nav-inbox-badge');
@@ -921,8 +933,10 @@ function listenForInboxUpdates() {
 
         window.acceptedChatUserIds.clear();
         window.pendingChatUserIds.clear();
+        window.reportedChatUserIds.clear();
         window.declinedChatUserIds = window.declinedChatUserIds || new Set();
         window.declinedChatUserIds.clear();
+        window.reportedChatDocIds = window.reportedChatDocIds || {};
 
         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         docs.sort((a, b) => {
@@ -989,16 +1003,42 @@ function listenForInboxUpdates() {
                         window.declinedChatUserIds.add(otherUser.id);
                     }
                 }
-            } else if (data.status === 'accepted') {
-                window.acceptedChatUserIds.add(otherUser.id);
+            } else if (data.status === 'reported' || data.status === 'accepted') {
+                if (data.status === 'reported') {
+                    window.reportedChatUserIds.add(otherUser.id);
+                } else {
+                    window.acceptedChatUserIds.add(otherUser.id);
+                }
+                
                 window.acceptedChatDocIds = window.acceptedChatDocIds || {};
                 window.acceptedChatDocIds[otherUser.id] = data.id;
+                
+                // Anonymize if other user blocked current member
+                const blockedBy = data.blockedBy || [];
+                if (blockedBy.includes(otherUser.id)) {
+                    otherUser.name = "YatrAmore User";
+                    otherUser.photo = "https://ui-avatars.com/api/?name=YatrAmore+User&background=random&size=150";
+                }
+
                 window.acceptedChatUsers = window.acceptedChatUsers || {};
                 window.acceptedChatUsers[otherUser.id] = otherUser;
 
                 let isUnread = false;
-                if (data.unreadBy && data.unreadBy.includes(currentMember.id)) {
-                    isUnread = true;
+                if (currentChatId === data.id) {
+                    isUnread = false;
+                } else if (data.unreadBy && data.unreadBy.includes(currentMember.id)) {
+                    // Even if in unreadBy (due to Ghost Mode), check if we actually read it locally via localStorage
+                    const localReadAt = localStorage.getItem(`localReadAt_${data.id}`);
+                    const lastMsgTime = data.updatedAt;
+                    
+                    if (localReadAt && lastMsgTime && typeof lastMsgTime.toMillis === 'function' && parseInt(localReadAt) >= lastMsgTime.toMillis()) {
+                        isUnread = false;
+                    } else {
+                        isUnread = true;
+                    }
+                }
+                
+                if (isUnread) {
                     unreadChatCount++;
                 }
 
@@ -1309,16 +1349,14 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
     // Clear unread status and check block status
     const { updateDoc, doc, arrayRemove, getDoc, serverTimestamp } = window.firebaseHelpers;
     if (updateDoc && doc && arrayRemove) {
-        if (window.currentUserMetaData?.ghostMode !== false) {
-            // Essential update
+        // Zero-write local cache for unread badge clearing
+        localStorage.setItem(`localReadAt_${docId}`, Date.now());
+
+        if (window.currentUserMetaData?.ghostMode === false) {
+            // Essential update for read receipts
             updateDoc(doc(window.firebaseDb, "conversations", docId), {
                 unreadBy: arrayRemove(currentMember.id)
-            }).catch(e => console.error(e));
-
-            // Non-essential visual update (wrapped separately in case strict Firebase Rules block new fields)
-            const updatePayload = {};
-            updatePayload[`lastReadAt_${currentMember.id}`] = serverTimestamp();
-            updateDoc(doc(window.firebaseDb, "conversations", docId), updatePayload).catch(e => {});
+            }).catch(e => console.error("Error updating read status:", e));
         }
 
         window.conversationReadState = false; // Tracks if the OTHER user has read our messages
@@ -1336,10 +1374,9 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
                 const unreadBy = data.unreadBy || [];
                 const previousReadState = window.conversationReadState;
                 window.conversationReadState = !unreadBy.includes(otherUser.id);
-                window.otherUserLastReadAt = data[`lastReadAt_${otherUser.id}`] || null;
 
-                // If it just transitioned to READ, instantly update the checkmarks on screen
-                if (window.conversationReadState && !previousReadState) {
+                // If it just transitioned to READ, instantly update the checkmarks on screen (Enforce 2-way Ghost Mode rule)
+                if (window.conversationReadState && !previousReadState && window.currentUserMetaData?.ghostMode === false) {
                     document.querySelectorAll('.msg-checkmarks.sent').forEach(el => {
                         el.classList.remove('sent');
                         el.classList.add('read');
@@ -1357,7 +1394,17 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
                 const chatInput = document.getElementById('chat-input');
                 const sendBtn = document.getElementById('send-msg-btn');
 
-                if (didIBlock) {
+                const isReported = data.status === 'reported';
+
+                if (isReported) {
+                    if (blockBtn) blockBtn.style.display = 'none';
+                    if (unblockBtn) unblockBtn.style.display = 'none';
+                    if (chatInput) {
+                        chatInput.disabled = true;
+                        chatInput.placeholder = "Profile under review.";
+                    }
+                    if (sendBtn) sendBtn.disabled = true;
+                } else if (didIBlock) {
                     if (blockBtn) blockBtn.style.display = 'none';
                     if (unblockBtn) unblockBtn.style.display = 'flex';
                     if (chatInput) {
@@ -1425,13 +1472,14 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
             // Debounce Read Receipt Update (saves database writes on rapid-fire messaging)
             if (window.readReceiptDebounceTimer) clearTimeout(window.readReceiptDebounceTimer);
             window.readReceiptDebounceTimer = setTimeout(() => {
-                if (window.firebaseHelpers && window.firebaseHelpers.updateDoc && window.currentUserMetaData?.ghostMode !== false) {
-                    const updatePayload = {
-                        unreadBy: window.firebaseHelpers.arrayRemove(currentMember.id)
-                    };
-                    updatePayload[`lastReadAt_${currentMember.id}`] = window.firebaseHelpers.serverTimestamp();
-                    
-                    window.firebaseHelpers.updateDoc(window.firebaseHelpers.doc(window.firebaseDb, "conversations", docId), updatePayload).catch(e => console.error("Error updating read state:", e));
+                localStorage.setItem(`localReadAt_${docId}`, Date.now());
+                if (window.firebaseHelpers && window.firebaseHelpers.updateDoc) {
+                    if (window.currentUserMetaData?.ghostMode === false) {
+                        const updatePayload = {
+                            unreadBy: window.firebaseHelpers.arrayRemove(currentMember.id)
+                        };
+                        window.firebaseHelpers.updateDoc(window.firebaseHelpers.doc(window.firebaseDb, "conversations", docId), updatePayload).catch(e => console.error("Error updating read state:", e));
+                    }
                 }
             }, 3000);
         }
@@ -1516,10 +1564,8 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
                                 let isRead = false;
                                 if (window.currentUserMetaData?.ghostMode !== false) {
                                     isRead = false; // 2-way rule: You can't see read receipts if you hide yours (default ON)
-                                } else if (data.createdAt && window.otherUserLastReadAt) {
-                                    isRead = data.createdAt.toMillis() <= window.otherUserLastReadAt.toMillis();
                                 } else if (window.conversationReadState) {
-                                    isRead = true; // Fallback for old schema
+                                    isRead = true; // The other user has actually removed themselves from unreadBy
                                 }
                                 const statusClass = data.createdAt ? (isRead ? 'read' : 'sent') : 'pending';
                                 const icon = data.createdAt ? '<i class="fa-solid fa-check-double"></i>' : '<i class="fa-regular fa-clock"></i>';
@@ -1839,7 +1885,7 @@ window.requestAccountDeletion = async () => {
 // Profiles are fetched from Firebase Firestore
 
 let allProfiles = [];
-let currentUserMetaData = {};
+window.currentUserMetaData = {};
 
 function initMatchmaking() {
     if (!document.getElementById('profiles-grid')) return;
@@ -1963,6 +2009,17 @@ function initMatchmaking() {
             }
         }
 
+        if (profileData && profileData['AccountDeleted'] === true) {
+            document.body.innerHTML = `
+                <div style="display: flex; height: 100vh; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; font-family: system-ui, sans-serif; color: #333; text-align: center; padding: 20px;">
+                    <i class="fa-solid fa-heart-crack" style="font-size: 4rem; color: #f44336; margin-bottom: 1rem;"></i>
+                    <h1 style="margin: 0 0 10px 0; font-size: 1.5rem;">Account Deleted</h1>
+                    <p style="margin: 0; color: #666; max-width: 400px; line-height: 1.5;">Your request has been accepted and your data has been wiped. Thank you for being part of the YatrAmore Matchmaking Journey.</p>
+                </div>
+            `;
+            return;
+        }
+
         // Attach event listeners regardless of gate state so the modal forms actually work
         setupProfileForm();
 
@@ -1989,6 +2046,10 @@ function initMatchmaking() {
                 const deleteLink = document.getElementById('delete-account-link');
                 if (deleteLink) deleteLink.style.display = 'none';
 
+                // Hide the ghost mode setting during first-time setup
+                const ghostMode = document.getElementById('ghost-mode-container');
+                if (ghostMode) ghostMode.style.display = 'none';
+
                 // Update the text to reflect setup mode
                 const title = editModal.querySelector('h2');
                 const desc = editModal.querySelector('p');
@@ -2000,7 +2061,26 @@ function initMatchmaking() {
         }
 
         if (!profileData['Approved']) {
-            if (elPending) elPending.style.display = 'block';
+            if (profileData['DeletionRequested']) {
+                const editBtn = document.getElementById('nav-edit-profile-btn');
+                if (editBtn) editBtn.style.display = 'none';
+
+                const inboxBtn = document.getElementById('nav-inbox-btn');
+                if (inboxBtn) inboxBtn.style.display = 'none';
+
+                if (elPending) {
+                    elPending.innerHTML = `
+                        <div class="glass-card" style="max-width: 500px; margin: 0 auto; padding: 40px; border-radius: 20px;">
+                            <i class="fa-solid fa-user-xmark" style="font-size: 3rem; color: #f44336; margin-bottom: 20px;"></i>
+                            <h2>Account Deletion Pending</h2>
+                            <p style="margin: 20px 0; color: var(--text-muted);">You have requested to permanently delete your account. An admin will review and process this request shortly.</p>
+                        </div>
+                    `;
+                    elPending.style.display = 'block';
+                }
+            } else {
+                if (elPending) elPending.style.display = 'block';
+            }
             return;
         }
 
@@ -2026,7 +2106,7 @@ function initMatchmaking() {
                 const db = window.firebaseDb;
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 if (userDoc.exists()) {
-                    currentUserMetaData = userDoc.data().metaData || {};
+                    window.currentUserMetaData = userDoc.data().metaData || {};
                 }
             }
         } catch (error) {
@@ -2351,6 +2431,21 @@ window.openEditProfileModal = async function () {
 
     modal.classList.add('active');
 
+    // Restore visibility for edit mode (in case it was hidden by first-time setup)
+    const closeBtn = document.querySelector('.edit-modal-close');
+    if (closeBtn) closeBtn.style.display = 'flex';
+
+    const deleteLink = document.getElementById('delete-account-link');
+    if (deleteLink) deleteLink.style.display = 'block';
+
+    const ghostMode = document.getElementById('ghost-mode-container');
+    if (ghostMode) ghostMode.style.display = 'flex';
+
+    const title = modal.querySelector('h2');
+    const desc = modal.querySelector('p');
+    if (title) title.textContent = "Edit Your Profile";
+    if (desc) desc.textContent = "Update your details. Changes will be reviewed by an Admin.";
+
     if (!window.firebaseCurrentUser) return;
 
     try {
@@ -2523,7 +2618,7 @@ function renderProfiles(profiles) {
         // Cooldown check (14 days) - Checks both cloud metadata and local storage
         const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
         const localSent = localStorage.getItem('interest_' + firebaseUid);
-        const cloudSent = currentUserMetaData['interest_' + firebaseUid];
+        const cloudSent = window.currentUserMetaData['interest_' + firebaseUid];
 
         const lastSent = cloudSent || localSent;
         const now = Date.now();
@@ -2535,12 +2630,19 @@ function renderProfiles(profiles) {
 
         const isAccepted = window.acceptedChatUserIds && window.acceptedChatUserIds.has(firebaseUid);
         const isDeclined = window.declinedChatUserIds && window.declinedChatUserIds.has(firebaseUid);
+        const isReported = window.reportedChatUserIds && window.reportedChatUserIds.has(firebaseUid);
 
         let btnHtml = '';
         if (isAccepted) {
             btnHtml = `<button onclick="window.openChatFromGrid('${firebaseUid}')" class="btn-interest btn-chat">
                 <i class="fa-solid fa-comment" style="color: white;"></i> Open Chat
             </button>`;
+        } else if (isReported) {
+            btnHtml = `<div style="display:flex; flex-direction:column; align-items:center; width: 100%;">
+                <button disabled class="btn-interest" style="background: #e53935; color: white; cursor: not-allowed;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Under Review
+                </button>
+            </div>`;
         } else if (isDeclined) {
             btnHtml = `<button disabled class="btn-interest btn-pending">
                 <i class="fa-solid fa-clock"></i> Request Pending...
@@ -2686,8 +2788,8 @@ window.expressInterest = async function expressInterest(targetUserId, targetName
             if (window.firebaseCurrentUser && window.firebaseHelpers) {
                 const { doc, setDoc } = window.firebaseHelpers;
                 const db = window.firebaseDb;
-                currentUserMetaData['interest_' + targetUserId] = Date.now();
-                setDoc(doc(db, 'users', window.firebaseCurrentUser.uid), { metaData: currentUserMetaData }, { merge: true }).catch(e => console.error(e));
+                window.currentUserMetaData['interest_' + targetUserId] = Date.now();
+                setDoc(doc(db, 'users', window.firebaseCurrentUser.uid), { metaData: window.currentUserMetaData }, { merge: true }).catch(e => console.error("Error setting metadata:", e));
             }
 
             if (btnElement) {
@@ -2728,8 +2830,8 @@ window.revokeInterest = async (targetUserId, btnElement) => {
             if (window.firebaseCurrentUser && window.firebaseHelpers) {
                 const { doc, setDoc } = window.firebaseHelpers;
                 const db = window.firebaseDb;
-                delete currentUserMetaData['interest_' + targetUserId];
-                setDoc(doc(db, 'users', window.firebaseCurrentUser.uid), { metaData: currentUserMetaData }, { merge: true }).catch(e => console.error(e));
+                delete window.currentUserMetaData['interest_' + targetUserId];
+                setDoc(doc(db, 'users', window.firebaseCurrentUser.uid), { metaData: window.currentUserMetaData }, { merge: true }).catch(e => console.error("Error setting metadata:", e));
             }
 
             // 2. Tell chat.js to delete the pending request from Firebase
@@ -2759,7 +2861,7 @@ window.updateProfileButtons = () => {
 
         const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
         const localSent = localStorage.getItem('interest_' + firebaseUid);
-        const cloudSent = currentUserMetaData ? currentUserMetaData['interest_' + firebaseUid] : null;
+        const cloudSent = window.currentUserMetaData ? window.currentUserMetaData['interest_' + firebaseUid] : null;
 
         const lastSent = cloudSent || localSent;
         const now = Date.now();
@@ -3114,6 +3216,7 @@ window.loadAdminDeletions = async () => {
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111; user-select: all; cursor: copy;" title="Double click to copy">${email}</td>
                     <td style="border: 1px solid #d3d3d3; padding: 6px 10px; text-align: center;">
                         <button onclick="window.approveDeletionRequest('${req.uid}', decodeURIComponent('${safeJsEmail}'))" style="background: #f44336; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 500;"><i class="fa-solid fa-fire"></i> Approve & Wipe</button>
+                        <button onclick="window.refuseDeletionRequest('${req.uid}')" style="background: #e0e0e0; color: #333; border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 500; margin-left: 5px;"><i class="fa-solid fa-times"></i> Refuse</button>
                     </td>
                 </tr>
             `;
@@ -3142,10 +3245,13 @@ window.approveDeletionRequest = async (uid, email) => {
     if (!confirm(`Are you sure you want to completely wipe the data for user ${uid}? \n\nAfter doing this, remember to go to your Firebase Console and delete their authentication email: ${email}`)) return;
 
     try {
-        const { deleteDoc, doc } = window.firebaseHelpers;
+        const { deleteDoc, setDoc, doc } = window.firebaseHelpers;
         const db = window.firebaseDb;
 
-        await deleteDoc(doc(db, "profiles", uid));
+        // Overwrite the profile doc completely to wipe PII, but leave a tombstone for the goodbye message
+        await setDoc(doc(db, "profiles", uid), {
+            AccountDeleted: true
+        });
 
         try {
             await deleteDoc(doc(db, "users", uid));
@@ -3154,6 +3260,35 @@ window.approveDeletionRequest = async (uid, email) => {
         }
 
         alert("Profile and User Database Records Wiped Successfully!");
+        window.loadAdminDeletions(); // Refresh list
+        loadAdminUsers();
+    } catch (e) {
+        console.error("Error approving deletion:", e);
+        alert("Error approving deletion. Check console.");
+    }
+}
+
+window.refuseDeletionRequest = async (uid) => {
+    if (!confirm(`Are you sure you want to refuse this deletion request and restore the user's access?`)) return;
+
+    try {
+        const { updateDoc, doc } = window.firebaseHelpers;
+        const db = window.firebaseDb;
+
+        await updateDoc(doc(db, "profiles", uid), {
+            DeletionRequested: false,
+            Approved: true
+        });
+
+        try {
+            await updateDoc(doc(db, "users", uid), {
+                DeletionRequested: false
+            });
+        } catch (e) {
+            console.warn("User document already deleted or inaccessible.", e);
+        }
+
+        alert("Deletion Request Refused. User access restored.");
         window.loadAdminDeletions(); // Refresh list
         loadAdminUsers();
 
@@ -3512,15 +3647,15 @@ window.dismissReport = async (reportId, conversationId) => {
         const { doc, deleteDoc, updateDoc } = window.firebaseHelpers;
         const db = window.firebaseDb;
 
-        // 1. Delete the report document
-        await deleteDoc(doc(db, "reports", reportId));
-
-        // 2. Unlock the conversation (set status back to accepted)
+        // 1. Unlock the conversation FIRST (set status back to accepted)
         if (conversationId) {
             await updateDoc(doc(db, "conversations", conversationId), {
                 status: 'accepted'
             });
         }
+
+        // 2. Then delete the report document
+        await deleteDoc(doc(db, "reports", reportId));
 
         alert("Report dismissed and chat unlocked successfully.");
         // Refresh panel
@@ -3528,6 +3663,13 @@ window.dismissReport = async (reportId, conversationId) => {
     } catch (e) {
         console.error("Error dismissing report:", e);
         alert("Failed to dismiss report. Check console for details.");
+    }
+};
+
+window.blockUser = (uid) => {
+    // Pass false as currentBlockStatus to force a block action
+    if (window.blockUserProfile) {
+        window.blockUserProfile(uid, false);
     }
 };
 

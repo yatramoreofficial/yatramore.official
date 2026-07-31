@@ -3759,6 +3759,16 @@ select.filter-input {
     pointer-events: auto;
 }
 
+/* Hide spin arrows on the Math Captcha for a cleaner look */
+#auth-captcha-answer::-webkit-outer-spin-button,
+#auth-captcha-answer::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#auth-captcha-answer {
+    -moz-appearance: textfield;
+}
+
 .auth-modal {
     position: fixed;
     top: 50%;

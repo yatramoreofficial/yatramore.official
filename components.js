@@ -317,9 +317,16 @@ const YatrAmore = {
                 </div>
 
                 <!-- MATH CAPTCHA -->
-                <div class="auth-input-group" id="auth-captcha-group" style="margin-top: 15px; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 15px;">
-                    <label id="auth-captcha-label" for="auth-captcha-answer" style="color: var(--brand-brown); font-weight: 600; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-shield-halved"></i> Security Check: What is 0 + 0?</label>
-                    <input type="number" id="auth-captcha-answer" required placeholder="Enter the sum">
+                <div class="auth-input-group" id="auth-captcha-group" style="margin-top: 20px;">
+                    <div style="background: rgba(107, 66, 38, 0.04); border: 1px solid rgba(107, 66, 38, 0.15); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);">
+                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-brown), #8b5a33); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; box-shadow: 0 3px 8px rgba(107, 66, 38, 0.3); flex-shrink: 0;">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <label id="auth-captcha-label" for="auth-captcha-answer" style="color: var(--text-main); font-weight: 600; font-size: 0.9rem; margin: 0; padding: 0; display: block; line-height: 1.2;">Security Check: What is 0 + 0?</label>
+                        </div>
+                        <input type="number" id="auth-captcha-answer" required placeholder="" oninput="if(this.value.length > 2) this.value = this.value.slice(0,2);" onkeypress="return event.charCode >= 48 && event.charCode <= 57" style="width: 60px; height: 40px; text-align: center; font-size: 1.1rem; font-weight: 700; padding: 0; border-radius: 8px; border: 1px solid rgba(107,66,38,0.2); background: var(--bg-main); color: var(--text-main); outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+                    </div>
                 </div>
 
                 <button type="submit" id="auth-submit-btn" class="auth-submit-btn">

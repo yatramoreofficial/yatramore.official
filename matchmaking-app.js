@@ -271,13 +271,9 @@ function setupAuthUIListeners() {
                     // Do not sign out! They will be sent to the Verify Email gate.
                 }
                 closeModal();
-                // Only redirect if they logged in successfully (not on signup, because they need to verify)
-                if (mode === 'login') {
-                    if (authForm.dataset.redirect) {
-                        window.location.href = authForm.dataset.redirect;
-                    } else {
-                        window.location.reload();
-                    }
+                // Only redirect if they logged in successfully and have a redirect param
+                if (mode === 'login' && authForm.dataset.redirect) {
+                    window.location.href = authForm.dataset.redirect;
                 }
             } catch (error) {
                 errorContainer.style.display = 'block';
@@ -382,7 +378,7 @@ window.generateAuthCaptcha = () => {
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
     window.authCaptchaAnswer = num1 + num2;
-    label.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Security Check: What is ${num1} + ${num2}?`;
+    label.innerHTML = `Security Check: What is ${num1} + ${num2}?`;
     answerInput.value = '';
 };
 
@@ -430,6 +426,18 @@ function initChatSystem() {
             if (!isChatInitialized) {
                 setupUIListeners();
                 listenForInboxUpdates();
+                
+                // Monitor keyboard state on iOS for safe-area fixes
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', () => {
+                        if (window.visualViewport.height < window.innerHeight - 100) {
+                            document.body.classList.add('keyboard-open');
+                        } else {
+                            document.body.classList.remove('keyboard-open');
+                        }
+                    });
+                }
+                
                 isChatInitialized = true;
             }
         } else {
@@ -1930,6 +1938,29 @@ function setupProfileForm() {
                 }
 
                 profileData['Profile Picture'] = photoUrl;
+
+                // Block blank updates to save admin review time
+                const existingData = existingProfile.data();
+                const hasChanges = (
+                    profileData['First Name'] !== existingData['First Name'] ||
+                    profileData['Gender'] !== existingData['Gender'] ||
+                    profileData['Age'] !== existingData['Age'] ||
+                    profileData['Religion'] !== existingData['Religion'] ||
+                    profileData['Location'] !== existingData['Location'] ||
+                    profileData['Bio'] !== existingData['Bio'] ||
+                    window.croppedImageBlob != null
+                );
+
+                if (!hasChanges) {
+                    btn.innerHTML = originalBtnText;
+                    btn.disabled = false;
+                    if (window.showToast) {
+                        window.showToast("No changes detected. You haven't updated any information.");
+                    } else {
+                        alert("No changes detected. You haven't updated any information.");
+                    }
+                    return;
+                }
                 profileData['status'] = 'pending';
                 profileData['requestedAt'] = window.firebaseHelpers.serverTimestamp();
                 // Preserve the original createdAt and Approved status in the update request payload for admin reference if needed
@@ -1973,7 +2004,8 @@ function setupProfileForm() {
                 }
 
                 profileData['Profile Picture'] = photoUrl;
-                profileData['Approved'] = false;
+                profileData['Approved'] = (existingProfile.exists() && existingProfile.data().Approved) ? existingProfile.data().Approved : false;
+                profileData['Blocked'] = (existingProfile.exists() && existingProfile.data().Blocked) ? existingProfile.data().Blocked : false;
                 profileData['createdAt'] = (existingProfile.exists() && existingProfile.data().createdAt) ? existingProfile.data().createdAt : window.firebaseHelpers.serverTimestamp();
 
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Step 4/4: Saving Profile...';
@@ -2088,7 +2120,6 @@ window.startProfilesListener = function() {
 
         window.profilesUnsubscribe = onSnapshot(q, async (snapshot) => {
             let rawProfiles = [];
-            let hasProfile = false;
 
             snapshot.forEach(docSnap => {
                 const data = docSnap.data();
@@ -2096,17 +2127,8 @@ window.startProfilesListener = function() {
                 rawProfiles.push(data);
             });
 
-            if (currentUserId) {
-                const myProfileDoc = await getDoc(doc(db, 'profiles', currentUserId));
-                if (myProfileDoc.exists()) {
-                    hasProfile = true;
-                    if (!myProfileDoc.data().Approved) {
-                        const myData = myProfileDoc.data();
-                        myData['Firebase UID'] = currentUserId;
-                        rawProfiles.push(myData);
-                    }
-                }
-            }
+            // The current user's profile is already checked before startProfilesListener is called.
+            // No need to fetch it again inside the snapshot callback!
 
             rawProfiles = rawProfiles.filter((p, index, self) =>
                 index === self.findIndex((t) => (
@@ -2122,27 +2144,6 @@ window.startProfilesListener = function() {
             });
 
             renderProfiles(allProfiles);
-
-            if (currentUserId) {
-                if (!hasProfile) {
-                    const modalTitle = document.querySelector('#edit-modal h2');
-                    if (modalTitle) modalTitle.textContent = "Complete Your Profile";
-                    const deleteLink = document.getElementById('delete-account-link');
-                    if (deleteLink) deleteLink.style.display = 'none';
-                    const editModal = document.getElementById('edit-modal');
-                    if (editModal) {
-                        editModal.classList.add('active');
-                        if (window.showToast) {
-                            window.showToast("Welcome! Please complete your profile to continue.");
-                        }
-                    }
-                } else {
-                    const modalTitle = document.querySelector('#edit-modal h2');
-                    if (modalTitle) modalTitle.textContent = "Edit Your Profile";
-                    const deleteLink = document.getElementById('delete-account-link');
-                    if (deleteLink) deleteLink.style.display = 'block';
-                }
-            }
         }, (error) => {
             console.error('Error in profiles listener:', error);
             const grid = document.getElementById('profiles-grid');
@@ -2585,7 +2586,7 @@ async function loadAdminUsers() {
             <table style="width: max-content; min-width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                 <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr style="color: #333333;">
-                        <th style="background: #f5f5f5; padding: 6px 8px; border: 1px solid #d3d3d3; font-weight: normal; width: 50px; text-align: center;"><input type="checkbox" /></th>
+                        <th style="background: #f5f5f5; padding: 6px 8px; border: 1px solid #d3d3d3; font-weight: normal; width: 50px; text-align: center;"><input type="checkbox" title="Select All" onchange="const cbs = this.closest('table').querySelectorAll('tbody input[type=checkbox]'); cbs.forEach(cb => cb.checked = this.checked);" /></th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">First Name</th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 80px;">Age</th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">Location</th>
@@ -2766,20 +2767,17 @@ window.loadAdminDeletions = async () => {
             }
         });
 
-        if (deletionRequests.length === 0) {
-            listContainer.innerHTML = '<div style="padding: 3rem; text-align: center; color: var(--text-muted); font-size: 1.1rem;"><i class="fa-regular fa-face-smile" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; display: block;"></i> No pending account deletion requests.</div>';
-            return;
-        }
 
         let html = `
-            <div style="overflow-x: auto; max-width: 100%; box-sizing: border-box;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                <thead>
-                    <tr style="background: #f44336; color: white;">
-                        <th style="padding: 10px; border: 1px solid #d3d3d3;">Name</th>
-                        <th style="padding: 10px; border: 1px solid #d3d3d3;">User ID (UID)</th>
-                        <th style="padding: 10px; border: 1px solid #d3d3d3;">Auth Email (Fetches from users collection)</th>
-                        <th style="padding: 10px; border: 1px solid #d3d3d3; text-align: center;">Actions</th>
+            <div style="overflow: auto; width: 100%; max-width: 100%; box-sizing: border-box; height: 60vh; background: #ffffff; border: 1px solid #d3d3d3; position: relative;">
+            <table style="width: max-content; min-width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                <thead style="position: sticky; top: 0; z-index: 10;">
+                    <tr style="color: #333333;">
+                        <th style="background: #f5f5f5; padding: 6px 8px; border: 1px solid #d3d3d3; font-weight: normal; width: 50px; text-align: center;"><input type="checkbox" title="Select All" onchange="const cbs = this.closest('table').querySelectorAll('tbody input[type=checkbox]'); cbs.forEach(cb => cb.checked = this.checked);" /></th>
+                        <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">Name</th>
+                        <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 150px;">User ID (UID)</th>
+                        <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 250px;">Auth Email</th>
+                        <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 150px; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -2801,13 +2799,22 @@ window.loadAdminDeletions = async () => {
 
             const safeJsEmail = encodeURIComponent(email).replace(/'/g, "%27");
             html += `
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 12px 10px; color: #111;"><strong>${name}</strong></td>
-                    <td style="padding: 12px 10px; font-family: monospace; color: #111; user-select: all; cursor: copy;" title="Double click to copy">${req.uid}</td>
-                    <td style="padding: 12px 10px; color: #111; user-select: all; cursor: copy;" title="Double click to copy">${email}</td>
-                    <td style="padding: 12px 10px; text-align: center;">
-                        <button onclick="window.approveDeletionRequest('${req.uid}', decodeURIComponent('${safeJsEmail}'))" style="background: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-fire"></i> Approve & Wipe Data</button>
+                <tr style="background: #ffffff;">
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 8px; text-align: center; color: #888; font-size: 11px; background: rgba(0,0,0,0.02);"><input type="checkbox" value="${req.uid}" /></td>
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111;"><strong>${name}</strong></td>
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; font-family: monospace; color: #111; user-select: all; cursor: copy;" title="Double click to copy">${req.uid}</td>
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; color: #111; user-select: all; cursor: copy;" title="Double click to copy">${email}</td>
+                    <td style="border: 1px solid #d3d3d3; padding: 6px 10px; text-align: center;">
+                        <button onclick="window.approveDeletionRequest('${req.uid}', decodeURIComponent('${safeJsEmail}'))" style="background: #f44336; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 500;"><i class="fa-solid fa-fire"></i> Approve & Wipe</button>
                     </td>
+                </tr>
+            `;
+        }
+
+        if (deletionRequests.length === 0) {
+            html += `
+                <tr style="background: #ffffff;">
+                    <td colspan="5" style="border: 1px solid #d3d3d3; padding: 20px; text-align: center; color: #888;">No pending account deletion requests.</td>
                 </tr>
             `;
         }
@@ -2867,7 +2874,7 @@ async function loadAdminUpdates() {
             <table style="width: max-content; min-width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                 <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr style="color: #333333;">
-                        <th style="background: #f5f5f5; padding: 6px 8px; border: 1px solid #d3d3d3; font-weight: normal; width: 50px; text-align: center;"><input type="checkbox" /></th>
+                        <th style="background: #f5f5f5; padding: 6px 8px; border: 1px solid #d3d3d3; font-weight: normal; width: 50px; text-align: center;"><input type="checkbox" title="Select All" onchange="const cbs = this.closest('table').querySelectorAll('tbody input[type=checkbox]'); cbs.forEach(cb => cb.checked = this.checked);" /></th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">First Name</th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 80px;">Age</th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">Location</th>
@@ -2952,6 +2959,15 @@ async function loadAdminUpdates() {
             `;
             rowIndex++;
         }
+
+        if (snapshot.empty) {
+            html += `
+                <tr style="background: #ffffff;">
+                    <td colspan="9" style="border: 1px solid #d3d3d3; padding: 20px; text-align: center; color: #888;">No pending profile update requests.</td>
+                </tr>
+            `;
+        }
+
         html += `</tbody></table></div>`;
 
         listContainer.innerHTML = html;
@@ -2971,12 +2987,15 @@ window.approveProfileUpdate = async (uid) => {
         if (!updateDocSnap.exists()) return;
         const updateData = updateDocSnap.data();
 
-        // 2. Remove update-specific metadata
+        // 2. Remove update-specific metadata and strip potential malicious privilege escalation flags
         delete updateData.status;
         delete updateData.requestedAt;
+        delete updateData.Approved;
+        delete updateData.Blocked;
+        delete updateData.isAdmin;
 
-        // 3. Overwrite the live profile
-        await setDoc(doc(db, "profiles", uid), updateData);
+        // 3. Merge the safe data into the live profile (preserving existing Approved/Blocked status)
+        await setDoc(doc(db, "profiles", uid), updateData, { merge: true });
 
         // 4. Delete the request
         await deleteDoc(doc(db, "profile_updates", uid));
@@ -3034,7 +3053,7 @@ async function loadAdminReports() {
             <table style="width: max-content; min-width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                 <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr style="color: #333333;">
-                        <th style="background: #f5f5f5; padding: 6px 8px; border: 1px solid #d3d3d3; font-weight: normal; width: 50px; text-align: center;"><input type="checkbox" /></th>
+                        <th style="background: #f5f5f5; padding: 6px 8px; border: 1px solid #d3d3d3; font-weight: normal; width: 50px; text-align: center;"><input type="checkbox" title="Select All" onchange="const cbs = this.closest('table').querySelectorAll('tbody input[type=checkbox]'); cbs.forEach(cb => cb.checked = this.checked);" /></th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">Reported User</th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">Reported By</th>
                         <th style="background: #f5f5f5; padding: 6px 10px; border: 1px solid #d3d3d3; font-weight: 500; min-width: 120px;">Date</th>
@@ -3246,33 +3265,6 @@ function handleTouchStart(e) {
     isSwiping = false;
 
     const msgId = msgElement.dataset.msgId;
-    const now = Date.now();
-    
-    // Double tap detection (within 300ms)
-    if (now - lastTapTime < 300 && lastTapMsgId === msgId) {
-        // Prevent long press
-        if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
-        }
-        lastTapTime = 0; // Reset
-        
-        // Bounce animation
-        msgElement.style.transition = 'transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        msgElement.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            msgElement.style.transform = 'scale(1)';
-        }, 150);
-        
-        // Trigger reaction
-        if (window.reactToMessage) {
-            window.reactToMessage(msgId, '❤️');
-        }
-        return;
-    }
-    
-    lastTapTime = now;
-    lastTapMsgId = msgId;
 
     // Start timer for 500ms
     pressTimer = setTimeout(() => {

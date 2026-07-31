@@ -113,7 +113,7 @@
     <div class="container auth-logged-in" data-display-original="flex"
         style="padding-top: 120px; padding-bottom: 20px; display: none; justify-content: flex-end; gap: 15px; align-items: center; position: relative; z-index: 50;">
         <button id="admin-dashboard-btn" onclick="if(window.promptAdminAccess) window.promptAdminAccess()" style="display: none; border: 2px solid #F44336; color: #F44336; padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i class="fas fa-shield-alt"></i> Admin</button>
-        <button onclick="window.openEditProfileModal()"
+        <button id="nav-edit-profile-btn" onclick="window.openEditProfileModal()"
             style="border: 2px solid var(--brand-brown); color: var(--brand-brown); padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i
                 class="fas fa-user-edit"></i> Edit Profile</button>
         <button class="trigger-logout"

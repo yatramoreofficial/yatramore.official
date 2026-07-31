@@ -1614,6 +1614,9 @@ function initMatchmaking() {
         if (!user) return; // User logged out, handled by updateUIForUser
 
         if (!user.emailVerified) {
+            const editBtn = document.getElementById('nav-edit-profile-btn');
+            if (editBtn) editBtn.style.display = 'none';
+
             if (elVerify) elVerify.style.display = 'block';
 
             // Auto-check for verification every 3 seconds so they don't have to refresh manually
@@ -1632,6 +1635,9 @@ function initMatchmaking() {
 
             return;
         } else {
+            const editBtn = document.getElementById('nav-edit-profile-btn');
+            if (editBtn) editBtn.style.display = 'inline-block';
+
             if (window.verificationCheckInterval) {
                 clearInterval(window.verificationCheckInterval);
             }

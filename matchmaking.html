@@ -44,7 +44,7 @@
     <link rel="canonical" href="https://yatramore.com/matchmaking">
 
     <!-- High-Level Security: Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://*.gstatic.com https://*.google.com https://apis.google.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://cdnjs.cloudflare.com https://*.adtrafficquality.google https://www.googletagservices.com https://bat.bing.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://ui-avatars.com; connect-src 'self' https://cdn.jsdelivr.net https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://apis.google.com https://www.gstatic.com https://*.gstatic.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://firestore.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://api.cloudinary.com https://ep1.adtrafficquality.google https://*.adtrafficquality.google https://*.doubleclick.net https://unpkg.com https://adservice.google.com https://bat.bing.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com https://*.firebaseapp.com https://*.adtrafficquality.google; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://*.gstatic.com https://*.google.com https://apis.google.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://cdnjs.cloudflare.com https://*.adtrafficquality.google https://www.googletagservices.com https://bat.bing.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://ui-avatars.com; connect-src 'self' https://securetoken.googleapis.com https://cdn.jsdelivr.net https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://apis.google.com https://www.gstatic.com https://*.gstatic.com https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://firestore.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://api.cloudinary.com https://ep1.adtrafficquality.google https://*.adtrafficquality.google https://*.doubleclick.net https://unpkg.com https://adservice.google.com https://bat.bing.com; frame-src 'self' https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com https://*.firebaseapp.com https://*.adtrafficquality.google; base-uri 'self'; form-action 'self';">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-cyzxRvewl+FOKTtpBzYjW6x6IAYUCZy3sGP40hn+DQkqeluGRCax7qztK2ImL64SA+C7kVWdLI6wvdlStawhyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -113,6 +113,8 @@
     <div class="container auth-logged-in" data-display-original="flex"
         style="padding-top: 120px; padding-bottom: 20px; display: none; justify-content: flex-end; gap: 15px; align-items: center; position: relative; z-index: 50;">
         <button id="admin-dashboard-btn" onclick="if(window.promptAdminAccess) window.promptAdminAccess()" style="display: none; border: 2px solid #F44336; color: #F44336; padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i class="fas fa-shield-alt"></i> Admin</button>
+        <button id="mobile-filter-btn" onclick="document.querySelector('.filter-sidebar').classList.add('mobile-open'); document.querySelector('.accessibility-container')?.classList.add('hide-fab');"
+            style="display: none; border: 2px solid var(--brand-brown); color: var(--brand-brown); padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-sliders"></i> Filters</button>
         <button id="nav-edit-profile-btn" onclick="window.openEditProfileModal()"
             style="border: 2px solid var(--brand-brown); color: var(--brand-brown); padding: 0.6rem 1.8rem; border-radius: 50px; background: transparent; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i
                 class="fas fa-user-edit"></i> Edit Profile</button>
@@ -190,15 +192,10 @@
         <!-- ACTUAL GRID (Hidden until all gates passed) -->
         <div id="gate-approved-grid" class="container matchmaking-layout" style="display: none;">
 
-            <!-- Mobile Filter FAB (Hidden on desktop) -->
-            <button id="mobile-filter-fab" class="mobile-filter-fab" onclick="document.querySelector('.filter-sidebar').classList.add('mobile-open'); this.classList.add('hide-fab'); document.querySelector('.accessibility-container')?.classList.add('hide-fab');">
-                <i class="fa-solid fa-sliders"></i> Filters
-            </button>
-
             <!-- Filter Sidebar -->
             <aside class="filter-sidebar glass-card">
                 <!-- Close Button for Mobile (Hidden on desktop) -->
-                <button class="mobile-filter-close" onclick="document.querySelector('.filter-sidebar').classList.remove('mobile-open'); document.getElementById('mobile-filter-fab').classList.remove('hide-fab'); document.querySelector('.accessibility-container')?.classList.remove('hide-fab');"><i class="fa-solid fa-times"></i></button>
+                <button class="mobile-filter-close" onclick="document.querySelector('.filter-sidebar').classList.remove('mobile-open'); document.querySelector('.accessibility-container')?.classList.remove('hide-fab');"><i class="fa-solid fa-times"></i></button>
                 <h2>Filter Matches</h2>
 
                 <div class="filter-group">
@@ -464,7 +461,7 @@
     </main>
 
     <!-- Edit Profile Modal -->
-    <div id="edit-modal" class="edit-modal-overlay" style="align-items: flex-start; overflow-y: auto; padding: 2rem 1rem;">
+    <div id="edit-modal" class="edit-modal-overlay" style="align-items: flex-start; overflow-y: auto; padding: 2rem 1rem;" onclick="if(event.target === this) this.classList.remove('active')">
         <div class="edit-modal-content glass-card" style="border-radius: 20px; margin: auto;">
             <button onclick="document.getElementById('edit-modal').classList.remove('active')" class="edit-modal-close">
                 <i class="fas fa-times"></i>
@@ -474,6 +471,23 @@
                 <h2 style="color: var(--brand-brown); margin-bottom: 0.5rem; text-align: center;">Your Profile</h2>
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">Please fill out your details to join the directory.</p>
                 
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; border: 1px solid var(--glass-border); border-radius: 8px; background: rgba(0,0,0,0.02); margin-bottom: 1.5rem;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-main); display: flex; align-items: center;">
+                            Ghost Mode <i class="fa-solid fa-ghost" style="color: var(--brand-brown); margin-left: 6px;"></i>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4; padding-right: 15px;">
+                            Hide your read receipts. Others won't see blue ticks when you read their messages, and you won't see theirs either.<br>
+                            <strong>(Recommended to keep active)</strong><br>
+                            <em style="font-size: 0.75rem; opacity: 0.8;">* Changes apply instantly (no profile submission or approval required).</em>
+                        </div>
+                    </div>
+                    <label class="ghost-switch" style="position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0;">
+                        <input type="checkbox" id="profile-ghost-mode" style="opacity: 0; width: 0; height: 0;" onchange="window.toggleGhostMode(this.checked)">
+                        <span class="ghost-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: .4s; border-radius: 34px;"></span>
+                    </label>
+                </div>
+
                 <form id="native-profile-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <div style="display: flex; gap: 1rem;">
                         <div style="flex: 1;">
@@ -735,6 +749,13 @@
                         </div>
                     </div>
 
+                    <style>
+                        .ghost-slider { background-color: #ccc; }
+                        .ghost-switch input:checked + .ghost-slider { background-color: #25D366; }
+                        .ghost-switch input:checked + .ghost-slider:before { transform: translateX(20px); }
+                        .ghost-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+                    </style>
+
                     <button type="submit" id="profile-submit-btn" class="btn" style="background: var(--brand-brown); color: white; border-radius: 50px; padding: 1rem 2rem; font-weight: 600; border: none; cursor: pointer; margin-top: 1rem; width: 100%; transition: all 0.3s ease;">
                         Submit Profile
                     </button>
@@ -755,7 +776,7 @@
         style="display: none; position: fixed; bottom: 0; top: auto; right: -100%; width: clamp(300px, 100vw, 400px); height: 60vh; z-index: 1999; flex-direction: column; border-top-left-radius: 20px; overflow: hidden;">
 
         <!-- Header -->
-        <div class="chat-panel-header">
+        <div id="inbox-panel-header" class="chat-panel-header" style="cursor: pointer;">
             <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600; display: flex; align-items: center;"><i
                     class="fa-solid fa-comment-dots" style="margin-right: 8px; font-size: 1.2rem;"></i> Inbox</h3>
             <button id="close-inbox-btn"
@@ -794,14 +815,22 @@
         <!-- Active Chat Interface (Overlay) -->
         <div id="active-chat-view"
             style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); flex-direction: column; z-index: 10;">
+            <!-- Fast Switcher Bar -->
+            <div id="fast-switcher-bar" style="display: flex; gap: 12px; padding: 10px 15px; background: rgba(0,0,0,0.02); overflow-x: auto; scroll-snap-type: x mandatory; border-bottom: 1px solid var(--glass-border); align-items: center;">
+                <!-- Populated by JS -->
+            </div>
+
             <!-- Active Chat Header -->
-            <div class="chat-panel-header">
+            <div id="active-chat-header" class="chat-panel-header" style="cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
                     <button id="back-to-inbox"
                         style="background: none; border: none; color: var(--bg-main); cursor: pointer; font-size: 1.2rem; flex-shrink: 0;"><i
                             class="fa-solid fa-arrow-left"></i></button>
-                    <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
                         <span id="active-chat-name" style="font-weight: 600; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">User Name</span>
+                        <button id="view-chat-profile-btn" style="background: none; border: none; color: var(--bg-main); font-size: 1.1rem; cursor: pointer; opacity: 0.8; transition: opacity 0.2s; flex-shrink: 0;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="View Profile">
+                            <i class="fa-regular fa-address-card"></i>
+                        </button>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0;">
@@ -856,13 +885,17 @@
                 </div>
                 <button id="cancel-reply-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 5px;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="chat-input-area">
-                <textarea id="chat-input" name="chat-message-text" placeholder="Type a message..." class="chat-input-field" autocomplete="false" autocorrect="on" autocapitalize="sentences" spellcheck="true" data-form-type="other" rows="1" style="resize: none; overflow: hidden; min-height: 44px; max-height: 120px;"></textarea>
+            <div class="chat-input-area" style="position: relative;">
+                <textarea id="chat-input" name="chat-message-text" placeholder="Type a message..." class="chat-input-field" autocomplete="do-not-autofill" data-1p-ignore="true" data-lpignore="true" autocorrect="on" autocapitalize="sentences" spellcheck="true" data-form-type="other" rows="1" style="resize: none; overflow: hidden; min-height: 44px; max-height: 120px;"></textarea>
+                <button id="open-emoji-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; padding: 5px 10px; transition: transform 0.2s;" title="Add Emoji">
+                    <i class="fa-regular fa-face-smile"></i>
+                </button>
                 <button id="send-msg-btn"
-                    style="background: var(--brand-brown); color: var(--bg-main); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;"><i
+                    style="background: var(--brand-brown); color: var(--bg-main); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; flex-shrink: 0;"><i
                         class="fa-solid fa-paper-plane" style="margin-left: -2px;"></i></button>
             </div>
         </div>
+
 
         <!-- Chat Context Menu Overlay -->
         <div id="ctx-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9998; opacity: 0; transition: opacity 0.2s;"></div>
@@ -903,7 +936,7 @@
 
     <!-- Hidden Admin Modal (Easter Egg) -->
     <div id="admin-reports-modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
+         style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10005; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto;" onclick="if(event.target === this) this.style.display='none'">
         <div
             style="background: var(--bg-main); width: 95%; max-width: 1400px; max-height: 85vh; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
             <div
@@ -981,6 +1014,21 @@
 
 
     </script>
+    <!-- Chat Profile Modal -->
+    <div id="chat-profile-modal" class="edit-modal-overlay" style="align-items: flex-start; overflow-y: auto; padding: 2rem 1rem; z-index: 10005;" onclick="if(event.target === this) this.classList.remove('active')">
+        <div class="edit-modal-content glass-card" style="border-radius: 20px; margin: auto; max-width: 400px; padding: 2rem;">
+            <button onclick="document.getElementById('chat-profile-modal').classList.remove('active')" class="edit-modal-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--brand-brown); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-regular fa-address-card"></i> Profile Details
+            </h2>
+            <div id="chat-profile-modal-content" style="display: flex; flex-direction: column; gap: 15px; color: var(--text-main);">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

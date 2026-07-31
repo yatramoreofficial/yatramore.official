@@ -3914,9 +3914,6 @@ select.filter-input {
 ========================================= */
 
 /* Hide mobile-specific elements on desktop */
-.mobile-filter-fab {
-    display: none;
-}
 
 .mobile-filter-close {
     display: none;
@@ -3951,32 +3948,9 @@ select.filter-input {
         gap: 10px !important;
     }
 
-    /* The Filter Bottom Sheet and FAB */
-    .mobile-filter-fab {
-        display: flex;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: var(--glass-bg);
-        color: var(--text-main);
-        border: 1px solid var(--glass-border);
-        padding: 8px 24px;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 1.1rem;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        align-items: center;
-        gap: 8px;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .mobile-filter-fab:active {
-        transform: scale(0.95);
+    /* New Nav Filter Button on Mobile */
+    #mobile-filter-btn {
+        display: flex !important;
     }
 
     .filter-sidebar {
@@ -4113,9 +4087,25 @@ select.filter-input {
         top: 75px !important;
         bottom: 0 !important;
         right: -100vw !important;
+        background: var(--bg-main) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        overscroll-behavior: none;
         /* Keep it closed */
         border-radius: 0 !important;
         z-index: 1999 !important;
+        transition: padding-bottom 0.1s ease-out, right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1);
+    }
+
+    body.keyboard-open .chat-panel {
+        padding-bottom: var(--keyboard-offset, 0px) !important;
+    }
+
+    body.chat-active {
+        position: fixed !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
     }
 
     .chat-panel.open {
@@ -4124,7 +4114,6 @@ select.filter-input {
 }
 
 /* Hide FAB using JS class (Global so it hides on desktop chat open too) */
-.mobile-filter-fab.hide-fab,
 .accessibility-container.hide-fab {
     display: none !important;
 }

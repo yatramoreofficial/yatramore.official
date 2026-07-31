@@ -429,16 +429,73 @@ function initChatSystem() {
 
                 // Monitor keyboard state on iOS for safe-area fixes
                 if (window.visualViewport) {
-                    window.visualViewport.addEventListener('resize', () => {
+                    const adjustForKeyboard = () => {
                         if (window.visualViewport.height < window.innerHeight - 100) {
                             document.body.classList.add('keyboard-open');
+                            if (window.innerWidth <= 768) {
+                                // Calculate total keyboard height
+                                const keyboardHeight = window.innerHeight - window.visualViewport.height;
+                                // Subtract how much Safari already pushed the layout viewport up
+                                const offsetTop = Math.max(0, window.visualViewport.offsetTop);
+                                // The remaining padding needed to perfectly touch the keyboard
+                                const paddingNeeded = Math.max(0, keyboardHeight - offsetTop);
+                                document.documentElement.style.setProperty('--keyboard-offset', paddingNeeded + 'px');
+                            }
                         } else {
                             document.body.classList.remove('keyboard-open');
+                            document.documentElement.style.setProperty('--keyboard-offset', '0px');
                         }
-                    });
+                    };
+                    window.visualViewport.addEventListener('resize', adjustForKeyboard);
+                    window.visualViewport.addEventListener('scroll', adjustForKeyboard);
+                }
+
+                const inboxBtnBadge = document.getElementById('nav-inbox-badge');
+                if (inboxBtnBadge) {
+                    const unreadCount = document.querySelectorAll('.inbox-chat-item[style*="border-left"]').length;
+                    inboxBtnBadge.textContent = unreadCount;
+                    inboxBtnBadge.style.display = unreadCount > 0 ? 'block' : 'none';
                 }
 
                 isChatInitialized = true;
+                
+                // Restore chat panel state
+                const state = localStorage.getItem('chatPanelState');
+                if (state === 'open' || state === 'minimized') {
+                        const panel = document.getElementById('chat-inbox-panel');
+                        if (panel) {
+                            panel.style.display = 'flex';
+                            setTimeout(() => {
+                                panel.classList.add('open');
+                                if (state === 'minimized') {
+                                    panel.classList.add('minimized');
+                                    document.body.style.overflow = '';
+                                    if (document.body.classList.contains('chat-active')) {
+                                        document.body.classList.remove('chat-active');
+                                        const scrollY = document.body.style.top;
+                                        document.body.style.top = '';
+                                        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+                                    }
+                                } else {
+                                    document.body.style.overflow = 'hidden';
+                                    if (window.innerWidth <= 768 && !document.body.classList.contains('chat-active')) {
+                                        document.body.style.top = `-${window.scrollY}px`;
+                                        document.body.classList.add('chat-active');
+                                    }
+                                    if (window.innerWidth <= 768) {
+                                        const ac = document.querySelector('.accessibility-container');
+                                        if (ac) ac.classList.add('hide-fab');
+                                    }
+                                }
+                                
+                                const lastChatId = localStorage.getItem('currentChatId');
+                                const lastChatJson = localStorage.getItem('currentChatUserJson');
+                                if (lastChatId && lastChatJson) {
+                                    window.openChat(lastChatId, lastChatJson, true);
+                                }
+                            }, 100);
+                        }
+                    }
             }
         } else {
             currentMember = null;
@@ -464,11 +521,19 @@ function setupUIListeners() {
     // Panel Toggle
     if (inboxBtn) {
         inboxBtn.addEventListener('click', () => {
-            if (panel) panel.style.display = 'flex';
+            if (panel) {
+                panel.style.display = 'flex';
+                panel.classList.remove('minimized');
+            }
             setTimeout(() => {
                 if (panel) panel.classList.add('open');
+                if (window.innerWidth > 768) localStorage.setItem('chatPanelState', 'open');
                 document.body.style.overflow = 'hidden';
                 if (window.innerWidth <= 768) {
+                    if (!document.body.classList.contains('chat-active')) {
+                        document.body.style.top = `-${window.scrollY}px`;
+                        document.body.classList.add('chat-active');
+                    }
                     const fab = document.getElementById('mobile-filter-fab');
                     if (fab) fab.classList.add('hide-fab');
                     const ac = document.querySelector('.accessibility-container');
@@ -478,11 +543,59 @@ function setupUIListeners() {
         });
     }
 
+    const activeChatHeader = document.getElementById('active-chat-header');
+    const inboxHeader = document.getElementById('inbox-panel-header');
+    
+    const toggleMinimize = (e) => {
+        if (!panel) return;
+        // Ignore clicks on buttons inside the header
+        if (e.target.closest && (e.target.closest('button') || e.target.closest('.chat-dropdown-item'))) return;
+        
+        if (panel.classList.contains('minimized')) {
+            panel.classList.remove('minimized');
+            localStorage.setItem('chatPanelState', 'open');
+            document.body.style.overflow = 'hidden';
+            if (window.innerWidth <= 768) {
+                if (!document.body.classList.contains('chat-active')) {
+                    document.body.style.top = `-${window.scrollY}px`;
+                    document.body.classList.add('chat-active');
+                }
+                const ac = document.querySelector('.accessibility-container');
+                if (ac) ac.classList.add('hide-fab');
+            }
+        } else {
+            panel.classList.add('minimized');
+            localStorage.setItem('chatPanelState', 'minimized');
+            document.body.style.overflow = '';
+            if (document.body.classList.contains('chat-active')) {
+                document.body.classList.remove('chat-active');
+                const scrollY = document.body.style.top;
+                document.body.style.top = '';
+                window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            }
+            if (window.innerWidth <= 768) {
+                const ac = document.querySelector('.accessibility-container');
+                if (ac) ac.classList.remove('hide-fab');
+            }
+        }
+    };
+
+    if (activeChatHeader) activeChatHeader.addEventListener('click', toggleMinimize);
+    if (inboxHeader) inboxHeader.addEventListener('click', toggleMinimize);
+
     const closePanel = () => {
-        if (panel) panel.classList.remove('open');
+        if (panel) {
+            panel.classList.remove('open');
+            panel.classList.remove('minimized');
+        }
+        localStorage.setItem('chatPanelState', 'closed');
         document.body.style.overflow = '';
-        const fab = document.getElementById('mobile-filter-fab');
-        if (fab) fab.classList.remove('hide-fab');
+        if (document.body.classList.contains('chat-active')) {
+            document.body.classList.remove('chat-active');
+            const scrollY = document.body.style.top;
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        }
         const ac = document.querySelector('.accessibility-container');
         if (ac) ac.classList.remove('hide-fab');
         setTimeout(() => {
@@ -524,6 +637,57 @@ function setupUIListeners() {
     document.getElementById('back-to-inbox').addEventListener('click', closeActiveChat);
     document.getElementById('close-chat-btn').addEventListener('click', closeActiveChat);
 
+    window.toggleGhostMode = async function(isChecked) {
+        if (!window.firebaseCurrentUser) return;
+        
+        if (!window.currentUserMetaData) window.currentUserMetaData = {};
+        window.currentUserMetaData.ghostMode = isChecked;
+        
+        try {
+            const { setDoc, doc } = window.firebaseHelpers;
+            const db = window.firebaseDb;
+            const uid = window.firebaseCurrentUser.uid;
+            await setDoc(doc(db, 'users', uid), { metaData: { ghostMode: isChecked } }, { merge: true });
+            if (window.showToast) {
+                window.showToast(isChecked ? "Ghost Mode Enabled" : "Ghost Mode Disabled");
+            }
+        } catch (e) {
+            console.error("Error saving ghost mode:", e);
+        }
+    };
+    
+    const viewChatProfileBtn = document.getElementById('view-chat-profile-btn');
+    if (viewChatProfileBtn) {
+        viewChatProfileBtn.addEventListener('click', () => {
+            if (!currentChatOtherUser || !currentChatOtherUser.profile) return;
+            const profile = currentChatOtherUser.profile;
+            
+            const html = `
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <img src="${window.escapeHtml(currentChatOtherUser.photo)}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-brown);">
+                    <div>
+                        <div style="font-size: 1.3rem; font-weight: 700;">${window.escapeHtml(currentChatOtherUser.name)}</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">${window.escapeHtml(profile.location || 'Unknown location')}</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <div style="background: rgba(107, 66, 38, 0.1); padding: 5px 12px; border-radius: 15px; font-size: 0.9rem; font-weight: 600;"><i class="fas fa-birthday-cake" style="color: var(--brand-brown);"></i> ${window.escapeHtml(String(profile.age))}</div>
+                    <div style="background: rgba(107, 66, 38, 0.1); padding: 5px 12px; border-radius: 15px; font-size: 0.9rem; font-weight: 600;"><i class="fas ${profile.gender === 'Male' ? 'fa-mars' : profile.gender === 'Female' ? 'fa-venus' : 'fa-user'}" style="color: var(--brand-brown);"></i> ${window.escapeHtml(profile.gender || 'N/A')}</div>
+                    ${profile.religion && profile.religion !== 'Prefer not to say' ? `<div style="background: rgba(107, 66, 38, 0.1); padding: 5px 12px; border-radius: 15px; font-size: 0.9rem; font-weight: 600;"><i class="fas fa-praying-hands" style="color: var(--brand-brown);"></i> ${window.escapeHtml(profile.religion)}</div>` : ''}
+                </div>
+                
+                <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Bio</div>
+                    <div style="font-style: italic; line-height: 1.5;">"${window.escapeHtml(profile.bio || 'No bio provided.')}"</div>
+                </div>
+            `;
+            
+            document.getElementById('chat-profile-modal-content').innerHTML = html;
+            document.getElementById('chat-profile-modal').classList.add('active');
+        });
+    }
+
     const chatMenuBtn = document.getElementById('chat-menu-btn');
     if (chatMenuBtn) {
         chatMenuBtn.addEventListener('click', (e) => {
@@ -554,6 +718,17 @@ function setupUIListeners() {
     document.getElementById('delete-chat-btn').addEventListener('click', () => {
         if (window.deleteConversation) window.deleteConversation();
     });
+
+    // Emoji Button Logic
+    const openEmojiBtn = document.getElementById('open-emoji-btn');
+    const chatInputField = document.getElementById('chat-input');
+    
+    if (openEmojiBtn && chatInputField) {
+        openEmojiBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            chatInputField.focus();
+        });
+    }
 
     // Send Message
     const sendBtn = document.getElementById('send-msg-btn');
@@ -704,6 +879,8 @@ function setupUIListeners() {
 }
 
 function closeActiveChat() {
+    localStorage.removeItem('currentChatId');
+    localStorage.removeItem('currentChatUserJson');
     document.getElementById('active-chat-view').style.display = 'none';
     currentChatId = null;
     currentChatOtherUser = null;
@@ -740,6 +917,7 @@ function listenForInboxUpdates() {
         let unreadChatCount = 0;
         let activeChatsHtml = '';
         let pendingRequestsHtml = '';
+        let fastSwitcherHtml = '';
 
         window.acceptedChatUserIds.clear();
         window.pendingChatUserIds.clear();
@@ -854,6 +1032,14 @@ function listenForInboxUpdates() {
                         </div>
                     </div>
                 `;
+
+                // Build Fast Switcher Item
+                fastSwitcherHtml += `
+                    <div id="fast-switcher-${data.id}" class="fast-switcher-item ${currentChatId === data.id ? 'active' : ''}" onclick="window.fastSwitchChat('${data.id}', '${safeUserStr}')">
+                        <img src="${window.escapeHtml(otherUser.photo)}" class="fast-switcher-avatar">
+                        ${isUnread && currentChatId !== data.id ? '<div class="fast-switcher-unread"></div>' : ''}
+                    </div>
+                `;
             }
         });
 
@@ -866,6 +1052,11 @@ function listenForInboxUpdates() {
         // Update DOM
         if (activeChatsHtml) chatList.innerHTML = activeChatsHtml;
         else chatList.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 2rem; font-size: 0.95rem;">No active chats yet.</div>`;
+        
+        const switcherBar = document.getElementById('fast-switcher-bar');
+        if (switcherBar) {
+            switcherBar.innerHTML = fastSwitcherHtml;
+        }
 
         if (pendingRequestsHtml) reqList.innerHTML = pendingRequestsHtml;
         else reqList.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 2rem; font-size: 0.95rem;">No pending requests.</div>`;
@@ -1049,24 +1240,86 @@ window.deleteConversation = async () => {
 };
 
 
-window.openChat = async (docId, otherUserJson) => {
+window.fastSwitchChat = (docId, otherUserJson) => {
+    if (currentChatId === docId) return; // Already open
+    
+    // Unsubscribe from current listeners without hiding the chat panel
+    if (unsubscribeMessages) {
+        unsubscribeMessages();
+        unsubscribeMessages = null;
+    }
+    if (window.unsubscribeChatConv) {
+        window.unsubscribeChatConv();
+        window.unsubscribeChatConv = null;
+    }
+    
+    // Clear old messages
+    const chatMsgs = document.getElementById('chat-messages');
+    if (chatMsgs) {
+        chatMsgs.innerHTML = '<div style="text-align: center; color: var(--text-muted); margin-top: 2rem;"><i class="fas fa-circle-notch fa-spin"></i> Loading...</div>';
+    }
+    
+    // Open the new chat
+    window.openChat(docId, otherUserJson);
+};
+
+
+window.openChat = async (docId, otherUserJson, isRestore = false) => {
+    // If they were minimizing, unminimize when opening a NEW chat (not restoring)
+    const panel = document.getElementById('chat-inbox-panel');
+    if (!isRestore && panel && panel.classList.contains('minimized')) {
+        panel.classList.remove('minimized');
+        if (window.innerWidth > 768) localStorage.setItem('chatPanelState', 'open');
+        document.body.style.overflow = 'hidden';
+        if (window.innerWidth <= 768) {
+            const ac = document.querySelector('.accessibility-container');
+            if (ac) ac.classList.add('hide-fab');
+        }
+    }
+
+    try {
+        if (!currentMember) return;
+        
+        localStorage.setItem('currentChatId', docId);
+        localStorage.setItem('currentChatUserJson', otherUserJson);
+    } catch (e) {}
+
     const otherUser = JSON.parse(decodeURIComponent(otherUserJson));
     currentChatId = docId;
     currentChatOtherUser = otherUser;
 
     document.getElementById('active-chat-name').textContent = otherUser.name;
     document.getElementById('active-chat-view').style.display = 'flex';
-    document.getElementById('chat-input').focus();
+    if (window.innerWidth > 768) {
+        document.getElementById('chat-input').focus();
+    }
+
+    // Immediately update the fast switcher active state in the DOM
+    document.querySelectorAll('.fast-switcher-item').forEach(el => el.classList.remove('active'));
+    const activeItem = document.getElementById(`fast-switcher-${docId}`);
+    if (activeItem) {
+        activeItem.classList.add('active');
+        // ensure it's visible by scrolling into view smoothly
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
 
     // Listen to conversation for block status, deletedAt, and real-time Read Receipts
     let chatDeletedAt = 0;
 
     // Clear unread status and check block status
-    const { updateDoc, doc, arrayRemove, getDoc } = window.firebaseHelpers;
+    const { updateDoc, doc, arrayRemove, getDoc, serverTimestamp } = window.firebaseHelpers;
     if (updateDoc && doc && arrayRemove) {
-        updateDoc(doc(window.firebaseDb, "conversations", docId), {
-            unreadBy: arrayRemove(currentMember.id)
-        }).catch(e => console.error(e));
+        if (window.currentUserMetaData?.ghostMode !== false) {
+            // Essential update
+            updateDoc(doc(window.firebaseDb, "conversations", docId), {
+                unreadBy: arrayRemove(currentMember.id)
+            }).catch(e => console.error(e));
+
+            // Non-essential visual update (wrapped separately in case strict Firebase Rules block new fields)
+            const updatePayload = {};
+            updatePayload[`lastReadAt_${currentMember.id}`] = serverTimestamp();
+            updateDoc(doc(window.firebaseDb, "conversations", docId), updatePayload).catch(e => {});
+        }
 
         window.conversationReadState = false; // Tracks if the OTHER user has read our messages
 
@@ -1083,6 +1336,7 @@ window.openChat = async (docId, otherUserJson) => {
                 const unreadBy = data.unreadBy || [];
                 const previousReadState = window.conversationReadState;
                 window.conversationReadState = !unreadBy.includes(otherUser.id);
+                window.otherUserLastReadAt = data[`lastReadAt_${otherUser.id}`] || null;
 
                 // If it just transitioned to READ, instantly update the checkmarks on screen
                 if (window.conversationReadState && !previousReadState) {
@@ -1171,10 +1425,13 @@ window.openChat = async (docId, otherUserJson) => {
             // Debounce Read Receipt Update (saves database writes on rapid-fire messaging)
             if (window.readReceiptDebounceTimer) clearTimeout(window.readReceiptDebounceTimer);
             window.readReceiptDebounceTimer = setTimeout(() => {
-                if (window.firebaseHelpers && window.firebaseHelpers.updateDoc) {
-                    window.firebaseHelpers.updateDoc(window.firebaseHelpers.doc(window.firebaseDb, "conversations", docId), {
+                if (window.firebaseHelpers && window.firebaseHelpers.updateDoc && window.currentUserMetaData?.ghostMode !== false) {
+                    const updatePayload = {
                         unreadBy: window.firebaseHelpers.arrayRemove(currentMember.id)
-                    }).catch(e => console.error("Error updating read state:", e));
+                    };
+                    updatePayload[`lastReadAt_${currentMember.id}`] = window.firebaseHelpers.serverTimestamp();
+                    
+                    window.firebaseHelpers.updateDoc(window.firebaseHelpers.doc(window.firebaseDb, "conversations", docId), updatePayload).catch(e => console.error("Error updating read state:", e));
                 }
             }, 3000);
         }
@@ -1254,7 +1511,20 @@ window.openChat = async (docId, otherUserJson) => {
                             <i class="fa-solid fa-star msg-star-indicator" style="display: ${isStarred ? 'inline' : 'none'};"></i>
                             <span class="message-time">${timeStr}</span>
                             ${data.isEdited && !data.isDeleted ? '<span class="message-edited" style="margin-left: 4px;">(edited)</span>' : ''}
-                            ${isMe ? `<span class="msg-checkmarks ${data.createdAt ? (window.conversationReadState ? 'read' : 'sent') : 'pending'}">${data.createdAt ? (window.conversationReadState ? '<i class="fa-solid fa-check-double"></i>' : '<i class="fa-solid fa-check-double"></i>') : '<i class="fa-regular fa-clock"></i>'}</span>` : ''}
+                            ${(() => {
+                                if (!isMe) return '';
+                                let isRead = false;
+                                if (window.currentUserMetaData?.ghostMode !== false) {
+                                    isRead = false; // 2-way rule: You can't see read receipts if you hide yours (default ON)
+                                } else if (data.createdAt && window.otherUserLastReadAt) {
+                                    isRead = data.createdAt.toMillis() <= window.otherUserLastReadAt.toMillis();
+                                } else if (window.conversationReadState) {
+                                    isRead = true; // Fallback for old schema
+                                }
+                                const statusClass = data.createdAt ? (isRead ? 'read' : 'sent') : 'pending';
+                                const icon = data.createdAt ? '<i class="fa-solid fa-check-double"></i>' : '<i class="fa-regular fa-clock"></i>';
+                                return `<span class="msg-checkmarks ${statusClass}">${icon}</span>`;
+                            })()}
                         </div>
                     </div>
                     ${(() => {
@@ -1665,7 +1935,7 @@ function initMatchmaking() {
                     if (window.profileRetryCount <= 3) {
                         loadingText.innerHTML = `Reconnecting to server (Attempt ${window.profileRetryCount}/3)...`;
                     } else {
-                        loadingText.innerHTML = "Unable to connect. Please check your internet or <a href='#' onclick='window.location.reload()' style='color: var(--brand-brown); text-decoration: underline;'>refresh the page</a>.";
+                        loadingText.innerHTML = `Unable to connect: ${error.message || error}. Please check your internet or <a href='#' onclick='window.location.reload()' style='color: var(--brand-brown); text-decoration: underline;'>refresh the page</a>.`;
                     }
                 }
             }
@@ -2112,6 +2382,11 @@ window.openEditProfileModal = async function () {
                 }
             }
             document.getElementById('profile-photo-preview').src = photoUrl;
+            
+            if (document.getElementById('profile-ghost-mode')) {
+                // Default to true if undefined
+                document.getElementById('profile-ghost-mode').checked = window.currentUserMetaData?.ghostMode !== false;
+            }
         }
     } catch (e) {
         console.error("Error pre-filling profile data:", e);
@@ -2592,8 +2867,7 @@ window.switchAdminTab = function (tab) {
         if (listReports) listReports.style.display = 'flex';
         loadAdminReports();
     }
-}
-
+};
 async function openAdminPanel() {
     const modal = document.getElementById('admin-reports-modal');
     if (!modal) return;

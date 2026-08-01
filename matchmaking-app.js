@@ -497,11 +497,12 @@ function initChatSystem() {
                             setTimeout(() => {
                                 const stillActive = (window.visualViewport.height < window.innerHeight - 100);
                                 if (!stillActive) {
+                                    const wasOpen = document.body.classList.contains('keyboard-open');
                                     document.body.classList.remove('keyboard-open');
                                     document.documentElement.style.removeProperty('--keyboard-top');
                                     document.documentElement.style.removeProperty('--keyboard-bottom');
                                     document.documentElement.style.removeProperty('--vv-height');
-                                    if (window.innerWidth <= 768) {
+                                    if (wasOpen && window.innerWidth <= 768) {
                                         window.scrollTo(0, 0); // Force visual viewport to snap back to top
                                     }
                                 }

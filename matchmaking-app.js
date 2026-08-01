@@ -3,7 +3,7 @@
 // ==========================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy, updateDoc, doc, getDocs, getDoc, setDoc, deleteDoc, arrayRemove, arrayUnion, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy, updateDoc, doc, getDocs, getDoc, setDoc, deleteDoc, arrayRemove, arrayUnion, deleteField, enableIndexedDbPersistence, CACHE_SIZE_UNLIMITED } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
@@ -52,6 +52,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Enable offline persistence for instant loading on refresh
+enableIndexedDbPersistence(db, {
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED
+}).catch((err) => {
+    if (err.code == 'failed-precondition') {
+        console.warn('Multiple tabs open, persistence can only be enabled in one tab at a a time.');
+    } else if (err.code == 'unimplemented') {
+        console.warn('The current browser does not support all of the features required to enable persistence');
+    }
+});
 const auth = getAuth(app);
 const storage = getStorage(app);
 
@@ -433,29 +444,98 @@ function initChatSystem() {
             if (!isChatInitialized) {
                 setupUIListeners();
                 listenForInboxUpdates();
+                
+                // Prevent iOS Safari visual viewport panning on non-scrollable chat elements
+                const preventPan = (e) => {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                    }
+                };
+                const inputArea = document.querySelector('.chat-input-area');
+                if (inputArea) inputArea.addEventListener('touchmove', preventPan, { passive: false });
+                
+                const activeHeader = document.getElementById('active-chat-header');
+                if (activeHeader) activeHeader.addEventListener('touchmove', preventPan, { passive: false });
+                
+                const fastSwitcher = document.getElementById('fast-switcher-bar');
+                if (fastSwitcher) {
+                    fastSwitcher.addEventListener('touchmove', (e) => {
+                        // Prevent vertical pan, allow horizontal native scroll
+                        if (window.innerWidth <= 768 && e.cancelable) {
+                            // We can't easily detect axis here without touchstart, 
+                            // but touch-action: pan-x in CSS usually handles it.
+                            // If CSS fails, we let it be for now on the horizontal bar.
+                        }
+                    }, { passive: false });
+                }
 
                 // Monitor keyboard state on iOS for safe-area fixes
                 if (window.visualViewport) {
+                    let lastVvHeight = window.visualViewport.height;
+                    
                     const adjustForKeyboard = () => {
-                        if (window.visualViewport.height < window.innerHeight - 100) {
+                        lastVvHeight = window.visualViewport.height;
+                        const isKeyboardActive = (window.visualViewport.height < window.innerHeight - 100);
+                        
+                        if (isKeyboardActive) {
                             document.body.classList.add('keyboard-open');
                             if (window.innerWidth <= 768) {
-                                // Calculate total keyboard height
-                                const keyboardHeight = window.innerHeight - window.visualViewport.height;
-                                // Subtract how much Safari already pushed the layout viewport up
-                                const offsetTop = Math.max(0, window.visualViewport.offsetTop);
-                                // The remaining padding needed to perfectly touch the keyboard
-                                const paddingNeeded = Math.max(0, keyboardHeight - offsetTop);
-                                document.documentElement.style.setProperty('--keyboard-offset', paddingNeeded + 'px');
+                                const offsetTop = window.visualViewport.offsetTop;
+                                const keyboardHeight = Math.max(0, window.innerHeight - window.visualViewport.height);
+                                const bottomOffset = Math.max(0, keyboardHeight - offsetTop);
+                                
+                                document.documentElement.style.setProperty('--keyboard-top', offsetTop + 'px');
+                                document.documentElement.style.setProperty('--keyboard-bottom', bottomOffset + 'px');
+                                document.documentElement.style.setProperty('--vv-height', window.visualViewport.height + 'px');
+                                
+                                setTimeout(() => {
+                                    const msgs = document.getElementById('chat-messages');
+                                    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+                                }, 50);
                             }
                         } else {
-                            document.body.classList.remove('keyboard-open');
-                            document.documentElement.style.setProperty('--keyboard-offset', '0px');
+                            setTimeout(() => {
+                                const stillActive = (window.visualViewport.height < window.innerHeight - 100);
+                                if (!stillActive) {
+                                    document.body.classList.remove('keyboard-open');
+                                    document.documentElement.style.removeProperty('--keyboard-top');
+                                    document.documentElement.style.removeProperty('--keyboard-bottom');
+                                    document.documentElement.style.removeProperty('--vv-height');
+                                    if (window.innerWidth <= 768) {
+                                        window.scrollTo(0, 0); // Force visual viewport to snap back to top
+                                    }
+                                }
+                            }, 100);
                         }
                     };
+
                     window.visualViewport.addEventListener('resize', adjustForKeyboard);
                     window.visualViewport.addEventListener('scroll', adjustForKeyboard);
+                    
+                    // iOS Safari bug: dismissing keyboard via UI tick/done button often fails to fire the 'resize' event.
+                    // We must poll visualViewport.height to catch these silent layout changes.
+                    setInterval(() => {
+                        if (window.innerWidth <= 768 && window.visualViewport) {
+                            // If Safari's visual viewport height changed silently, or if innerHeight changed silently
+                            if (window.visualViewport.height !== lastVvHeight) {
+                                adjustForKeyboard();
+                            } else if (document.body.classList.contains('keyboard-open') && window.visualViewport.height >= window.innerHeight - 100) {
+                                // Failsafe: if viewport is full screen but class is still stuck open
+                                // This forces the variables to reset to 0 even if adjustForKeyboard thinks it's still active.
+                                const keyboardHeight = Math.max(0, window.innerHeight - window.visualViewport.height);
+                                if (keyboardHeight === 0 && document.documentElement.style.getPropertyValue('--keyboard-bottom') !== '0px') {
+                                    adjustForKeyboard();
+                                }
+                            }
+                        }
+                    }, 400);
+
+                    // Re-calculate on focus/blur just in case
+                    document.addEventListener('focusin', adjustForKeyboard);
+                    document.addEventListener('focusout', adjustForKeyboard);
                 }
+                
+                // (Removed pre-emptive keyboard-opening logic)
 
                 const inboxBtnBadge = document.getElementById('nav-inbox-badge');
                 if (inboxBtnBadge) {
@@ -476,6 +556,7 @@ function initChatSystem() {
                                 panel.classList.add('open');
                                 if (state === 'minimized') {
                                     panel.classList.add('minimized');
+                                    document.body.classList.add('chat-minimized');
                                     document.body.style.overflow = '';
                                     if (document.body.classList.contains('chat-active')) {
                                         document.body.classList.remove('chat-active');
@@ -484,7 +565,7 @@ function initChatSystem() {
                                         window.scrollTo(0, parseInt(scrollY || '0') * -1);
                                     }
                                 } else {
-                                    document.body.style.overflow = 'hidden';
+                                    if (window.innerWidth <= 768) document.body.style.overflow = 'hidden';
                                     if (window.innerWidth <= 768 && !document.body.classList.contains('chat-active')) {
                                         document.body.style.top = `-${window.scrollY}px`;
                                         document.body.classList.add('chat-active');
@@ -535,7 +616,7 @@ function setupUIListeners() {
             setTimeout(() => {
                 if (panel) panel.classList.add('open');
                 if (window.innerWidth > 768) localStorage.setItem('chatPanelState', 'open');
-                document.body.style.overflow = 'hidden';
+                if (window.innerWidth <= 768) document.body.style.overflow = 'hidden';
                 if (window.innerWidth <= 768) {
                     if (!document.body.classList.contains('chat-active')) {
                         document.body.style.top = `-${window.scrollY}px`;
@@ -553,6 +634,23 @@ function setupUIListeners() {
     const activeChatHeader = document.getElementById('active-chat-header');
     const inboxHeader = document.getElementById('inbox-panel-header');
     
+    window.updateChatMinimizeOffset = () => {
+        if (!panel) return;
+        let offset = 56;
+        if (panel.classList.contains('has-active-chat')) {
+            const fsBar = document.getElementById('fast-switcher-bar');
+            const activeHeader = document.getElementById('active-chat-header');
+            const fsHeight = (fsBar && fsBar.style.display !== 'none' && fsBar.innerHTML.trim() !== '') ? Math.max(fsBar.offsetHeight, 62) : 0;
+            const headerHeight = activeHeader ? Math.max(activeHeader.offsetHeight, 56) : 56;
+            offset = fsHeight + headerHeight;
+        } else {
+            const inboxHeader = document.getElementById('inbox-panel-header');
+            offset = inboxHeader ? Math.max(inboxHeader.offsetHeight, 56) : 56;
+        }
+        panel.style.setProperty('--minimize-offset', `${offset}px`);
+        document.documentElement.style.setProperty('--minimize-offset', `${offset}px`);
+    };
+
     const toggleMinimize = (e) => {
         if (!panel) return;
         // Ignore clicks on buttons inside the header
@@ -560,8 +658,9 @@ function setupUIListeners() {
         
         if (panel.classList.contains('minimized')) {
             panel.classList.remove('minimized');
+            document.body.classList.remove('chat-minimized');
             localStorage.setItem('chatPanelState', 'open');
-            document.body.style.overflow = 'hidden';
+            if (window.innerWidth <= 768) document.body.style.overflow = 'hidden';
             if (window.innerWidth <= 768) {
                 if (!document.body.classList.contains('chat-active')) {
                     document.body.style.top = `-${window.scrollY}px`;
@@ -571,7 +670,9 @@ function setupUIListeners() {
                 if (ac) ac.classList.add('hide-fab');
             }
         } else {
+            window.updateChatMinimizeOffset();
             panel.classList.add('minimized');
+            document.body.classList.add('chat-minimized');
             localStorage.setItem('chatPanelState', 'minimized');
             document.body.style.overflow = '';
             if (document.body.classList.contains('chat-active')) {
@@ -594,6 +695,7 @@ function setupUIListeners() {
         if (panel) {
             panel.classList.remove('open');
             panel.classList.remove('minimized');
+            document.body.classList.remove('chat-minimized');
         }
         localStorage.setItem('chatPanelState', 'closed');
         document.body.style.overflow = '';
@@ -726,16 +828,7 @@ function setupUIListeners() {
         if (window.deleteConversation) window.deleteConversation();
     });
 
-    // Emoji Button Logic
-    const openEmojiBtn = document.getElementById('open-emoji-btn');
-    const chatInputField = document.getElementById('chat-input');
-    
-    if (openEmojiBtn && chatInputField) {
-        openEmojiBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            chatInputField.focus();
-        });
-    }
+    // Emoji Button Logic (Removed for mobile simplicity)
 
     // Send Message
     const sendBtn = document.getElementById('send-msg-btn');
@@ -795,8 +888,21 @@ function setupUIListeners() {
             window.playChatSound('send');
         }
     };
+    let isSending = false;
+    const handleSend = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (isSending) return;
+        isSending = true;
+        sendMessage();
+        setTimeout(() => isSending = false, 300);
+    };
 
-    sendBtn.addEventListener('click', sendMessage);
+    sendBtn.addEventListener('mousedown', (e) => e.preventDefault()); // Prevent focus loss on desktop
+    sendBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent focus loss on mobile (keeps keyboard open)
+        handleSend(e);
+    }, {passive: false});
+    sendBtn.addEventListener('click', handleSend);
     inputField.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault(); // Prevent adding a new line
@@ -885,7 +991,11 @@ function setupUIListeners() {
     }
 }
 
+
+
 function closeActiveChat() {
+    if (document.activeElement) document.activeElement.blur();
+    document.body.classList.remove('keyboard-open', 'keyboard-opening');
     localStorage.removeItem('currentChatId');
     localStorage.removeItem('currentChatUserJson');
     document.getElementById('active-chat-view').style.display = 'none';
@@ -1098,7 +1208,8 @@ function listenForInboxUpdates() {
 
                 // Build Fast Switcher Item
                 fastSwitcherHtml += `
-                    <div id="fast-switcher-${data.id}" class="fast-switcher-item ${currentChatId === data.id ? 'active' : ''}" onclick="window.fastSwitchChat('${data.id}', '${safeUserStr}')">
+                    <div id="fast-switcher-${data.id}" class="fast-switcher-item ${currentChatId === data.id ? 'active' : ''}" 
+                         onmousedown="event.preventDefault();" onclick="window.fastSwitchChat('${data.id}', '${safeUserStr}')">
                         <img src="${window.escapeHtml(otherUser.photo)}" class="fast-switcher-avatar">
                         ${isUnread && currentChatId !== data.id ? '<div class="fast-switcher-unread"></div>' : ''}
                     </div>
@@ -1123,6 +1234,10 @@ function listenForInboxUpdates() {
 
         if (pendingRequestsHtml) reqList.innerHTML = pendingRequestsHtml;
         else reqList.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin-top: 2rem; font-size: 0.95rem;">No pending requests.</div>`;
+
+        if (window.updateChatMinimizeOffset) {
+            window.updateChatMinimizeOffset();
+        }
 
         // Update Badges
         const reqBadge = document.getElementById('requests-badge');
@@ -1324,6 +1439,23 @@ window.fastSwitchChat = (docId, otherUserJson) => {
     
     // Open the new chat
     window.openChat(docId, otherUserJson);
+
+    // Maximize the panel if it's minimized
+    const panel = document.getElementById('chat-inbox-panel');
+    if (panel && panel.classList.contains('minimized')) {
+        panel.classList.remove('minimized');
+        document.body.classList.remove('chat-minimized');
+        localStorage.setItem('chatPanelState', 'open');
+        if (window.innerWidth <= 768) {
+            document.body.style.overflow = 'hidden';
+            if (!document.body.classList.contains('chat-active')) {
+                document.body.style.top = `-${window.scrollY}px`;
+                document.body.classList.add('chat-active');
+            }
+            const ac = document.querySelector('.accessibility-container');
+            if (ac) ac.classList.add('hide-fab');
+        }
+    }
 };
 
 
@@ -1333,7 +1465,7 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
     if (!isRestore && panel && panel.classList.contains('minimized')) {
         panel.classList.remove('minimized');
         if (window.innerWidth > 768) localStorage.setItem('chatPanelState', 'open');
-        document.body.style.overflow = 'hidden';
+        if (window.innerWidth <= 768) document.body.style.overflow = 'hidden';
         if (window.innerWidth <= 768) {
             const ac = document.querySelector('.accessibility-container');
             if (ac) ac.classList.add('hide-fab');
@@ -1353,9 +1485,22 @@ window.openChat = async (docId, otherUserJson, isRestore = false) => {
 
     document.getElementById('active-chat-name').textContent = otherUser.name;
     document.getElementById('active-chat-view').style.display = 'flex';
-    if (panel) panel.classList.add('has-active-chat');
-    if (window.innerWidth > 768) {
-        document.getElementById('chat-input').focus();
+    if (panel) {
+        panel.classList.add('has-active-chat');
+        if (window.updateChatMinimizeOffset) window.updateChatMinimizeOffset();
+    }
+    
+    // Handle keyboard focus
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) {
+        if (window.innerWidth > 768) {
+            chatInput.focus();
+        } else {
+            // Mobile: only focus if the keyboard is ALREADY open
+            if (document.body.classList.contains('keyboard-open')) {
+                chatInput.focus();
+            }
+        }
     }
 
     // Immediately update the fast switcher active state in the DOM
@@ -1802,7 +1947,7 @@ window.openChatFromGrid = (targetUserId) => {
         panel.style.display = 'flex';
         setTimeout(() => {
             panel.classList.add('open');
-            document.body.style.overflow = 'hidden';
+            if (window.innerWidth <= 768) document.body.style.overflow = 'hidden';
             if (window.innerWidth <= 768) {
                 const fab = document.getElementById('mobile-filter-fab');
                 if (fab) fab.classList.add('hide-fab');

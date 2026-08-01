@@ -480,16 +480,6 @@ body.keyboard-open .chat-input-area {
     text-align: center;
 }
 
-@media (min-width: 768px) {
-    #open-emoji-btn {
-        display: none !important;
-    }
-}
-
 .chat-panel.minimized {
-    transform: translateY(calc(100% - 56px)) !important;
-}
-
-.chat-panel.has-active-chat.minimized {
-    transform: translateY(calc(100% - 138px)) !important;
+    transform: translateY(calc(100% - var(--minimize-offset, 56px))) !important;
 }

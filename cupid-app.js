@@ -1532,12 +1532,11 @@ window.openEditProfileModal = async function (isExplicitlyEditing = false) {
         const hoursPassed = (now.getTime() - lastEditDate.getTime()) / (1000 * 60 * 60);
         if (hoursPassed < 72) {
             const hoursLeft = Math.ceil(72 - hoursPassed);
-            Swal.fire({
-                icon: 'info',
-                title: 'Profile Edit Locked',
-                text: `You can only edit your profile details once every 3 days. Please wait another ${hoursLeft} hours.`,
-                confirmButtonColor: 'var(--brand-brown)'
-            });
+            if (window.showToast) {
+                window.showToast(`<strong>Profile Edit Locked</strong><br><span style='font-size:0.85em; opacity:0.85;'>You can only edit your profile details once every 3 days. Please wait another ${hoursLeft} hours.</span>`, false);
+            } else {
+                alert(`You can only edit your profile details once every 3 days. Please wait another ${hoursLeft} hours.`);
+            }
             return;
         }
     }

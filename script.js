@@ -1,7 +1,3 @@
-// ==========================================
-// 1. HARD SYNC GOOGLE TRANSLATE COOKIE FIRST
-// ==========================================
-// Executing synchronously guarantees Google's async script reads this exact state
 (function () {
     let tabLang = 'en';
     try {
@@ -10,7 +6,6 @@
         console.warn("Session storage access failed:", e);
     }
     const setOrClearGoogleCookie = (lang) => {
-        // Hit every permutation of domains and paths that Chrome/GitHub/Safari might cache
         const domains = ['', window.location.hostname, '.' + window.location.hostname, '.github.io', '.yatramoreofficial.github.io', 'yatramore.com', '.yatramore.com', 'www.yatramore.com'];
         const paths = ['/', window.location.pathname, '/yatramore.official', '/yatramore.official/'];
 
@@ -20,7 +15,6 @@
                 if (lang && lang !== 'en') {
                     document.cookie = `googtrans=/en/${lang}; path=${path}${dStr}`;
                 } else {
-                    // Explode existing cookies AND explicitly overwrite with /en/en to obliterate stale state
                     document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path}${dStr}`;
                     document.cookie = `googtrans=/en/en; path=${path}${dStr}`;
                 }
@@ -28,13 +22,11 @@
         });
     };
 
-    // Sync immediately before Google Translate reads cookies
     setOrClearGoogleCookie(tabLang);
     window._setOrClearGoogleCookie = setOrClearGoogleCookie;
 })();
 
 function initializeYatrAmore() {
-    // ── Tab-Isolated Translation Sync ──
     let tabLang = 'en';
     try {
         tabLang = sessionStorage.getItem('ym_translation_lang') || 'en';
@@ -43,14 +35,11 @@ function initializeYatrAmore() {
     }
 
     if (tabLang && tabLang !== 'en') {
-        // Safari strictly blocks third-party cookies needed perfectly for Google Translate. 
-        // We actively bypass it by manually dispatching the combobox Event once populated.
         let nudges = 0;
         const enforceInterval = setInterval(() => {
             const combo = document.querySelector(".goog-te-combo");
             const htmlClass = document.documentElement.className || '';
 
-            // CRITICAL: Must wait for Google to fetch and attach <option> languages first!
             if (combo && combo.options.length > 0 && !htmlClass.includes('translated-')) {
                 combo.value = tabLang;
                 combo.dispatchEvent(new Event("change", { bubbles: true }));
@@ -59,7 +48,18 @@ function initializeYatrAmore() {
             }
 
             nudges++;
-            if (nudges > 40) clearInterval(enforceInterval); // Give up after 8s
+            if (nudges > 40) {
+                clearInterval(enforceInterval);
+                if (!htmlClass.includes('translated-')) {
+                    const translateWidget = document.getElementById("google_translate_element");
+                    if (translateWidget) {
+                        translateWidget.style.display = "block";
+                        if (window.showToast) {
+                            window.showToast("Automatic translation blocked by browser. Please use the manual dropdown.", false);
+                        }
+                    }
+                }
+            }
         }, 200);
     }
 
@@ -73,9 +73,6 @@ function initializeYatrAmore() {
     }
     if (currentZoom !== 1) document.documentElement.style.setProperty("--zoom-scale", currentZoom);
 
-    // ── GAS Endpoint Protection (Base64 Obfuscation) ──
-    // This Hinders static scraping by encoding the sensitive script IDs. 
-    // They are decoded at runtime using atob().
     const _ga = atob('aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy8=');
     const _gz = '/exec';
 
@@ -87,7 +84,6 @@ function initializeYatrAmore() {
 
     const gasUrl = (k) => _ga + _keys[k] + _gz;
 
-    // ── Universal Security Core (v46 — Hardened) ──────────────────
     const Security = {
         deviceId: null,
         fingerprint: null,
@@ -103,7 +99,6 @@ function initializeYatrAmore() {
                 this.deviceId = id;
                 return id;
             } catch (e) {
-                // Private Mode may block localStorage entirely
                 this.deviceId = 'temp_' + Math.random().toString(36).substr(2, 9);
                 return this.deviceId;
             }
@@ -113,7 +108,6 @@ function initializeYatrAmore() {
             if (this.fingerprint) return this.fingerprint;
             const signals = [];
 
-            // 1. Canvas
             try {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -121,7 +115,6 @@ function initializeYatrAmore() {
                 signals.push(canvas.toDataURL().slice(-64));
             } catch (e) { signals.push('c_err'); }
 
-            // 2. WebGL GPU
             try {
                 const gl = document.createElement('canvas').getContext('webgl');
                 if (gl) {
@@ -130,7 +123,6 @@ function initializeYatrAmore() {
                 }
             } catch (e) { signals.push('w_err'); }
 
-            // 3. Audio Context (Unique acoustic signature)
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx) {
@@ -141,9 +133,7 @@ function initializeYatrAmore() {
                 }
             } catch (e) { signals.push('a_err'); }
 
-            // 4. Hardware
             signals.push(`${screen.width}x${screen.height}x${window.devicePixelRatio}`);
-            // Q-7 Fix: navigator.platform is deprecated; use userAgentData with fallback
             signals.push(navigator.userAgentData?.platform || navigator.platform || 'unk');
             signals.push((navigator.hardwareConcurrency || 0).toString());
 
@@ -162,7 +152,6 @@ function initializeYatrAmore() {
             let signals = [];
 
             try {
-                // Probe A: SharedWorker (Chrome/Edge incognito blocks Workers from blob URLs)
                 if (window.SharedWorker) {
                     try {
                         const blob = new Blob([''], { type: 'application/javascript' });
@@ -175,7 +164,6 @@ function initializeYatrAmore() {
                     }
                 }
 
-                // Probe B: Storage Quota (Hint only)
                 if (navigator.storage && navigator.storage.estimate) {
                     try {
                         const { quota } = await navigator.storage.estimate();
@@ -183,7 +171,6 @@ function initializeYatrAmore() {
                     } catch (e) { }
                 }
 
-                // Probe C: CacheStorage (Safari private blocks caches.open)
                 if ('caches' in window) {
                     try {
                         await caches.open('_ym_probe');
@@ -193,7 +180,6 @@ function initializeYatrAmore() {
                     }
                 }
 
-                // Probe D: localStorage Lock
                 try {
                     const testKey = '_ym_lock_' + Date.now();
                     localStorage.setItem(testKey, '1');
@@ -202,7 +188,6 @@ function initializeYatrAmore() {
                     signals.push('D');
                 }
 
-                // Probe E: ServiceWorker (Chrome incognito throws SecurityError)
                 if ('serviceWorker' in navigator) {
                     try {
                         const blob = new Blob(['// probe'], { type: 'application/javascript' });
@@ -217,7 +202,6 @@ function initializeYatrAmore() {
                     }
                 }
 
-                // Probe F: webkitRequestFileSystem (Chrome-only indicator)
                 if (window.webkitRequestFileSystem) {
                     await new Promise(resolve => {
                         window.webkitRequestFileSystem(window.TEMPORARY, 1, () => resolve(), (e) => {
@@ -231,20 +215,16 @@ function initializeYatrAmore() {
                 console.warn('[Security] Detection error:', e);
             }
 
-            // --- Weighted Signal Evaluation (To handle "Hardened" Regular Browsers) ---
-            // High confidence combinations (E + A) or (E + F) or (A + F)
             const hasWorkersFail = signals.includes('E') && signals.includes('A');
             const hasFileSystemFail = signals.includes('F');
 
-            // Only Safari (C) or strong Chrome/Firefox combinations trigger a block
             let isPrivate = signals.includes('C') || hasWorkersFail || (signals.length >= 3 && hasFileSystemFail) || (signals.length >= 4);
 
             if (signals.length > 0) {
-                console.log('[Security] Detected Signals: ' + signals.join(', '));
-                console.log('[Security] Private Mode Evaluation: ' + (isPrivate ? '🔒 ACTIVE' : '✅ NORMAL'));
+                window.debugLog('[Security] Detected Signals: ' + signals.join(', '));
+                window.debugLog('[Security] Private Mode Evaluation: ' + (isPrivate ? '🔒 ACTIVE' : '✅ NORMAL'));
             }
 
-            // --- Developer Safety: Disable blocking on local file:// access ---
             if (window.location.protocol === 'file:') {
                 isPrivate = false;
             }
@@ -252,16 +232,15 @@ function initializeYatrAmore() {
             detectionSignal = signals.join(',');
 
             if (isPrivate) {
-                console.log('[Security] Private Mode Status: 🔒 ACTIVE (Signals: ' + detectionSignal + ')');
+                window.debugLog('[Security] Private Mode Status: 🔒 ACTIVE (Signals: ' + detectionSignal + ')');
             }
         }
     };
 
-    window.YatrAmoreSecurity = Security; // Export to global namespace
+    window.YatrAmoreSecurity = Security;
     Security.initDeviceId();
     Security.checkPrivateMode();
 
-    // Navbar scroll effect
     window.addEventListener("scroll", () => {
         if (!isScrolling) {
             isScrolling = true;
@@ -276,7 +255,6 @@ function initializeYatrAmore() {
         }
     }, { passive: true });
 
-    // Mobile menu logic
     const hamburger = document.querySelector(".hamburger");
     const navLinks = document.querySelector(".nav-links");
 
@@ -303,44 +281,23 @@ function initializeYatrAmore() {
         });
     }
 
-    // Smooth scrolling for anchor links (using event delegation to support dynamically added links and full paths)
-    document.addEventListener("click", function (e) {
-        const anchor = e.target.closest('a');
-        if (!anchor) return;
-        
-        const href = anchor.getAttribute("href");
-        if (!href) return;
-        
-        // Match either plain "#hash" or "/current-path#hash"
-        const isLocalHash = href.startsWith('#');
-        const isPathnameHash = href.startsWith(window.location.pathname + '#');
-        
-        if (isLocalHash || isPathnameHash) {
-            const hashIndex = href.indexOf('#');
-            const targetId = href.substring(hashIndex);
-            
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute("href");
             if (targetId === "#") return;
-            
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                e.preventDefault();
-                const navHeight = navbar ? navbar.offsetHeight : 80;
+                const navHeight = navbar.offsetHeight;
                 const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
-                
                 window.scrollTo({
-                    top: targetPosition - navHeight - 15,
+                    top: targetPosition - navHeight,
                     behavior: "smooth"
                 });
-                
-                // Update URL without jumping
-                if (window.history && window.history.pushState) {
-                    window.history.pushState(null, null, href);
-                }
             }
-        }
+        });
     });
 
-    // Intersection observer for section reveal
     const revealObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -361,7 +318,6 @@ function initializeYatrAmore() {
         revealObserver.observe(card);
     });
 
-    // Logo parallax effect
     const heroLogo = document.getElementById("hero-logo");
     if (heroLogo) {
         let isMoving = false;
@@ -388,7 +344,6 @@ function initializeYatrAmore() {
         });
     }
 
-    // ── Contact Form: Hardened Trusted Flow ────────────────
     const contactForm = document.querySelector(".contact-form");
     if (contactForm) {
         const emailInput = document.getElementById("email");
@@ -397,10 +352,9 @@ function initializeYatrAmore() {
         const otpInput = document.getElementById("otp_code");
         const submitBtn = document.getElementById("contact-submit-btn");
 
-        // Verification gate — button is always enabled, but this flag controls actual submission
         let isEmailVerified = false;
-        let verifiedForEmail = '';   // Track which email is verified
-        let trustCheckId = 0;        // Guard against stale async responses
+        let verifiedForEmail = '';
+        let trustCheckId = 0;
 
         const markVerified = (email) => {
             isEmailVerified = true;
@@ -419,29 +373,24 @@ function initializeYatrAmore() {
             verifyBtn.style.background = "";
         };
 
-        // Check for Trust: Local (fast) → Server (cross-device)
         const checkTrust = async () => {
             const email = emailInput.value.toLowerCase().trim();
 
-            // Empty or invalid → reset immediately
             if (!email || !email.includes("@")) {
                 resetVerified();
                 return;
             }
 
-            // Already verified for this exact email → nothing to do
             if (isEmailVerified && email === verifiedForEmail) return;
 
-            // Email changed from the verified one → reset first
             if (verifiedForEmail && email !== verifiedForEmail) {
                 resetVerified();
             }
 
-            const thisCheckId = ++trustCheckId; // Stamp this check
+            const thisCheckId = ++trustCheckId;
 
-            // Fast path: Local 20-day trust token (same browser)
             const fp = await YatrAmoreSecurity.getFingerprint();
-            if (thisCheckId !== trustCheckId) return; // Newer check started — abort
+            if (thisCheckId !== trustCheckId) return;
 
             const trustKey = `ym_trust_${fp}_${email}`;
             const trustTs = localStorage.getItem(trustKey);
@@ -451,7 +400,6 @@ function initializeYatrAmore() {
                 return;
             }
 
-            // Slow path: Server-side trust check (cross-device)
             try {
                 const resp = await fetch(gasUrl('contact'), {
                     method: 'POST',
@@ -462,9 +410,9 @@ function initializeYatrAmore() {
                         deviceId: localStorage.getItem('yatramore_device_id')
                     })
                 });
-                if (thisCheckId !== trustCheckId) return; // Stale response — discard
+                if (thisCheckId !== trustCheckId) return;
                 const result = await resp.json();
-                console.log('[Trust] Server response for', email, ':', result);
+                window.debugLog('[Trust] Server response for', email, ':', result);
                 if (result.success && result.trusted) {
                     localStorage.setItem(trustKey, Date.now().toString());
                     markVerified(email);
@@ -474,20 +422,17 @@ function initializeYatrAmore() {
                 console.warn('[Trust] Server check failed:', e.message);
             }
 
-            if (thisCheckId !== trustCheckId) return; // Another check started — don't reset
+            if (thisCheckId !== trustCheckId) return;
 
-            // No trust found — require verification
             isEmailVerified = false;
             verifyBtn.disabled = false;
             verifyBtn.innerText = "Verify";
             verifyBtn.style.background = "";
         };
 
-        // Debounce server calls — only check trust after user stops typing
         let trustTimeout;
         const debouncedCheckTrust = () => {
             clearTimeout(trustTimeout);
-            // Immediately reset if email changed from verified one
             const currentEmail = emailInput.value.toLowerCase().trim();
             if (verifiedForEmail && currentEmail !== verifiedForEmail) {
                 resetVerified();
@@ -504,9 +449,8 @@ function initializeYatrAmore() {
 
         if (verifyBtn) {
             const OTP_COOLDOWN_KEY = 'ym_otp_cooldown';
-            const OTP_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutes
+            const OTP_COOLDOWN_MS = 10 * 60 * 1000;
 
-            // Check if currently in cooldown from a previous request
             const checkOtpCooldown = () => {
                 const lastReq = parseInt(sessionStorage.getItem(OTP_COOLDOWN_KEY) || '0');
                 const elapsed = Date.now() - lastReq;
@@ -515,21 +459,18 @@ function initializeYatrAmore() {
                     verifyBtn.innerText = `Wait ${minsLeft}m`;
                     verifyBtn.disabled = true;
                     verifyBtn.style.background = "#999";
-                    // Show OTP input in case they haven't entered it yet
                     otpGroup.style.display = "block";
-                    return true; // In cooldown
+                    return true;
                 }
-                return false; // Not in cooldown
+                return false;
             };
 
-            // Check on page load
             checkOtpCooldown();
 
             verifyBtn.addEventListener("click", async () => {
                 const email = emailInput.value.trim();
-                if (!email || !email.includes("@")) return alert("Please enter a valid email first.");
+                if (!email || !email.includes("@")) return window.showToast("Please enter a valid email first.", false);
 
-                // Enforce 10-minute cooldown
                 if (checkOtpCooldown()) return;
 
                 verifyBtn.innerText = "...";
@@ -548,57 +489,33 @@ function initializeYatrAmore() {
                     const result = await resp.json();
 
                     if (result.success) {
-                        // Start 10-minute cooldown
                         sessionStorage.setItem(OTP_COOLDOWN_KEY, Date.now().toString());
                         otpGroup.style.display = "block";
                         verifyBtn.innerText = "Sent ✓";
                         verifyBtn.style.background = "#4CAF50";
 
-                        // After 60s, show countdown timer
                         setTimeout(() => {
                             if (verifyBtn.innerText !== "Verified ✓") {
-                                checkOtpCooldown(); // Will show "Wait Xm"
+                                checkOtpCooldown();
                             }
                         }, 60000);
                     } else {
-                        alert("Error: " + (result.error || "Could not send code."));
+                        window.showToast("Error: " + (result.error || "Could not send code.", false));
                         verifyBtn.innerText = "Verify";
                         verifyBtn.disabled = false;
                     }
                 } catch (e) {
-                    alert("Verification Service Unavailable.");
+                    window.showToast("Verification Service Unavailable.", false);
                     verifyBtn.innerText = "Verify";
                     verifyBtn.disabled = false;
                 }
             });
         }
 
-        // Auto-verify when 6 digits are entered — now checks against server
         if (otpInput) {
-            otpInput.addEventListener("input", async () => {
+            otpInput.addEventListener("input", () => {
                 if (otpInput.value.length === 6) {
-                    const fp = await YatrAmoreSecurity.getFingerprint();
-                    try {
-                        const resp = await fetch(gasUrl('contact'), {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                action: "verifyCode",
-                                email: emailInput.value.toLowerCase().trim(),
-                                code: otpInput.value,
-                                fingerprint: fp
-                            })
-                        });
-                        const result = await resp.json();
-                        if (result.success && result.verified) {
-                            markVerified(emailInput.value.toLowerCase().trim());
-                        } else {
-                            otpInput.value = '';
-                            alert("Invalid or expired code. Please check your email and try again.");
-                        }
-                    } catch (e) {
-                        // If server check fails, fall through to submitContact which will also verify
-                        markVerified(emailInput.value.toLowerCase().trim());
-                    }
+                    markVerified(emailInput.value.toLowerCase().trim());
                 }
             });
         }
@@ -607,13 +524,12 @@ function initializeYatrAmore() {
         contactForm.addEventListener("submit", async function (e) {
             e.preventDefault();
 
-            // Gate: If not verified, prompt the user instead of submitting
             if (!isEmailVerified) {
                 emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 verifyBtn.style.animation = 'none';
-                void verifyBtn.offsetWidth; // Force reflow to restart animation
+                void verifyBtn.offsetWidth;
                 verifyBtn.style.animation = 'pulse 0.5s ease 2';
-                alert("Please verify your email first by clicking the 'Verify' button.");
+                window.showToast("Please verify your email first by clicking the 'Verify' button.", false);
                 return;
             }
 
@@ -638,7 +554,6 @@ function initializeYatrAmore() {
                 const result = await resp.json();
 
                 if (result.success) {
-                    // Create/Refresh 20-day Trust Token
                     localStorage.setItem(`ym_trust_${fp}_${data.email.toLowerCase().trim()}`, Date.now().toString());
 
                     submitBtn.innerText = "Message Sent ✓";
@@ -651,26 +566,24 @@ function initializeYatrAmore() {
                         resetVerified();
                     }, 5000);
                 } else {
-                    alert("Submission Failed: " + (result.error || "Check your verification code."));
+                    window.showToast("Submission Failed: " + (result.error || "Check your verification code.", false));
                     submitBtn.innerText = "Try Again";
                     submitBtn.disabled = false;
                 }
             } catch (err) {
-                alert("Connection Error. Please try again.");
+                window.showToast("Connection Error. Please try again.", false);
                 submitBtn.innerText = "Send Message";
                 submitBtn.disabled = false;
             }
         });
     }
 
-    // Global Visitor Counter (Session-guarded to prevent inflation)
     const visitorCountElement = document.getElementById("visitor-count");
     if (visitorCountElement) {
         const BASE_COUNT = 2600;
         const SESSION_KEY = 'ym_counted';
         const CACHE_KEY = 'ym_visitor_count';
 
-        // Only hit the backend once per browser session
         if (sessionStorage.getItem(SESSION_KEY)) {
             const cached = localStorage.getItem(CACHE_KEY);
             visitorCountElement.innerText = cached || BASE_COUNT.toLocaleString();
@@ -698,21 +611,17 @@ function initializeYatrAmore() {
         }
     }
 
-    // --- Family Tree Background Pre-fetch (Ready in Time) ---
     function fetchFamilyTreeData(force = false) {
         const CACHE_KEY = "yatramore_family_tree_cache";
         const SESSION_READY_KEY = "yatramore_family_tree_session_ready";
 
-        // Logic: ONLY fetch fresh data if we are on the Home page, if cache is missing, or if forced (Smart Refresh).
         const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.php');
         const hasCache = localStorage.getItem(CACHE_KEY);
 
         if (!isHomePage && hasCache && !force) {
-            //  // console.log("[Global] Using cached family tree data (refresh restricted to Home page/Smart Refresh).");
             return;
         }
 
-        // Only fetch once per page load to minimize data
         if (window._familyTreeFetchInFlight) return;
         window._familyTreeFetchInFlight = true;
 
@@ -729,22 +638,18 @@ function initializeYatrAmore() {
                 const oldDataRaw = localStorage.getItem(CACHE_KEY);
                 const oldData = oldDataRaw ? JSON.parse(oldDataRaw) : [];
 
-                // Smart comparison: check for length (new entries) OR content changes (name corrections)
                 const isDifferent = JSON.stringify(data) !== JSON.stringify(oldData);
 
                 if (isDifferent) {
                     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                     sessionStorage.setItem(SESSION_READY_KEY, "true");
-                    console.log(`[Global] Family Tree cache updated (${data.length} members).`);
+                    window.debugLog(`[Global] Family Tree cache updated (${data.length} members).`);
                 } else {
-                    //  // console.log("[Global] Family Tree cache is already up-to-date.");
                     sessionStorage.setItem(SESSION_READY_KEY, "true");
                 }
 
-                // Update sync timestamp (v36: Support for Smart Refresh)
                 localStorage.setItem('yatramore_last_sync_time', Date.now().toString());
 
-                // Dispatch event to notify family-tree.js if it's already open
                 window.dispatchEvent(new CustomEvent('yatramore_family_tree_updated', { detail: data }));
             }
         };
@@ -753,20 +658,17 @@ function initializeYatrAmore() {
         script.id = 'family-prefetch-script';
         script.src = `${scriptURL}?callback=${callbackName}&action=getMembers&t=${Date.now()}`;
 
-        // Use requestIdleCallback for "Side-by-Side" non-blocking fetching if available
         if ('requestIdleCallback' in window) {
             window.requestIdleCallback(() => document.body.appendChild(script));
         } else {
             setTimeout(() => document.body.appendChild(script), 1000);
         }
     }
-    // v36: Smart Refresh - Sync when switching back to tab after 30 mins
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
             const lastSync = parseInt(localStorage.getItem('yatramore_last_sync_time') || '0');
-            const COOLDOWN = 30 * 60 * 1000; // 30 mins
+            const COOLDOWN = 30 * 60 * 1000;
             if (Date.now() - lastSync > COOLDOWN) {
-                //  // console.log("[Global] Smart Refresh: Triggering background sync after tab visibility change.");
                 fetchFamilyTreeData(true);
             }
         }
@@ -774,14 +676,12 @@ function initializeYatrAmore() {
 
     fetchFamilyTreeData();
 
-    // --- Accessibility & Translation ---
 
     const accFab = document.getElementById("accessibility-fab");
     const accMenu = document.querySelector(".accessibility-menu");
 
     if (accFab && accMenu) {
         accFab.addEventListener("click", () => {
-            // Close other menus first
             const shareMenu = document.querySelector(".share-menu");
             const shareFab = document.getElementById("share-toggle");
             if (shareMenu && shareMenu.classList.contains("active")) {
@@ -808,7 +708,6 @@ function initializeYatrAmore() {
         });
     }
 
-    // --- Share Logic ---
     const shareFab = document.getElementById("share-toggle");
     const shareMenu = document.querySelector(".share-menu");
     const shareToast = document.getElementById("share-toast");
@@ -820,11 +719,11 @@ function initializeYatrAmore() {
             url: window.location.href
         };
 
-        // Setup social links function
         const updateSocialLinks = () => {
-            // Priority: When sharing, use the LIVE URL if we're on a local file, otherwise use current URL
-            // Always share the homepage as requested by the user
-            let shareUrl = 'https://yatramore.com';
+            let shareUrl = window.location.href;
+            if (shareUrl.startsWith('file://')) {
+                shareUrl = 'https://yatramore.com';
+            }
 
             const currentUrl = encodeURIComponent(shareUrl);
             const shareText = encodeURIComponent(shareData.text);
@@ -834,15 +733,11 @@ function initializeYatrAmore() {
             const instagramBtn = document.getElementById("share-instagram");
             const tiktokBtn = document.getElementById("share-tiktok");
 
-            // Define reliable sharing intents
             const whatsappIntent = `https://api.whatsapp.com/send?text=${shareText}%20${currentUrl}`;
             const facebookIntent = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
 
-            // We use click listeners + window.open instead of simple hrefs 
-            // This is MORE RELIABLE for bypassing browser security on local files (file://)
             const handleSocialClick = (btn, url) => {
                 if (!btn) return;
-                // Remove existing listeners if any
                 const newBtn = btn.cloneNode(true);
                 btn.parentNode.replaceChild(newBtn, btn);
 
@@ -855,32 +750,25 @@ function initializeYatrAmore() {
             handleSocialClick(whatsappBtn, whatsappIntent);
             handleSocialClick(facebookBtn, facebookIntent);
 
-            // IG/TikTok just open the profiles
             if (instagramBtn) instagramBtn.setAttribute("href", "https://www.instagram.com/yatramore.official");
             if (tiktokBtn) tiktokBtn.setAttribute("href", "https://www.tiktok.com/@yatramore.official");
         };
 
-        // Initialize once
         updateSocialLinks();
 
         shareFab.addEventListener("click", async () => {
-            // Priority 1: Native Share Sheet (Mobile Only)
             if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 try {
                     await navigator.share(shareData);
-                    // Close menu if it was open
                     shareMenu.classList.remove("active");
                     shareFab.innerHTML = '<i class="fas fa-share-alt"></i>';
                     return;
                 } catch (err) {
-                    // Fallback to custom menu if share was cancelled or failed
                 }
             }
 
-            // Sync links again just before opening menu to be 100% sure
             updateSocialLinks();
 
-            // Priority 2: Custom Menu
             if (accMenu) {
                 accMenu.classList.remove("active");
                 accMenu.style.display = "none";
@@ -893,7 +781,6 @@ function initializeYatrAmore() {
                 : '<i class="fas fa-share-alt"></i>';
         });
 
-        // Close on outside click
         document.addEventListener("click", (e) => {
             if (!shareFab.contains(e.target) && !shareMenu.contains(e.target)) {
                 shareMenu.classList.remove("active");
@@ -901,11 +788,9 @@ function initializeYatrAmore() {
             }
         });
 
-        // Copy Link
         const showToast = (msg) => {
             if (!shareToast) return;
-            shareToast.innerHTML = `<i class="fas fa-check-circle"></i> `;
-            shareToast.appendChild(document.createTextNode(msg));
+            shareToast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
             shareToast.classList.add("show");
             setTimeout(() => shareToast.classList.remove("show"), 2500);
         };
@@ -919,7 +804,6 @@ function initializeYatrAmore() {
             });
         }
 
-        // Handle IG/TikTok Desktop "Copy & Open" logic
         const socialCopyOpen = (id, platform) => {
             const btn = document.getElementById(id);
             if (btn) {
@@ -935,7 +819,6 @@ function initializeYatrAmore() {
         socialCopyOpen("share-tiktok", "TikTok");
     }
 
-    // Zoom Logic
     const zoomInBtn = document.getElementById("zoom-in");
     const zoomOutBtn = document.getElementById("zoom-out");
     const zoomResetBtn = document.getElementById("zoom-reset");
@@ -970,11 +853,9 @@ function initializeYatrAmore() {
         });
     }
 
-    // --- Theme Toggle Logic ---
     const themeToggle = document.getElementById("theme-toggle");
     const htmlElement = document.documentElement;
 
-    // In-page initialization for UI elements
     const currentTheme = htmlElement.getAttribute("data-theme") || "light";
     updateThemeIcon(currentTheme);
 
@@ -1002,7 +883,6 @@ function initializeYatrAmore() {
         }
     }
 
-    // --- Searchable Language Selector ---
     const languages = [
         { name: "English", code: "en" },
         { name: "Italiano (Italian)", code: "it" },
@@ -1055,7 +935,7 @@ function initializeYatrAmore() {
         { name: "فارسی (Persian)", code: "fa" },
         { name: "Afrikaans", code: "af" },
         { name: "Shqip (Albanian)", code: "sq" },
-        { name: "Հայerεն (Armenian)", code: "hy" },
+        { name: "Հայերեն (Armenian)", code: "hy" },
         { name: "Azərbaycan (Azerbaijani)", code: "az" },
         { name: "Euskara (Basque)", code: "eu" },
         { name: "Беларуская (Belarusian)", code: "be" },
@@ -1101,7 +981,7 @@ function initializeYatrAmore() {
         { name: "Kiswahili (Swahili)", code: "sw" },
         { name: "Тоҷикӣ (Tajik)", code: "tg" },
         { name: "تاتار (Tatar)", code: "tt" },
-        { name: "བོད་སྐད་ (Tibetan)", code: "bo" },
+        { name: "بོད་སྐད་ (Tibetan)", code: "bo" },
         { name: "Türkmen (Turkmen)", code: "tk" },
         { name: "ئۇيغۇرچە (Uyghur)", code: "ug" },
         { name: "Oʻzbek (Uzbek)", code: "uz" },
@@ -1112,11 +992,9 @@ function initializeYatrAmore() {
     ];
 
     const translatePage = (langCode) => {
-        // 1. Tab-Isolated Persistence via strictly mapped Cookies
         if (langCode === 'en' || !langCode) {
             sessionStorage.removeItem('ym_translation_lang');
             window._setOrClearGoogleCookie('en');
-            // Reload cleanly strips all injected Spans by Google
             setTimeout(() => window.location.reload(), 100);
         } else {
             sessionStorage.setItem('ym_translation_lang', langCode);
@@ -1125,11 +1003,13 @@ function initializeYatrAmore() {
             if (combo) {
                 combo.value = langCode;
                 combo.dispatchEvent(new Event("change", { bubbles: true }));
+            } else {
+                console.log("Translate widget not fully loaded, reloading...");
+                setTimeout(() => window.location.reload(), 100);
             }
         }
     };
 
-    // ── Nav Globe Language Button ─────────────────────────
     const navLangBtn = document.getElementById("nav-lang-btn");
     const navLangDropdown = document.getElementById("nav-lang-dropdown");
     const navLangWrapper = document.getElementById("nav-lang-wrapper");
@@ -1156,14 +1036,12 @@ function initializeYatrAmore() {
     };
 
     if (navLangBtn && navLangDropdown) {
-        // Stop clicks inside the dropdown from bubbling to document (which would close it)
         navLangDropdown.addEventListener("click", (e) => e.stopPropagation());
 
         navLangBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             const isOpen = navLangDropdown.classList.contains("active");
 
-            // Close other menus first
             const shareMenu = document.querySelector(".share-menu");
             const shareFab = document.getElementById("share-toggle");
             const accMenu = document.querySelector(".accessibility-menu");
@@ -1188,21 +1066,18 @@ function initializeYatrAmore() {
             }
         });
 
-        // Close on outside click/tap (works on both desktop and mobile)
         document.addEventListener("click", (e) => {
             if (navLangWrapper && !navLangWrapper.contains(e.target)) {
                 closeNavLangDropdown();
             }
         });
 
-        // Search input
         if (navLangSearch) {
             navLangSearch.addEventListener("input", (e) => {
                 renderNavResults(e.target.value);
             });
         }
 
-        // Language selection
         if (navLangResults) {
             navLangResults.addEventListener("click", (e) => {
                 const item = e.target.closest(".nav-lang-item");
@@ -1214,19 +1089,14 @@ function initializeYatrAmore() {
         }
     }
 
-
-
-    // --- Safe Translation State Watcher ---
     let translationActiveConfirmed = false;
     setInterval(() => {
         const htmlClass = document.documentElement.className || '';
         if (htmlClass.includes('translated-')) {
             translationActiveConfirmed = true;
         } else if (translationActiveConfirmed && !htmlClass.includes('translated-')) {
-            // The translation WAS active successfully, but is no longer.
-            // This safely implies the user manually hit Google's 'Show Original' or 'X' button.
             if (sessionStorage.getItem('ym_translation_lang')) {
-                console.log("Native Google UI translation cancelled. Syncing state without reload...");
+                window.debugLog("Native Google UI translation cancelled. Syncing state without reload...");
                 sessionStorage.removeItem('ym_translation_lang');
                 window._setOrClearGoogleCookie('en');
                 translationActiveConfirmed = false;
@@ -1234,12 +1104,10 @@ function initializeYatrAmore() {
         }
     }, 500);
 
-    // The in-page Google Translate widget is now handled by the initialization in your HTML files.
-
-    // Sanitization is now handled globally by YatrAmore.sanitize (in components.js)
 
 
-    // --- Dynamic Collaborator Loading ---
+
+
     async function loadCollaborators() {
         const collaboratorGrid = document.getElementById("collaborator-grid");
         const collaboratorPageGrid = document.getElementById("collaborator-page-grid");
@@ -1248,7 +1116,6 @@ function initializeYatrAmore() {
 
         if (!collaboratorGrid && !collaboratorPageGrid) return;
 
-        // Use global COLLABORATOR_DATA from collaborators.js as the single source of truth
         let data = (typeof COLLABORATOR_DATA !== 'undefined') ? COLLABORATOR_DATA : [];
 
         if (!data || data.length === 0) {
@@ -1262,29 +1129,45 @@ function initializeYatrAmore() {
                 category: YatrAmore.sanitize(collaborator.category || ''),
                 title: YatrAmore.sanitize(collaborator.title || ''),
                 location: YatrAmore.sanitize(collaborator.location || ''),
-                description: collaborator.description ? collaborator.description.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/on\w+\s*=\s*["'][^"']*["']/gi, '') : '',
-                image: (collaborator.image || '').replace(/[<>"]/g, ''), // URL-safe filter (don't HTML-escape URLs)
+                description: YatrAmore.sanitize(collaborator.description || '')
+                    .replace(/&lt;br\/?&gt;/gi, '<br>')
+                    .replace(/&lt;strong&gt;/gi, '<strong>')
+                    .replace(/&lt;\/strong&gt;/gi, '</strong>')
+                    .replace(/&amp;nbsp;/g, '&nbsp;'),
+                image: (collaborator.image || '').replace(/[<>"]/g, ''),
                 date: YatrAmore.sanitize(collaborator.date || ''),
                 nights: collaborator.nights ? YatrAmore.sanitize(collaborator.nights) : '',
+                wardrobe: collaborator.Wardrobe ? YatrAmore.sanitize(collaborator.Wardrobe) : '',
+                product: collaborator.Product ? YatrAmore.sanitize(collaborator.Product) : '',
                 camera: collaborator.Camera ? YatrAmore.sanitize(collaborator.Camera) : '',
                 menu: collaborator.Menu ? YatrAmore.sanitize(collaborator.Menu) : '',
-                gift: (collaborator.Gift || collaborator.Gifts) ? YatrAmore.sanitize(collaborator.Gift || collaborator.Gifts) : '',
-                product: (collaborator.Product || collaborator.Products) ? YatrAmore.sanitize(collaborator.Product || collaborator.Products) : '',
-                wardrobe: collaborator.Wardrobe ? YatrAmore.sanitize(collaborator.Wardrobe) : '',
+                gift: (collaborator.Gift || collaborator.Gifts || collaborator.Products) ? YatrAmore.sanitize(collaborator.Gift || collaborator.Gifts || collaborator.Products) : '',
                 collab: collaborator.Collab ? YatrAmore.sanitize(collaborator.Collab) : '',
                 rating: YatrAmore.sanitize(collaborator.rating || collaborator.love || ''),
                 status: YatrAmore.sanitize(collaborator.status || 'Partner'),
                 tags: (collaborator.tags || []).map(t => YatrAmore.sanitize(t)),
-                weblink: collaborator.weblink ? collaborator.weblink.replace(/[<>"]/g, '') : ''
+                weblink: collaborator.weblink ? collaborator.weblink.replace(/[<>"]/g, '') : '',
+                whatsappClub: collaborator.whatsappClub ? collaborator.whatsappClub.replace(/[<>"]/g, '') : ''
             };
 
-            // Dynamic middle meta item (Nights, Camera gear, or Menu highlights)
             let middleMetaHTML = '';
             if (s.nights) {
                 middleMetaHTML = `
                 <div class="card-meta-item">
                     <i class="fas fa-moon"></i>
                     <span>${s.nights}</span>
+                </div>`;
+            } else if (s.wardrobe) {
+                middleMetaHTML = `
+                <div class="card-meta-item">
+                    <i class="fas fa-tshirt"></i>
+                    <span>${s.wardrobe}</span>
+                </div>`;
+            } else if (s.product) {
+                middleMetaHTML = `
+                <div class="card-meta-item">
+                    <i class="fas fa-wine-bottle" style="transform: rotate(45deg);"></i>
+                    <span>${s.product}</span>
                 </div>`;
             } else if (s.camera) {
                 middleMetaHTML = `
@@ -1298,12 +1181,6 @@ function initializeYatrAmore() {
                     <i class="fas fa-utensils"></i>
                     <span>${s.menu}</span>
                 </div>`;
-            } else if (s.wardrobe) {
-                middleMetaHTML = `
-                <div class="card-meta-item">
-                    <i class="fas fa-tshirt"></i>
-                    <span>${s.wardrobe}</span>
-                </div>`;
             } else if (s.collab) {
                 middleMetaHTML = `
                 <div class="card-meta-item">
@@ -1316,19 +1193,12 @@ function initializeYatrAmore() {
                     <i class="fas fa-gift"></i>
                     <span>${s.gift}</span>
                 </div>`;
-            } else if (s.product) {
-                middleMetaHTML = `
-                <div class="card-meta-item">
-                    <i class="fas fa-box-open"></i>
-                    <span>${s.product}</span>
-                </div>`;
             }
 
-            // Optimized Rendering: Conditionally render image OR placeholder (never both)
             const hasRealImage = collaborator.image && collaborator.image !== 'Images/logo.svg' && collaborator.image.includes('.');
 
             const imageHTML = hasRealImage ? `
-                <img loading="lazy" src="${s.image}" alt="${s.title}" 
+                <img src="${s.image}" alt="${s.title}" 
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             ` : `
                 <div class="card-image-placeholder">
@@ -1354,10 +1224,10 @@ function initializeYatrAmore() {
                         <i class="fas fa-map-pin"></i>
                         <span>${s.location}</span>
                     </div>
-                    <h2 class="card-title">
-                        ${s.title}
-                        ${collaborator.whatsappClub ? ` <a href="${collaborator.whatsappClub.replace(/[<>"]/g, '')}" target="_blank" rel="noopener noreferrer" class="whatsapp-club-btn" onclick="event.stopPropagation()"><i class="fa-brands fa-whatsapp"></i> Join Club</a>` : ''}
-                    </h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; gap: 10px;">
+                        <h2 class="card-title" style="margin-bottom: 0;">${s.title}</h2>
+                        ${s.whatsappClub ? `<a href="${s.whatsappClub}" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" style="background: rgba(37, 211, 102, 0.1); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.4); border-radius: 20px; padding: 8px 14px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0;" onmouseover="this.style.background='rgba(37, 211, 102, 0.2)'" onmouseout="this.style.background='rgba(37, 211, 102, 0.1)'"><i class="fab fa-whatsapp" style="font-size: 1rem;"></i> JOIN CLUB</a>` : ''}
+                    </div>
                     <p class="card-description">${s.description}</p>
                     <div class="card-meta">
                         <div class="card-meta-item">
@@ -1382,7 +1252,6 @@ function initializeYatrAmore() {
 
         if (loadingNotice) loadingNotice.style.display = "none";
 
-        // Helper: Attach click-to-open-weblink on collaborator cards with a data-weblink attribute
         const attachWeblinkListeners = (container) => {
             container.querySelectorAll('.travel-card[data-weblink]').forEach(card => {
                 card.addEventListener('click', () => {
@@ -1395,7 +1264,6 @@ function initializeYatrAmore() {
             collaboratorGrid.innerHTML = cardsHTML;
             attachWeblinkListeners(collaboratorGrid);
 
-            // Immediately apply active filter to new cards on the journey page
             const currentFilterBtn = document.querySelector('.filter-btn.active');
             if (currentFilterBtn) {
                 const filter = currentFilterBtn.dataset.filter;
@@ -1404,7 +1272,6 @@ function initializeYatrAmore() {
                     const category = card.dataset.category || '';
                     const isCollaborator = card.getAttribute('data-is-collaborator') === 'true';
 
-                    // Logic: Collaborators ONLY show in their category, NOT in "All"
                     const shouldShow = (filter !== 'All' && category === filter);
 
                     if (!shouldShow) {
@@ -1418,34 +1285,8 @@ function initializeYatrAmore() {
         if (collaboratorPageGrid) {
             collaboratorPageGrid.innerHTML = cardsHTML;
             attachWeblinkListeners(collaboratorPageGrid);
-
-            // Fix anchor jumping on mobile/dynamic load: 
-            // Re-scroll to hash after injecting the content that shifts the page layout
-            if (window.location.hash) {
-                setTimeout(() => {
-                    try {
-                        const hash = window.location.hash;
-                        // Security: Only allow simple ID selectors (e.g. #lucky-draw)
-                        if (/^#[a-zA-Z][\w-]*$/.test(hash)) {
-                            const hashEl = document.getElementById(hash.slice(1));
-                            if (hashEl) {
-                                const navHeight = document.querySelector('.navbar') ? document.querySelector('.navbar').offsetHeight : 80;
-                                const targetPosition = hashEl.getBoundingClientRect().top + window.scrollY;
-                                window.scrollTo({
-                                    top: targetPosition - navHeight - 20, // 20px extra padding
-                                    behavior: "smooth"
-                                });
-                            }
-                        }
-                    } catch(e) { 
-                        // Ignored: Invalid selector in hash
-                    }
-                }, 300); // 300ms allows layout to fully settle
-            }
         }
 
-        // ── Surgical Scroll Reveal Implementation ──
-        // This exactly matches the behavior of the Journey page but remains self-contained.
         const revealOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -1466,43 +1307,29 @@ function initializeYatrAmore() {
             cards.forEach(card => {
                 revealObserver.observe(card);
 
-                // Fallback: If for any reason the card isn't revealed after 2s, show it.
-                // This handles edge cases like extremely fast scrolling or browser-specific IO delays.
                 setTimeout(() => {
                     if (!card.classList.contains('revealed')) card.classList.add('revealed');
                 }, 2000);
             });
         }
-
-        // Re-scroll to moderators if the hash is present, 
-        // to handle layout shifting caused by dynamic card injection
-        if (window.location.hash === '#moderators') {
-            setTimeout(() => {
-                const target = document.getElementById('moderators');
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
-            }, 150);
-        }
     }
+
+
 
     loadCollaborators();
 
-    // ── Share FAB (REMOVED as per user request) ───────
-
-    // ── Privacy Policy TOC ──────────────────────────────
     function initPolicyPage() {
         const policyContent = document.querySelector('.policy-content');
         const policySections = document.querySelectorAll('.policy-section h2');
 
         if (policyContent && policySections.length > 0) {
-            // Add IDs to each section heading
             policySections.forEach((heading, i) => {
                 heading.id = `policy-section-${i + 1}`;
             });
 
-            // Build TOC HTML
             const tocItems = Array.from(policySections).map((heading, i) => {
                 const num = (i + 1) + '.';
-                const text = heading.textContent.replace(/^\d+\.\s*/, ''); // Remove leading number
+                const text = heading.textContent.replace(/^\d+\.\s*/, '');
                 return `<li><a href="#policy-section-${i + 1}"><span class="toc-num">${num}</span>${YatrAmore.sanitize(text)}</a></li>`;
             }).join('');
 
@@ -1513,10 +1340,8 @@ function initializeYatrAmore() {
                 </nav>
             `;
 
-            // Insert TOC at the very top of the content card so it sticks for the whole duration
             policyContent.insertAdjacentHTML('afterbegin', tocHTML);
 
-            // Smooth scroll for TOC links
             document.querySelectorAll('.policy-toc a').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1531,10 +1356,6 @@ function initializeYatrAmore() {
     initPolicyPage();
 }
 
-// ── Robust Initialization Trigger ──────────────────
-// Since this script is loaded dynamically via components.js, it may finish 
-// loading AFTER DOMContentLoaded has already fired. We check readyState 
-// to ensure the app initializes regardless of timing.
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeYatrAmore);
 } else {

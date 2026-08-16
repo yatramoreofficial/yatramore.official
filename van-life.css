@@ -1,10 +1,10 @@
-/* YA-VANLIFE MISSION CONTROL: INTEGRATED STYLES (v8.2) */
+/* ya- */
 
-/* 1. MISSION MAP ENGINE */
+/* 1-m */
 .map-section {
     padding: 6rem 5% 4rem;
     background: var(--bg-accent);
-    /* USE THEME-AWARE ACCENT */
+    /* use */
     border-top: 1px solid var(--glass-border);
     border-bottom: 1px solid var(--glass-border);
 }
@@ -12,7 +12,7 @@
 .map-container-wrapper {
     position: relative;
     width: 100%;
-    max-width: 1400px; /* PANORAMIC EXPANSION */
+    max-width: 1400px; /* pan */
     margin: 0 auto;
     height: 800px;
     border-radius: 24px;
@@ -25,17 +25,17 @@
     width: 100%;
     height: 100%;
     filter: saturate(0.8) contrast(1.1);
-    /* TACTICAL MAP FILTER */
+    /* tac */
 }
 
-/* Hide unstyled routing box */
+/* hid */
 .leaflet-routing-container {
     display: none !important;
 }
 
-/* 3. TACTICAL STATS GRID */
+/* 3-t */
 .map-stats-grid {
-    display: flex; /* SWITCH TO FLEX FOR CLUSTERING */
+    display: flex; /* swi */
     flex-wrap: wrap;
     justify-content: center;
     gap: 1.2rem;
@@ -58,7 +58,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
-    min-width: 180px; /* NARROWER CHASSIS */
+    min-width: 180px; /* nar */
     max-width: 220px;
     border: 1px solid var(--glass-border);
     background: var(--glass-bg);
@@ -73,7 +73,7 @@
 
 .stat-card i {
     color: var(--brand-brown);
-    font-size: 1.2rem; /* REFINED ICON SCALE */
+    font-size: 1.2rem; /* ref */
     opacity: 0.8;
 }
 
@@ -85,13 +85,13 @@
 
 .stat-value {
     display: block;
-    font-size: 1.2rem; /* REFINED SCALE */
+    font-size: 1.2rem; /* ref */
     font-weight: 800;
     color: var(--brand-brown);
 }
 
 .stat-label {
-    font-size: 0.7rem; /* REFINED SCALE */
+    font-size: 0.7rem; /* ref */
     color: var(--brand-brown);
     opacity: 0.7;
     text-transform: uppercase;
@@ -99,7 +99,7 @@
     font-weight: 600;
 }
 
-/* 4. SATELLITE SIGNAL ANIMATION */
+/* 4-s */
 .signal-bars {
     display: flex;
     align-items: flex-end;
@@ -148,7 +148,7 @@
     }
 }
 
-/* 5. CUSTOM VAN MARKERS */
+/* 5-c */
 .custom-van-marker {
     position: relative;
     display: flex;
@@ -167,7 +167,7 @@
 
 .van-icon-main {
     font-size: 22px;
-    color: var(--brand-white); /* FIXED LIGHT COLOR FOR VISIBILITY */
+    color: var(--brand-white); /* fix */
     z-index: 2;
 }
 
@@ -195,7 +195,7 @@
     letter-spacing: 0.1px;
 }
 
-/* 6. RADAR & DISCOVERY ANIMATIONS */
+/* 6-r */
 .radar-pulse-icon {
     display: flex !important;
     align-items: center;
@@ -210,7 +210,7 @@
     width: 20px;
     height: 20px;
     background: radial-gradient(circle, rgba(197, 179, 88, 0.25) 0%, transparent 70%);
-    border: 2px solid rgba(197, 179, 88, 0.8); /* CLEARLY VISIBLE */
+    border: 2px solid rgba(197, 179, 88, 0.8); /* cle */
     border-radius: 50%;
     box-shadow: 0 0 15px rgba(197, 179, 88, 0.3);
     animation: radar-grow 6s infinite linear;
@@ -253,37 +253,37 @@
     }
 }
 
-/* 7. GLASS POPUP STYLING */
+/* 7-g */
 .van-popup-card {
     width: 260px;
     overflow: hidden;
     border-radius: 20px;
-    background: var(--bg-main); /* SOLID THEME BACKGROUND */
+    background: var(--bg-main); /* sol */
     border: 1px solid var(--glass-border);
-    box-shadow: 0 15px 45px rgba(0,0,0,0.4); /* DEEPER FLOATING SHADOW */
+    box-shadow: 0 15px 45px rgba(0,0,0,0.4); /* dee */
 }
 
 .van-popup-img {
     width: 100%;
-    height: 150px; /* INCREASED PHOTO HEIGHT */
+    height: 150px; /* inc */
     object-fit: cover;
 }
 
 .van-popup-body {
-    padding: 0.8rem 1rem 1rem; /* TIGHTER TOP PADDING */
+    padding: 0.8rem 1rem 1rem; /* tig */
 }
 
 .van-popup-title {
     font-weight: 800;
     font-size: 1.1rem;
     color: var(--brand-brown);
-    margin-bottom: -4px; /* NEGATIVE SQUEEZE */
+    margin-bottom: -4px; /* neg */
     line-height: 1.1;
 }
 
 .van-popup-text {
     font-size: 0.85rem;
-    color: var(--brand-brown); /* RESTORE BRAND BROWN */
+    color: var(--brand-brown); /* res */
     line-height: 1.4;
     margin-bottom: 0.8rem;
     font-weight: 500;
@@ -292,7 +292,7 @@
 .van-popup-links {
     display: flex;
     gap: 0.6rem;
-    justify-content: center; /* CENTERED BUTTONS */
+    justify-content: center; /* cen */
     margin-top: 0.5rem;
 }
 
@@ -306,12 +306,12 @@
     background: rgba(220, 205, 190, 0.1);
     border: 1.5px solid rgba(220, 205, 190, 0.25);
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s ease, border-color 0.4s ease;
-    color: var(--brand-brown) !important; /* TOTAL BLUE PURGE */
+    color: var(--brand-brown) !important; /* tot */
     text-decoration: none !important;
 }
 
 .van-popup-btn i {
-    color: inherit !important; /* FOLLOW PARENT LOCK */
+    color: inherit !important; /* fol */
     font-size: 1.1rem;
 }
 
@@ -321,7 +321,7 @@
 }
 
 .van-popup-btn:hover i {
-    color: white !important; /* SNAP TO WHITE ON HOVER */
+    color: white !important; /* sna */
 }
 
 .van-popup-btn.instagram:hover { background: #E4405F !important; border-color: #E4405F; }
@@ -329,13 +329,13 @@
 .van-popup-btn.youtube:hover { background: #FF0000 !important; border-color: #FF0000; }
 .van-popup-btn.maps:hover { background: #4285F4 !important; border-color: #4285F4; }
 
-/* Leaflet Overrides - Premium Circular Glass Controls */
+/* lea */
 .leaflet-control-zoom, .leaflet-control-home {
     border: none !important;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
     display: flex;
     flex-direction: column;
-    gap: 8px; /* SEPARATE CIRCULAR BUTTONS */
+    gap: 8px; /* sep */
     background: none !important;
 }
 
@@ -343,7 +343,7 @@
     width: 40px !important;
     height: 40px !important;
     line-height: 40px !important;
-    border-radius: 50% !important; /* PERFECT ROUNDING */
+    border-radius: 50% !important; /* per */
     background: var(--glass-bg) !important;
     backdrop-filter: blur(10px) !important;
     color: var(--brand-brown) !important;
@@ -378,7 +378,7 @@
     transition: all 0.3s ease !important;
     z-index: 1000 !important;
     text-decoration: none !important;
-    padding-top: 2px !important; /* Visual center tweak */
+    padding-top: 2px !important; /* vis */
 }
 
 .leaflet-popup-close-button:hover {
@@ -396,14 +396,14 @@
     background: var(--glass-bg);
 }
 
-/* 8. RESPONSIVE CALIBRATION */
+/* 8-r */
 @media (max-width: 768px) {
     .map-section {
         padding: 4rem 3% 2rem;
     }
 
     .map-container-wrapper {
-        height: 450px; /* COMPACT MAP FOR MOBILE */
+        height: 450px; /* com */
         border-radius: 16px;
     }
 
@@ -422,7 +422,7 @@
     }
 
     .van-popup-card {
-        width: 220px; /* SLIMMER CARDS FOR MOBILE */
+        width: 220px; /* sli */
     }
 
     .van-popup-img {
@@ -440,13 +440,13 @@
     }
 
     .stat-card {
-        min-width: 100%; /* FULL WIDTH STACK ON VERY SMALL SCREENS */
+        min-width: 100%; /* ful */
         justify-content: space-between;
         padding: 0.8rem 1.2rem;
     }
 }
 
-/* Responsive Adjustments */
+/* res */
 @media (max-width: 768px) {
     .van-hero {
         height: 50vh;
@@ -461,7 +461,7 @@
         margin-top: 2rem;
     }
 }
-/* 9. TACTICAL HUD & COMMAND LOG */
+/* 9-t */
 .tactical-hud .stat-card {
     border: 1px solid rgba(197, 179, 88, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -510,10 +510,10 @@
     to { opacity: 1; transform: translateX(0); }
 }
 
-/* 10. VAN SPECS SECTION */
+/* 10- */
 .van-specs-section {
     padding: 4rem 5%;
-    background: var(--bg-accent); /* Changed to accent for contrast */
+    background: var(--bg-accent); /* cha */
 }
 
 .specs-grid {

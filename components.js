@@ -1,15 +1,72 @@
-// ============================================
-// SHARED COMPONENTS — YatrAmore
-// ============================================
-// This file generates the navigation, footer, and accessibility widgets
-// so you only need to edit them in ONE place.
-//
-// Usage: Add <script src="components.js"></script> BEFORE your page content scripts.
-// Then call: YatrAmore.renderNav(), YatrAmore.renderFooter(), YatrAmore.renderAccessibility()
-// ============================================
+window.DEBUG_MODE = false;
+
+window.debugLog = function (...args) {
+    if (window.DEBUG_MODE) {
+        console.log(...args);
+    }
+};
+
+window.showToast = function (message, isSuccess = true) {
+    let toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) {
+        toastContainer = document.createElement("div");
+        toastContainer.id = "toast-container";
+        toastContainer.style.cssText = "position: fixed; top: 100px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 12px; pointer-events: none; align-items: center;";
+        document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement("div");
+
+    const iconClass = isSuccess ? "fa-solid fa-circle-check" : "fa-solid fa-circle-exclamation";
+    const bgColor = isSuccess ? "rgba(20, 20, 20, 0.65)" : "rgba(30, 10, 10, 0.65)";
+    const borderColor = isSuccess ? "rgba(74, 222, 128, 0.3)" : "rgba(248, 113, 113, 0.3)";
+    const shadowColor = isSuccess ? "rgba(74, 222, 128, 0.15)" : "rgba(248, 113, 113, 0.15)";
+    const iconColor = isSuccess ? "#4ade80" : "#f87171";
+
+    toast.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: ${bgColor};
+        color: #f8fafc;
+        padding: 14px 28px 14px 20px;
+        border-radius: 50px;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+        border: 1px solid ${borderColor};
+        box-shadow: 0 10px 40px -10px ${shadowColor}, inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    `;
+
+    toast.innerHTML = `
+        <i class="${iconClass}" style="color: ${iconColor}; font-size: 20px; filter: drop-shadow(0 0 8px ${iconColor});"></i>
+        <span>${message}</span>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.style.opacity = "1";
+            toast.style.transform = "translateY(0) scale(1)";
+        });
+    });
+
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-20px) scale(0.95)";
+        toast.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+        setTimeout(() => toast.remove(), 400);
+    }, 4000);
+};
 
 const YatrAmore = {
-    // ── XSS Sanitization Helper ────────────────────────
     sanitize(str) {
         if (!str) return '';
         const div = document.createElement('div');
@@ -17,7 +74,6 @@ const YatrAmore = {
         return div.innerHTML;
     },
 
-    // ── Navigation ──────────────────────────────────────
     renderNav(activePage) {
         const nav = document.getElementById('navbar');
         if (!nav) return;
@@ -35,12 +91,41 @@ const YatrAmore = {
             { href: '/#contact', label: 'Contact', anchor: false }
         ];
 
+        const isCupidPage = activePage === 'cupid';
+        const cupidIconContent = `
+        <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 2.6rem; height: 2.6rem;">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; overflow: visible;" aria-hidden="true">
+                <style>
+                    .cupid-wing-left { transform-origin: 40px 50px; animation: flapLeft 0.8s ease-in-out infinite alternate; }
+                    .cupid-wing-right { transform-origin: 60px 50px; animation: flapRight 0.8s ease-in-out infinite alternate; }
+                    @keyframes flapLeft { 0% { transform: rotate(0deg); } 100% { transform: rotate(15deg) skewY(-15deg); } }
+                    @keyframes flapRight { 0% { transform: rotate(0deg); } 100% { transform: rotate(-15deg) skewY(15deg); } }
+                    .cupid-heart { transform-origin: 50px 50px; transition: transform 0.3s ease, fill 0.3s ease, stroke 0.3s ease; }
+                    .nav-icon-link:hover .cupid-heart { transform: scale(1.15); fill: #f44336; stroke: #f44336; }
+                    @keyframes floatCupid { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+                    .cupid-group { animation: floatCupid 2s ease-in-out infinite; }
+                </style>
+                <g class="cupid-group">
+                    <!-- lef-win -->
+                    <path class="cupid-wing-left" d="M35 45 C 15 25, 5 35, 10 45 C 5 50, 10 60, 20 55 C 15 65, 25 70, 35 60 Z" fill="transparent" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+                    <!-- rig-win -->
+                    <path class="cupid-wing-right" d="M65 45 C 85 25, 95 35, 90 45 C 95 50, 90 60, 80 55 C 85 65, 75 70, 65 60 Z" fill="transparent" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+                    <!-- hea -->
+                    <path class="cupid-heart" d="M50 80 C 50 80, 25 55, 25 35 C 25 20, 40 15, 50 25 C 60 15, 75 20, 75 35 C 75 55, 50 80, 50 80 Z" fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+                </g>
+            </svg>
+            <span id="nav-cupid-notification" style="display: none; position: absolute; top: -2px; right: -2px; font-size: 0.65rem; font-family: sans-serif; background-color: #f44336; color: white; border-radius: 50%; width: 16px; height: 16px; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 0 0 2px var(--bg-nav); font-style: normal; z-index: 10;">0</span>
+        </div>`;
+
         const iconLinks = [
             { href: '/family-tree', label: 'Family Tree', id: 'family-tree', icon: '<style>@keyframes leafWavy { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } } .nav-icon-link:hover .leaf-wavy { animation: leafWavy 1.5s ease-in-out infinite; transform-origin: bottom center; }</style><i class="fa-solid fa-seedling leaf-wavy" style="font-size: 1.6rem;"></i>' },
             { href: '/collaborator#lucky-draw', label: 'Lucky Draw', id: 'lucky-draw', icon: '<svg viewBox="0 0 100 100" style="width: 2.2rem; height: 2.2rem; overflow: visible;" aria-hidden="true"><style>.lucky-wheel-group { transform-origin: 50px 50px; transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.15); } .nav-icon-link:hover .lucky-wheel-group { transform: rotate(720deg); }</style><g class="lucky-wheel-group"><circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3" fill="none"/><circle cx="50" cy="50" r="43" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="50" cy="50" r="36" stroke="currentColor" stroke-width="14" stroke-dasharray="18.85 18.85" fill="none"/><circle cx="50" cy="50" r="28" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="50" cy="4" r="2.5" fill="currentColor"/><circle cx="50" cy="96" r="2.5" fill="currentColor"/><circle cx="4" cy="50" r="2.5" fill="currentColor"/><circle cx="96" cy="50" r="2.5" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2.5" fill="currentColor"/><circle cx="82.5" cy="82.5" r="2.5" fill="currentColor"/><circle cx="17.5" cy="82.5" r="2.5" fill="currentColor"/><circle cx="82.5" cy="17.5" r="2.5" fill="currentColor"/></g><path d="M 50 1 L 56 12 L 44 12 Z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/><text x="50" y="55" font-family="\'Brush Script MT\', \'Pacifico\', cursive" font-weight="normal" font-size="18" text-anchor="middle" fill="currentColor">Lucky</text></svg>' }
         ];
 
-        // For index.html, use anchor-only links
+        if (!isCupidPage) {
+            iconLinks.push({ href: 'javascript:void(0)', label: 'Matches', id: 'nav-cupid-icon', icon: cupidIconContent });
+        }
+
         const isIndex = activePage === 'index';
         const navLinksHTML = links.map(link => {
             let href = link.href;
@@ -51,7 +136,6 @@ const YatrAmore = {
                 else if (link.href === '/#contact') href = '#contact';
             }
 
-            // Robust active state: Match by explicit key OR by lowercased label mapping
             const linkKey = link.label.toLowerCase().replace(/\s+/g, '-');
             const isSponsorLegacy = (activePage === 'sponsor' && linkKey === 'collaborator');
             const isStory = (activePage === 'blog' && linkKey === 'story');
@@ -60,7 +144,7 @@ const YatrAmore = {
 
             return `<a href="${href}"${activeAttrs}>${link.label}</a>`;
         }).join('\n                ');
-        
+
         const iconLinksHTML = iconLinks.map(link => {
             const isActive = activePage === link.id;
             const iconClass = isActive ? 'nav-icon-link active' : 'nav-icon-link';
@@ -72,12 +156,11 @@ const YatrAmore = {
             ? 'class="brand brand-text"'
             : 'href="/" class="brand brand-text" style="text-decoration: none; color: inherit;"';
 
-        const isMatchmaking = window.location.pathname.includes('matchmaking');
+        const isMatchmaking = window.location.pathname.includes('matchmaking') || window.location.pathname.includes('cupid');
         const chatInboxIconHTML = isMatchmaking ? `
-                <!-- Chat Inbox Icon -->
-                <button id="nav-inbox-btn" class="nav-icon-link" title="Inbox" aria-label="Inbox" style="background:none; border:none; padding:0; cursor:pointer; position:relative; color:var(--brand-brown); margin-right: 10px; display:inline-flex; align-items:center; justify-content:center; font-size:1.15rem; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s;" onmouseover="this.querySelector('.fa-heart').classList.add('fa-beat'); this.style.transform='scale(1.15) translateY(-2px)';" onmouseout="this.querySelector('.fa-heart').classList.remove('fa-beat'); this.style.transform='scale(1) translateY(0)';">
-                    <i class="fa-solid fa-heart" style="font-size: 1.7rem; --fa-animation-duration: 1s;"></i>
-                    <span id="nav-inbox-badge" style="display:none; position:absolute; top:-6px; right:-10px; background:var(--brand-red, #e74c3c); color:white; font-size:0.7rem; font-weight:bold; border-radius:50%; width:18px; height:18px; align-items:center; justify-content:center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">0</span>
+                <!-- cha-inb-ico -->
+                <button id="nav-inbox-btn" class="nav-icon-link" title="Inbox" aria-label="Inbox" style="background:none; border:none; padding:0; cursor:pointer; position:relative; color:var(--brand-brown); margin-right: 10px; display:inline-flex; align-items:center; justify-content:center;">
+                    ${cupidIconContent}
                 </button>` : '';
 
         nav.innerHTML = `
@@ -122,15 +205,21 @@ const YatrAmore = {
             </div>
         </div>`;
 
-        // A-1 Fix: Ensure a #main-content target exists for the skip link
         if (!document.getElementById('main-content')) {
             const mainTarget = document.querySelector('main') ||
                 document.querySelector('.hero, .travel-hero, .faq-hero, .policy-hero, .page-content');
             if (mainTarget) mainTarget.id = 'main-content';
         }
+
     },
 
-    // ── Footer ──────────────────────────────────────────
+    checkGlobalUnreadMessages: async function () {
+    },
+
+    startNotificationPolling: function () {
+    },
+
+
     renderFooter() {
         const footer = document.querySelector('footer:not(.post-footer)');
         if (!footer) return;
@@ -166,7 +255,6 @@ const YatrAmore = {
         </div>`;
     },
 
-    // ── Accessibility & Translation Widget ──────────────
     renderAccessibility() {
         const container = document.querySelector('.accessibility-container');
         if (!container) return;
@@ -184,7 +272,7 @@ const YatrAmore = {
             </button>
         </div>
 
-        <!-- Share Menu -->
+        <!-- sha-men -->
         <div class="share-menu glass-card">
             <div class="share-header">
                 <h3>Share YatrAmore</h3>
@@ -214,7 +302,7 @@ const YatrAmore = {
             </div>
         </div>
 
-        <!-- Copied Toast -->
+        <!-- cop-toa -->
         <div id="share-toast" class="share-toast glass">
             <i class="fas fa-check-circle"></i> Link copied to clipboard!
         </div>
@@ -237,7 +325,6 @@ const YatrAmore = {
         </div>`;
     },
 
-    // ── Google Translate (centralized) ──────────────────
     renderGoogleTranslate() {
         if (window._ytGoogleTranslateLoaded) return;
         window._ytGoogleTranslateLoaded = true;
@@ -255,19 +342,16 @@ const YatrAmore = {
         document.body.appendChild(script);
     },
 
-    // ── Core Security & Logic Loader ──────────────────
-    // Centralized versioning: Update once here to refresh all pages
     loadCore() {
         if (window._ytCoreLoaded) return;
         window._ytCoreLoaded = true;
 
-        const CORE_VERSION = 'v20'; // Increment this to break cache
+        const CORE_VERSION = 'v20';
         const script = document.createElement('script');
         script.src = `/script.js?v=SECURITY_${CORE_VERSION}`;
         document.body.appendChild(script);
     },
 
-    // ── Firebase Auth Modal ─────────────────────────────
     renderAuthModal() {
         if (document.getElementById('auth-modal')) return;
 
@@ -291,7 +375,6 @@ const YatrAmore = {
             <form id="auth-form" data-mode="login">
                 <div id="auth-error" class="auth-error" style="display: none; background: rgba(244, 67, 54, 0.1); color: #F44336; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem;"></div>
                 
-                <!-- MULTI-HONEYPOT (Bots will fill this, humans won't see it) -->
                 <div style="position: absolute; opacity: 0; left: -9999px; pointer-events: none;" aria-hidden="true">
                     <input type="text" id="auth-hp-website" name="website" tabindex="-1" autocomplete="off">
                     <input type="text" id="auth-hp-phone" name="phone-ext" tabindex="-1" autocomplete="off">
@@ -304,7 +387,12 @@ const YatrAmore = {
                 
                 <div class="auth-input-group">
                     <label for="auth-password">Password</label>
-                    <input type="password" id="auth-password" required placeholder="••••••••">
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="auth-password" required placeholder="••••••••" style="width: 100%; padding-right: 40px;">
+                        <button type="button" aria-label="Toggle password visibility" tabindex="-1" onclick="const p=document.getElementById('auth-password'); const i=this.querySelector('i'); if(p.type==='password'){p.type='text';i.className='fa-solid fa-eye-slash';}else{p.type='password';i.className='fa-solid fa-eye';}" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #777; padding: 5px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="auth-forgot-password-container" style="text-align: right; margin-top: -10px; margin-bottom: 15px; font-size: 0.85rem;">
@@ -313,21 +401,15 @@ const YatrAmore = {
 
                 <div class="auth-input-group" id="auth-confirm-password-group" style="display: none;">
                     <label for="auth-confirm-password">Confirm Password</label>
-                    <input type="password" id="auth-confirm-password" placeholder="••••••••">
-                </div>
-
-                <!-- MATH CAPTCHA -->
-                <div class="auth-input-group" id="auth-captcha-group" style="margin-top: 20px;">
-                    <div style="background: rgba(107, 66, 38, 0.04); border: 1px solid rgba(107, 66, 38, 0.15); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);">
-                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-brown), #8b5a33); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; box-shadow: 0 3px 8px rgba(107, 66, 38, 0.3); flex-shrink: 0;">
-                                <i class="fa-solid fa-shield-halved"></i>
-                            </div>
-                            <label id="auth-captcha-label" for="auth-captcha-answer" style="color: var(--text-main); font-weight: 600; font-size: 0.9rem; margin: 0; padding: 0; display: block; line-height: 1.2;">Security Check: What is 0 + 0?</label>
-                        </div>
-                        <input type="number" id="auth-captcha-answer" required placeholder="" oninput="if(this.value.length > 2) this.value = this.value.slice(0,2);" onkeypress="return event.charCode >= 48 && event.charCode <= 57" style="width: 60px; height: 40px; text-align: center; font-size: 1.1rem; font-weight: 700; padding: 0; border-radius: 8px; border: 1px solid rgba(107,66,38,0.2); background: var(--bg-main); color: var(--text-main); outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="auth-confirm-password" placeholder="••••••••" style="width: 100%; padding-right: 40px;">
+                        <button type="button" aria-label="Toggle password visibility" tabindex="-1" onclick="const p=document.getElementById('auth-confirm-password'); const i=this.querySelector('i'); if(p.type==='password'){p.type='text';i.className='fa-solid fa-eye-slash';}else{p.type='password';i.className='fa-solid fa-eye';}" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #777; padding: 5px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
                     </div>
                 </div>
+
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAC75vfDlt1Ng8f6d" data-theme="auto" style="margin-top: 20px; margin-bottom: 1.5rem; display: flex; justify-content: center;"></div>
 
                 <button type="submit" id="auth-submit-btn" class="auth-submit-btn">
                     Login

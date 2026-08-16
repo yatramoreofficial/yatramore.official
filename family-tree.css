@@ -1,6 +1,6 @@
-/* Family Tree Prototype Styles v4 - Banyan & Engraving Update */
+/* fam */
 
-/* Hero Styling (Matched to Journal Style) */
+/* her */
 .travel-hero {
     min-height: 40vh;
     display: flex;
@@ -55,7 +55,7 @@
     margin: 0 auto;
 }
 
-/* Join Family Form */
+/* joi */
 .join-family-container {
     max-width: 800px;
     margin: 0 auto;
@@ -68,7 +68,7 @@
 
 .family-join-form .rating-group {
     margin: 2.5rem 0;
-    /* Extra space before and after rating */
+    /* ext */
     text-align: center;
 }
 
@@ -96,7 +96,7 @@
     color: var(--brand-gold);
 }
 
-/* Star selection handled in JS */
+/* sta */
 
 .form-grid {
     display: grid;
@@ -135,11 +135,11 @@
     color: var(--text-main);
 }
 
-/* Tree Search Bar */
+/* tre */
 .tree-search-container {
     max-width: 600px;
     margin: 0 auto 1.5rem;
-    /* Tightened gap */
+    /* tig */
 }
 
 .search-bar {
@@ -214,7 +214,7 @@
     background: var(--glass-bg);
 }
 
-/* Tree Visualization */
+/* tre */
 .tree-visualization-container {
     max-width: 1200px;
     padding-bottom: 1rem;
@@ -240,7 +240,7 @@
     margin: 0 auto;
 }
 
-/* Dynamic Bark Colors (Theme Aware) */
+/* dyn */
 :root {
     --bark-6: #2d1a11;
     --bark-5: #361e13;
@@ -249,7 +249,7 @@
     --bark-2: #57321e;
     --bark-1: #633923;
     --leaf-green: #228B22;
-    /* Forest Green */
+    /* for */
     --engraving-fill: rgba(0, 0, 0, 0.5);
     --engraving-shadow: rgba(255, 255, 255, 0.2);
     --hero-glow-1: rgba(107, 66, 38, 0.08);
@@ -264,7 +264,7 @@
     --bark-2: #876556;
     --bark-1: #987566;
     --leaf-green: #32CD32;
-    /* Lime Green for Dark Mode visibility */
+    /* lim */
     --engraving-fill: rgba(255, 255, 255, 0.4);
     --engraving-shadow: rgba(0, 0, 0, 0.5);
     --hero-glow-1: rgba(212, 196, 176, 0.04);
@@ -281,7 +281,7 @@
     transition: var(--transition-slow);
 }
 
-/* Global Transition Sync */
+/* glo */
 .tree-leaf,
 .leaf-shape-masterpiece,
 .bark-engraving,
@@ -311,23 +311,23 @@
     user-select: none;
     -webkit-user-select: none;
     overflow: visible;
-    /* v32: Account for fixed navbar when scrolling */
+    /* v32 */
     scroll-margin-top: 100px;
     will-change: transform;
-    /* Hint the browser to prepare for animation */
+    /* hin */
     shape-rendering: geometricPrecision;
-    /* Highest possible quality, balance with optimizeSpeed if needed */
+    /* hig */
 }
 
 #tree-canvas {
     will-change: transform;
-    /* Force GPU composition */
+    /* for */
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     perspective: 1000px;
 }
 
-/* Masterpiece Leaf Aesthetics */
+/* mas */
 .tree-leaf {
     cursor: pointer;
 }
@@ -351,7 +351,7 @@
     letter-spacing: 0.5px;
 }
 
-/* The Engraving / Flight Effect */
+/* the */
 .masterpiece-flight {
     z-index: 1000 !important;
 }
@@ -362,7 +362,7 @@
     filter: drop-shadow(0 0 20px var(--brand-gold));
 }
 
-/* Mobile Performance Override for Flight - Restored to full fidelity as requested */
+/* mob */
 @media (max-width: 768px) {
     .masterpiece-flight .leaf-shape-masterpiece {
         filter: drop-shadow(0 0 20px var(--brand-gold)) !important;
@@ -371,7 +371,7 @@
     }
 }
 
-/* Form Messaging */
+/* for */
 .form-message {
     margin: 1.5rem auto;
     max-width: 680px;
@@ -387,7 +387,7 @@
 .contact-form-styled {
     padding: 2.5rem;
     max-width: 900px;
-    /* Increased to support horizontal layout */
+    /* inc */
     margin: 0 auto;
 }
 
@@ -415,7 +415,7 @@
     pointer-events: none;
 }
 
-/* Animations from Main Site */
+/* ani */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -486,7 +486,7 @@
     font-size: 2.5rem;
 }
 
-/* High-Fidelity Realistic Grass */
+/* hig */
 .realistic-grass {
     fill: none;
     stroke-linecap: round;
@@ -522,7 +522,7 @@
     border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Glow Effect for Searched Leaves */
+/* glo */
 .glow-leaf {
     z-index: 1001 !important;
 }
@@ -534,7 +534,7 @@
     animation: leaf-glow-pulse 1s ease-in-out infinite alternate !important;
 }
 
-/* Mobile-Optimized Glow: Restored to full fidelity as requested */
+/* mob */
 @media (max-width: 768px) {
     .glow-leaf .leaf-shape-masterpiece {
         filter: drop-shadow(0 0 15px var(--brand-gold)) !important;
@@ -554,12 +554,12 @@
     }
 }
 
-/* Search Filter Visibility */
+/* sea */
 .leaf-hidden {
     display: none !important;
 }
 
-/* ── Status Card ───────────────────────────────────── */
+/* sta */
 .status-card {
     display: none;
     text-align: center;
@@ -630,13 +630,13 @@
 }
 
 [data-theme="dark"] .btn-status {
-    color: #121212 !important; /* Proper contrast for beige background */
+    color: #121212 !important; /* pro */
 }
 
 .btn-status:hover {
     transform: translateY(-3px);
     box-shadow: 0 15px 30px rgba(107, 66, 38, 0.3);
-    background: #5C3A1E !important; /* Standardized theme brown */
+    background: #5C3A1E !important; /* sta */
     color: #FFFFFF !important;
 }
 
@@ -644,8 +644,8 @@
     font-size: 1.1rem;
 }
 
-/* THE BEACON: High-intensity Flare when 'Find My' is clicked */
-/* v32: Targeting the 'use' element directly to bypass SVG symbol isolation */
+/* the */
+/* v32 */
 .tree-leaf.glow-leaf use {
     filter: drop-shadow(0 0 40px #FFD700) drop-shadow(0 0 60px #fff) !important;
     animation: majestic-flare 1s ease-in-out infinite alternate !important;
@@ -660,11 +660,11 @@
     100% {
         filter: drop-shadow(0 0 70px #FFD700) brightness(1.8);
         transform: scale(1.4);
-        /* Unmistakable flare */
+        /* unm */
     }
 }
 
-/* Mobile Responsiveness & Tree Adaptive Scale */
+/* mob */
 @media (max-width: 992px) {
     .travel-hero h1 {
         font-size: 2.8rem;
@@ -739,10 +739,10 @@
     }
 }
 
-/* Ensure the tree visualization is NEVER cropped on mobile */
+/* ens */
 .family-tree-svg {
     max-width: 100% !important;
     height: auto !important;
     overflow: visible !important;
-    /* Prevents clipping of outer leaves on small screens */
+    /* pre */
 }

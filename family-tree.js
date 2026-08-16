@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const _gz = '/exec';
         const scriptURL = _ga + _id + _gz;
 
-        // v45: Use Universal Security Core for Device ID & Fingerprint
+        // v45: Use Universal Auth Module for Device ID & Fingerprint
         const deviceId = YatrAmoreSecurity.deviceId;
         // Populate the hidden form field so the submit logic can read it
         const devInput = document.getElementById('deviceId');
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Enable smooth transitions on the canvas for auto-zoom
         treeCanvas.style.transition = "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
-        treeCanvas.style.transformOrigin = "0 0"; // v31: Fix zoom math origin
+        treeCanvas.style.transformOrigin = "0 0"; // v31: Update zoom math origin
 
         // 1. STAR RATING
         stars.forEach(star => {
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ratingInput.value = star.dataset.value;
                 highlightStars(parseInt(star.dataset.value));
             });
-            // A-2 Fix: Keyboard accessibility for star rating
+            // Logic update: Keyboard accessibility for star rating
             star.addEventListener("keydown", (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let familyMembers = [];
         const CACHE_KEY = "yatramore_family_tree_cache";
 
-        // --- INITIAL CACHE LOAD ---
+        // --- ini ---
         let cachedData = null;
         try {
             cachedData = localStorage.getItem(CACHE_KEY);
@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Listen for updates from background fetch (if Home page is trigger)
             window.addEventListener('yatramore_family_tree_updated', (e) => {
-                //  // console.log("[Family Tree] Live sync received from background fetch.");
+                //  // window.debugLog("[Family Tree] Live sync received from background fetch.");
                 const data = e.detail;
                 if (Array.isArray(data)) {
                     syncData(data);
@@ -311,19 +311,19 @@ document.addEventListener("DOMContentLoaded", () => {
             // Admin Mode or manual 'force' bypasses this to allow manual refresh.
             if (hasCache && JSON.parse(hasCache).length > 0 && isJoined && !force) {
                 if (localStorage.getItem('ya-family') !== 'true') {
-                    //  // console.log("[Family Tree] Member recognized. Strictly using cached data to save bandwidth.");
+                    //  // window.debugLog("[Family Tree] Member recognized. Strictly using cached data to save bandwidth.");
                     return;
                 }
             }
 
             if (hasCache && JSON.parse(hasCache).length > 0 && sessionStorage.getItem(SESSION_READY_KEY) === "true" && !force) {
-                //  // console.log("[Family Tree] Cache is fresh this session. Skipping redundant fetch.");
+                //  // window.debugLog("[Family Tree] Cache is fresh this session. Skipping redundant fetch.");
                 return;
             }
 
             if (!scriptURL || scriptURL === "") return;
 
-            //  // console.log("[Family Tree] Initiating direct fetch...");
+            //  // window.debugLog("[Family Tree] Initiating direct fetch...");
             const callbackName = 'fetchCallback_' + Date.now();
             const scriptId = 'fetch-script-' + Date.now(); // Unique ID for absolute perfection
 
@@ -365,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // v34: Differential Update (Sync logic shared by events/fetches)
             if (data.length > familyMembers.length) {
-                console.log(`[Family Tree] Sync: Adding ${data.length - familyMembers.length} new members.`);
+                window.debugLog(`[Family Tree] Sync: Adding ${data.length - familyMembers.length} new members.`);
                 const newMembers = data.slice(familyMembers.length);
                 const oldLength = familyMembers.length;
 
@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let changedCount = 0;
                 data.forEach((member, i) => {
                     if (member.name !== familyMembers[i].name) {
-                        console.log(`[Family Tree] Choice A Correction: "${familyMembers[i].name}" -> "${member.name}"`);
+                        window.debugLog(`[Family Tree] Choice A Correction: "${familyMembers[i].name}" -> "${member.name}"`);
                         familyMembers[i].name = member.name;
                         changedCount++;
                     }
@@ -394,7 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // v56: Choice A Move - Full re-render ensures leaves move to correct branches based on new names
                     renderLeaves("", true);
                 } else {
-                    //  // console.log("[Family Tree] Sync complete. No changes found.");
+                    //  // window.debugLog("[Family Tree] Sync complete. No changes found.");
                 }
                 checkJoinedStatus();
             }
@@ -781,7 +781,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const treeSection = document.getElementById("family-tree-svg");
-            // Mobile fix: 'center' prevents the SVG from colliding underneath the fixed position top-navbar!
+            // Mobile layout behavior: 'center' prevents the SVG from colliding underneath the fixed position top-navbar!
             if (treeSection) treeSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             resetZoom();
             let targetLeaf = Array.from(treeLeaves.querySelectorAll('.tree-leaf')).find(l =>
@@ -825,14 +825,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (clickCount >= 5) {
                     localStorage.setItem('ya-family', isAdmin ? 'false' : 'true');
-                    alert(`Admin Mode ${!isAdmin ? 'Enabled' : 'Disabled'}`);
+                    if (window.showToast) window.showToast(`Admin Mode ${!isAdmin ? 'Enabled' : 'Disabled'}`, true);
                     window.location.reload();
                     clickCount = 0;
                     return;
                 }
 
                 if (isAdmin && clickCount === 1) {
-                    // console.log("[Admin] Manual sync triggered via YA-Family tag.");
+                    // window.debugLog("[Admin] Manual sync triggered via YA-Family tag.");
                     fetchFamilyMembers(true);
                 }
             });

@@ -1,4 +1,4 @@
-/* faq.css - YatrAmore FAQ Styling */
+/* faq */
 
 :root {
     --faq-gap: 1.5rem;
@@ -104,7 +104,7 @@
     color: var(--brand-brown);
 }
 
-/* ── FAQ Accordion ────────────────────────────────── */
+/* faq */
 .faq-list {
     display: flex;
     flex-direction: column;
@@ -175,7 +175,7 @@
 }
 
 .faq-item.active .faq-answer {
-    max-height: 500px; /* Large enough for any answer */
+    max-height: 500px; /* lar */
     opacity: 1;
 }
 
@@ -198,7 +198,7 @@
     text-decoration: none;
 }
 
-/* ── Search Bar ───────────────────────────────────── */
+/* sea */
 .faq-search-wrapper {
     margin: -30px auto 5rem;
     max-width: 600px;
@@ -233,7 +233,7 @@
     font-size: 1.2rem;
 }
 
-/* ── Footer Link ──────────────────────────────────── */
+/* foo */
 .still-questions {
     text-align: center;
     margin-top: 4rem;
@@ -261,7 +261,7 @@
     font-size: 1.1rem;
 }
 
-/* ── Mobile Tweaks ────────────────────────────────── */
+/* mob */
 @media (max-width: 768px) {
     .faq-hero {
         padding: 8rem 1rem 3rem;
@@ -387,7 +387,7 @@
     }
 }
 
-/* ── FAQ Search Highlights & Empty State ─────────── */
+/* faq */
 .faq-highlight {
     background-color: rgba(255, 230, 0, 0.2);
     color: inherit;

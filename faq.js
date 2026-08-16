@@ -8,14 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('faq-search');
     const categories = document.querySelectorAll('.faq-category');
 
-    // S-3 Fix: Store original HTML before any search manipulation (preserves <a> links)
+    // Logic update: Store original HTML before any search manipulation (preserves <a> links)
     faqItems.forEach((item, i) => {
         const h3 = item.querySelector('h3');
         const answerContent = item.querySelector('.answer-content');
         item._origQuestionHTML = h3.innerHTML;
         item._origAnswerHTML = answerContent.innerHTML;
 
-        // A-3 Fix: ARIA disclosure pattern for screen readers
+        // Logic update: ARIA disclosure pattern for screen readers
         const question = item.querySelector('.faq-question');
         const answer = item.querySelector('.faq-answer');
         question.setAttribute('aria-expanded', 'false');
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.faq-container').appendChild(noResults);
     }
 
-    // --- 1. Accordion Toggle Logic ---
+    // --- 1-a ---
     faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
         question.addEventListener('click', () => {
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 2. Search Logic with Debouncing & Highlighting ---
+    // --- 2-s ---
     let searchTimeout;
 
     if (searchInput) {
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             searchTimeout = setTimeout(() => {
                 const term = e.target.value.toLowerCase().trim();
                 
-                // Security: Escape HTML characters to prevent XSS
+                // Escape HTML
                 const safeTerm = term.replace(/[&<>'"]/g, tag => ({
                     '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
                 }[tag] || tag));
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const answerText = answerContent.textContent;
 
                         if (term === "") {
-                            // S-3 Fix: Restore original HTML (preserves <a> links)
+                            // Logic update: Restore original HTML (preserves <a> links)
                             item.style.display = 'block';
                             h3.innerHTML = item._origQuestionHTML;
                             answerContent.innerHTML = item._origAnswerHTML;

@@ -134,7 +134,7 @@ const COLLABORATOR_DATA = [
         "weblink": "https://www.instagram.com/reel/DKcghubo0eU/"
     }
     /* 
-    // --- Placeholder Collaborators (Inactive) ---
+    // --- pla ---
     // Uncomment these when you're ready to showcase more partnerships!
     ,
     {
@@ -211,9 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!luckyDrawSection) return;
 
     // Configuration
-    // ============================================================================
+    // ===== x =====
     // 🎯 AUTO-LOOPING LUCKY DRAW DATE CONFIGURATION (37-Day Cycle)
-    // ============================================================================
+    // ===== x =====
     const CYCLE_START_DATE = new Date('2026-07-13T00:00:00Z'); // Registrations open on Monday
     const OPEN_DAYS = 30; // Registration open for 30 days
     const BREAK_DAYS = 7; // Registration closed for 7 days
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             descElement.innerHTML = "Enter our contest to win exclusive discount codes! Register your name and email below. The big draw happens when the countdown ends.";
         }
     }
-    // ============================================================================
+    // ===== x =====
 
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-uMWse2zwU5J5EXoJNXCtdmD-3rFBbEEnBj8Wi0EhFj_ElHpgcD7CBlDZEtcsAdCDGQ/exec';
 
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('_gotcha', gotcha);
                 formData.append('cf-turnstile-response', turnstileResponse);
 
-                // Generate a Dynamic Timestamp/Token (Security by Obscurity)
+                // Generate a Dynamic Timestamp/Token (Generated Token)
                 // We combine the email, current date, and a salt, then base64 encode it.
                 // Bots won't know they need to generate this specific formula.
                 const todayStr = new Date().toISOString().split('T')[0];
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const firstName = name.split(' ')[0] || 'there';
 
                         // Pop a native browser alert so mobile users definitely see it!
-                        alert(`Hey ${firstName}, you have already entered the draw within this 37-day cycle!`);
+                        if (window.showToast) window.showToast(`Hey ${firstName}, you have already entered the draw within this 37-day cycle!`, false);
 
                         // Change the success container text to reflect they are already registered
                         const successTitle = document.getElementById('ld-success-title');
@@ -491,9 +491,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ============================================================================
+    // ===== x =====
     // 🎯 MOMENTUM PHYSICS WHEEL (True physical spin behavior)
-    // ============================================================================
+    // ===== x =====
     const wheelElement = document.querySelector('.lucky-draw-wheel');
     const wheelCont = document.querySelector('.lucky-draw-wheel-container');
 
@@ -525,9 +525,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         animateWheel(); // Start engine
 
-        // ------------------------------------------------------------------
+        // --- x ---
         // Interaction Handlers (Mouse + Touch)
-        // ------------------------------------------------------------------
+        // --- x ---
         function startInteraction() {
             isHovering = true;
             lastTime = 0; // Reset timer on entry
@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dt = performance.now() - lastTime;
                 if (dt > 0) {
                     let dAngle = angle - lastAngle;
-                    // Fix wraparound maths
+                    // Update wraparound maths
                     if (dAngle > 180) dAngle -= 360;
                     if (dAngle < -180) dAngle += 360;
 
@@ -569,12 +569,12 @@ document.addEventListener('DOMContentLoaded', () => {
             wheelElement.style.transform = `rotate(${currentAngle}deg)`;
         }
 
-        // --- Mouse Events ---
+        // --- mou ---
         wheelCont.addEventListener('mouseenter', startInteraction);
         wheelCont.addEventListener('mouseleave', endInteraction);
         wheelCont.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
 
-        // --- Touch Events (Mobile) ---
+        // --- tou ---
         let startTouchX = 0;
         let startTouchY = 0;
         let isSpinningWheel = false;

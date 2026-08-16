@@ -1,23 +1,3 @@
-// ============================================
-// JOURNEY DATA — YatrAmore
-// ============================================
-// To add a new trip, copy one of the objects below and fill in your details.
-// The card will automatically appear on the "Our Journey" page.
-//
-// Fields:
-//   category  — Must match a filter button: "Italy", "India", "Europe", "Asia", "Oceania"
-//   badge     — "Must Visit", "Our Favourite", "Hidden Gem", "Gem Explored" (or leave empty "")
-//   badgeType — "default" (brown), "love" (pink), "gem" (dark brown), or "" for default
-//   location  — The subtitle shown below the image (e.g. "Venice, Italy")
-//   title     — The card heading
-//   description — A short description of your experience
-//   image     — Path to photo file (e.g. "photos/venice.jpg") or "Images/logo.svg" as placeholder
-//   date      — When you visited (e.g. "April 2025")
-//   nights    — Number of nights (e.g. "1" or "4")
-//   rating    — Your rating (e.g. "5/5")
-//   tags      — Array of emoji tags (e.g. ["🏛️ History", "🍕 Food"])
-// ============================================
-
 const JOURNEY_DATA = [
     {
         category: "Italy",
@@ -80,7 +60,7 @@ const JOURNEY_DATA = [
         description: "A lovely place where history, comfort, and nature blend beautifully, offering a peaceful stay with genuine hospitality and a special bike-friendly spirit.",
         image: "Images/Borgo.webp",
         date: "September 2025",
-        nights: "2 nights",
+        nights: "2",
         rating: "5/5",
         tags: ["🚴🏻‍♀️ Sports", "🧖🏻‍♀️ Wellness", "🍝 Food"]
     },
@@ -164,4 +144,25 @@ const JOURNEY_DATA = [
         tags: ["🐠 Ocean", "🦤 Wildlife", "🏝️ Beaches"]
     }
     */
+
+    // ===== x =====
+    // JOURNEY DATA — YatrAmore
+    // ===== x =====
+    // To add a new trip, copy one of the objects below and fill in your details.
+    // The card will automatically appear on the "Our Journey" page.
+    //
+    // Fields:
+    //   category  — Must match a filter button: "Italy", "India", "Europe", "Asia", "Oceania"
+    //   badge     — "Must Visit", "Our Favourite", "Hidden Gem", "Gem Explored" (or leave empty "")
+    //   badgeType — "default" (brown), "love" (pink), "gem" (dark brown), or "" for default
+    //   location  — The subtitle shown below the image (e.g. "Venice, Italy")
+    //   title     — The card heading
+    //   description — A short description of your experience
+    //   image     — Path to photo file (e.g. "photos/venice.jpg") or "Images/logo.svg" as placeholder
+    //   date      — When you visited (e.g. "April 2025")
+    //   nights    — Number of nights (e.g. "1" or "4")
+    //   rating    — Your rating (e.g. "5/5")
+    //   tags      — Array of emoji tags (e.g. ["🏛️ History", "🍕 Food"])
+    // ===== x =====
+
 ];

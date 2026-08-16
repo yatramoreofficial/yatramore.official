@@ -12,6 +12,8 @@ Disallow: /server.py
 Disallow: /.git/
 Disallow: /.gitignore
 Disallow: /.DS_Store
+Disallow: /node_modules/
+Disallow: /eslint.config.js
 
 # Block hidden portal
 Disallow: /submission-portal

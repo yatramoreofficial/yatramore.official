@@ -1,12 +1,4 @@
-/* ==========================================================================
-   blog.css — YatrAmore Modular Blog Stylesheet
-   ==========================================================================
-   This stylesheet styles the typography-first blog listing and distraction-free
-   Medium-style reading layout, integrating automatically with YatrAmore's 
-   global variables and theme states.
-   ========================================================================== */
-
-/* ── 1. Blog Listing Layout ────────────────────────────────────────────── */
+/* 1-b */
 
 .blog-hero {
     min-height: 35vh;
@@ -46,7 +38,7 @@
     margin: 0 auto;
 }
 
-/* Hero Content & Animations */
+/* her */
 .travel-hero-content {
     max-width: 1200px;
     animation: fadeInUp 1s ease-out;
@@ -75,7 +67,7 @@
     background: rgba(212, 196, 176, 0.1);
 }
 
-/* Scroll indicator */
+/* scr */
 .hero-scroll-indicator {
     margin-top: 2rem;
     animation: bounce 2s infinite;
@@ -107,9 +99,12 @@
 }
 
 @keyframes bounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(6px);
     }
@@ -120,6 +115,7 @@
         opacity: 1;
         top: 6px;
     }
+
     100% {
         opacity: 0;
         top: 20px;
@@ -135,7 +131,7 @@
     gap: 2.5rem;
 }
 
-/* Typographic Post Cards */
+/* typ */
 .blog-card {
     position: relative;
     padding: 2.5rem;
@@ -159,7 +155,7 @@
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Post Metadata */
+/* pos */
 .post-meta {
     display: flex;
     flex-wrap: wrap;
@@ -188,7 +184,7 @@
     color: var(--glass-border);
 }
 
-/* Post Content */
+/* pos */
 .blog-card h2 {
     font-size: clamp(1.3rem, 3.5vw, 1.8rem);
     color: var(--brand-brown);
@@ -214,7 +210,7 @@
     opacity: 0.9;
 }
 
-/* Read Link */
+/* rea */
 .read-link {
     display: inline-flex;
     align-items: center;
@@ -228,7 +224,7 @@
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
-/* Expand link to cover the entire card */
+/* exp */
 .read-link::after {
     content: "";
     position: absolute;
@@ -241,7 +237,7 @@
     transition: transform 0.3s ease;
 }
 
-/* Trigger hover effects when the whole card is hovered */
+/* tri */
 .blog-card:hover .read-link {
     color: var(--text-main);
 }
@@ -251,14 +247,14 @@
 }
 
 
-/* ── 2. Distraction-Free Reading Layout (Medium-style) ──────────────── */
+/* 2-d */
 
-/* Hide main navigation on individual story pages */
+/* hid */
 body:has(.post-layout-wrapper) #navbar {
     display: none !important;
 }
 
-/* Make the breadcrumb act as the page nav bar */
+/* mak */
 body:has(.post-layout-wrapper) .post-breadcrumb {
     position: fixed;
     top: 0;
@@ -270,7 +266,8 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);
-    justify-content: center; /* Center the breadcrumbs */
+    justify-content: center;
+    /* cen */
     z-index: 1000;
 }
 
@@ -280,8 +277,8 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
 }
 
 .post-layout-wrapper {
-    /* Offset for the fixed breadcrumb nav */
-    margin-top: 65px; 
+    /* off */
+    margin-top: 65px;
     padding: 4rem 0 3rem;
     background-color: var(--bg-main);
 }
@@ -292,7 +289,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     padding: 0 1.5rem;
 }
 
-/* Article Header */
+/* art */
 .post-header {
     margin-bottom: 3.5rem;
     text-align: left;
@@ -326,7 +323,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     opacity: 0.9;
 }
 
-/* Author Bylines */
+/* aut */
 .post-byline {
     display: flex;
     align-items: center;
@@ -367,7 +364,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     opacity: 0.8;
 }
 
-/* Article Body Content */
+/* art */
 .post-body {
     font-size: 1.18rem;
     line-height: 1.85;
@@ -379,7 +376,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     font-weight: 400;
 }
 
-/* Enhanced Typographic elements */
+/* enh */
 .post-body h2 {
     font-size: 2rem;
     color: var(--brand-brown);
@@ -395,7 +392,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     font-weight: 600;
 }
 
-/* Medium-Style Glassmorphic Blockquotes */
+/* med */
 .post-body blockquote {
     font-style: italic;
     font-size: 1.3rem;
@@ -410,7 +407,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     -webkit-backdrop-filter: blur(5px);
 }
 
-.post-body ul, 
+.post-body ul,
 .post-body ol {
     margin: 0 0 2rem 2.5rem;
 }
@@ -425,7 +422,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     color: var(--brand-brown);
 }
 
-/* Simple Decorative Divider */
+/* sim */
 .article-divider {
     display: flex;
     justify-content: center;
@@ -443,7 +440,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     opacity: 0.5;
 }
 
-/* Post Footer / Navigation back to Feed */
+/* pos */
 .post-footer {
     margin-top: 5rem;
     padding-top: 3rem;
@@ -481,49 +478,49 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
 }
 
 
-/* ── 3. Responsive Adjustments ──────────────────────────────────────── */
+/* 3-r */
 
 @media (max-width: 768px) {
     .blog-hero {
         padding: 8rem 1.5rem 2.5rem;
     }
-    
+
     .blog-hero h1 {
         font-size: 2.6rem;
     }
-    
+
     .blog-feed {
         gap: 1.8rem;
         margin-bottom: 5rem;
     }
-    
+
     .blog-card {
         padding: 1.8rem;
         border-radius: 16px;
     }
-    
+
     .blog-card h2 {
         font-size: 1.5rem;
     }
-    
+
     .post-layout-wrapper {
         padding: 3rem 0 6rem;
     }
-    
+
     .post-header h1 {
         font-size: 2.2rem;
     }
-    
+
     .post-subtitle {
         font-size: 1.15rem;
         margin-bottom: 1.5rem;
     }
-    
+
     .post-body {
         font-size: 1.05rem;
         line-height: 1.75;
     }
-    
+
     .post-body h2 {
         font-size: 1.5rem;
         margin: 2.5rem 0 1rem;
@@ -532,7 +529,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     .post-body h3 {
         font-size: 1.25rem;
     }
-    
+
     .post-body blockquote {
         font-size: 1.1rem;
         padding: 1.2rem 1.5rem;
@@ -548,7 +545,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     }
 }
 
-/* ── 4. Sticky Filter Bar ────────────────────────────────────────── */
+/* 4-s */
 .filter-bar-section {
     padding: 0;
     position: sticky;
@@ -612,7 +609,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     background: rgba(212, 196, 176, 0.1);
 }
 
-/* Card Category Tags */
+/* car */
 .card-tags {
     display: flex;
     flex-wrap: wrap;
@@ -622,7 +619,8 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
 
 .tag {
     position: relative;
-    z-index: 2; /* Keep tags above the absolute link cover */
+    z-index: 2;
+    /* kee */
     background: rgba(107, 66, 38, 0.07);
     color: var(--brand-brown);
     font-size: 0.78rem;
@@ -645,7 +643,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     background: rgba(212, 196, 176, 0.18);
 }
 
-/* Empty State */
+/* emp */
 .blog-no-results {
     text-align: center;
     padding: 5rem 2rem;
@@ -674,7 +672,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     color: var(--text-muted);
 }
 
-/* Responsive Sticky Top */
+/* res */
 @media (max-width: 768px) {
     .filter-bar-section {
         top: 65px;
@@ -708,7 +706,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     }
 }
 
-/* ── 5. Read State ────────────────────────────────────────── */
+/* 5-r */
 .blog-card.post-read {
     opacity: 0.75;
 }
@@ -733,7 +731,7 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
     color: #81C784;
 }
 
-/* ── 6. Featured Series Banner ────────────────────────────────────────── */
+/* 6-f */
 .featured-series-banner {
     margin: 2rem 0 1rem;
 }
@@ -812,10 +810,9 @@ body:has(.post-layout-wrapper) .post-breadcrumb {
         gap: 1.5rem;
         padding: 1.8rem;
     }
-    
+
     .banner-icon {
         padding-left: 0;
         align-self: flex-end;
     }
 }
-

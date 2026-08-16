@@ -1,4 +1,4 @@
-/* Moderator Profile - Premium Editorial Glassmorphism */
+/* mod */
 
 /* ═══════════════════════════════════════════════════
    1. HERO BACKGROUND & PARTICLES
@@ -15,11 +15,11 @@
     overflow: hidden;
 }
 
-/* Floating Golden Particles — pure CSS, no JS */
+/* flo */
 .particle {
     position: absolute;
     border-radius: 50%;
-    /* Stronger opacity for light mode so they are clearly visible */
+    /* str */
     background: radial-gradient(circle, rgba(212, 155, 30, 0.85) 0%, rgba(212, 175, 55, 0) 70%);
     pointer-events: none;
     z-index: 1;
@@ -190,7 +190,7 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Decorative Corner Accents */
+/* dec */
 .moderator-glass-card::before,
 .moderator-glass-card::after {
     content: '✦';
@@ -233,6 +233,11 @@
     transform: translateY(20px);
     animation: staggerIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: calc(0.15s * var(--i));
+}
+
+.alumni-card {
+    filter: grayscale(85%) opacity(0.85);
+    transition: filter 0.3s ease;
 }
 
 @keyframes staggerIn {
@@ -433,7 +438,7 @@
     margin-bottom: 2rem;
 }
 
-/* Drop Cap on the first paragraph */
+/* dro */
 .moderator-text:first-of-type::first-letter {
     float: left;
     font-size: 4.5rem;
@@ -490,7 +495,7 @@
     margin-bottom: 2rem;
 }
 
-/* Labeled Social Buttons */
+/* lab */
 .social-icon-btn {
     display: flex;
     align-items: center;
@@ -534,7 +539,7 @@
     transition: opacity 0.4s ease;
 }
 
-/* Dynamic Hover Effects */
+/* dyn */
 .social-icon-btn.instagram-btn::before {
     background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
@@ -650,7 +655,7 @@
         gap: 2.5rem;
     }
     
-    /* Reduce particles on mobile */
+    /* red */
     .particle:nth-child(2),
     .particle:nth-child(4),
     .particle:nth-child(6),

@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const videoId = this.getAttribute("data-videoid");
             const isShort = this.hasAttribute("data-short");
             
-            // MOBILE FIX: Bypass the YouTube API entirely on mobile for performance.
+            // Mobile layout behavior: Bypass the YouTube API entirely on mobile for performance.
             if (window.innerWidth < 768) {
                 // playsinline=1 prevents iOS from forcing fullscreen on play
                 let iframeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;

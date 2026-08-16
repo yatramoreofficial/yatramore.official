@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-/* Font Awesome loaded via <link> in HTML — @import removed to prevent double-loading */
+/* fon */
 
 :root {
     --bg-main: #FDFBF7;
@@ -25,10 +25,10 @@
     --grass-3: #43a047;
     --tree-shadow: rgba(0, 0, 0, 0.2);
 
-    /* Accessibility */
+    /* acc */
     --zoom-scale: 1;
 
-    /* Transitions */
+    /* tra */
     --status-error: #f44336;
     --status-warning: #FF9800;
     --bg-transition: background 0.5s ease-in-out, background-color 0.5s ease-in-out, color 0.4s ease-in-out, border-color 0.4s ease-in-out, fill 0.6s ease, stroke 0.6s ease;
@@ -65,7 +65,7 @@ html {
     font-family: 'Outfit', sans-serif;
 }
 
-/* P-1 Fix: Exclude heavy rendered elements from theme transitions (performance) */
+/* p-1 */
 img,
 video,
 canvas,
@@ -76,7 +76,7 @@ svg *,
     transition: none;
 }
 
-/* A-1: Skip-to-content link (visible only on keyboard focus) */
+/* a-1 */
 .skip-link {
     position: absolute;
     top: -100%;
@@ -96,7 +96,7 @@ svg *,
     top: 0;
 }
 
-/* Media elements excluded above via P-1 rule */
+/* med */
 
 body {
     background-color: var(--bg-main);
@@ -105,7 +105,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Background Elements */
+/* bac */
 body::before {
     content: '';
     position: fixed;
@@ -118,7 +118,7 @@ body::before {
     z-index: -1;
 }
 
-/* Utils */
+/* uti */
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -138,14 +138,14 @@ body::before {
     font-weight: 700;
 }
 
-/* Navbar */
+/* nav */
 nav {
     position: fixed;
     top: 0;
     width: 100%;
     padding: 1.2rem 0;
     z-index: 2000;
-    /* FORCE NAV ABOVE MAP CONTROLS */
+    /* for */
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -193,14 +193,14 @@ nav.scrolled {
     color: var(--brand-brown);
 }
 
-/* ── Nav Right Controls (globe + hamburger) ─────────── */
+/* nav */
 .nav-right-controls {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-/* Globe Language Button */
+/* glo */
 .nav-lang-wrapper {
     position: relative;
 }
@@ -262,7 +262,7 @@ nav.scrolled {
     color: white;
 }
 
-/* Globe Dropdown */
+/* glo */
 .nav-lang-dropdown {
     position: absolute;
     top: calc(100% + 12px);
@@ -326,7 +326,7 @@ nav.scrolled {
     margin: 0;
 }
 
-/* Search inside dropdown */
+/* sea */
 .nav-lang-search-wrap {
     position: relative;
 }
@@ -365,7 +365,7 @@ nav.scrolled {
     color: white;
 }
 
-/* Language results list */
+/* lan */
 
 .nav-language-results {
     max-height: 200px;
@@ -422,11 +422,11 @@ nav.scrolled {
     color: white !important;
 }
 
-/* Travel & Stay Nav Button */
-/* (removed — nav link now matches standard nav style) */
+/* tra */
+/* rem */
 
-/* ── Desktop Nav: push logo left, links right ──────── */
-/* Only on large screens — mobile layout is unchanged   */
+/* des */
+/* onl */
 @media (min-width: 769px) {
     nav .container {
         max-width: 1600px;
@@ -435,7 +435,7 @@ nav.scrolled {
 }
 
 
-/* Hero Section */
+/* her */
 .hero,
 .socials,
 .section-padded,
@@ -469,7 +469,7 @@ nav.scrolled {
     box-shadow: 0 20px 40px rgba(107, 66, 38, 0.15);
     animation: fadeInUp 1.2s ease-out;
     background-color: var(--bg-accent);
-    /* In case of image lag */
+    /* in- */
 }
 
 .hero h1 {
@@ -503,7 +503,7 @@ nav.scrolled {
     line-height: 1.6;
 }
 
-/* Social Media Grid */
+/* soc */
 .socials {
     padding: 3rem 0;
     background: var(--bg-accent);
@@ -565,7 +565,7 @@ nav.scrolled {
     background: var(--brand-brown) !important;
 }
 
-/* Specific Brand Hover Backgrounds */
+/* spe */
 .social-card:hover:has(.fa-youtube) {
     background: #FF0000 !important;
 }
@@ -591,7 +591,7 @@ nav.scrolled {
     font-size: 1.1rem;
 }
 
-/* CTA */
+/* cta */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -652,15 +652,15 @@ nav.scrolled {
     transform: translateY(-3px);
     box-shadow: 0 15px 35px rgba(107, 66, 38, 0.3);
     background: #5C3A1E !important;
-    /* Exact match to Find My Leaf hover */
+    /* exa */
     color: #FFFFFF !important;
-    /* Pure white for sharp contrast */
+    /* pur */
 }
 
 [data-theme="dark"] .btn-main {
     background: var(--brand-brown);
     color: #121212 !important;
-    /* Kept dark for readability on beige background */
+    /* kep */
 }
 
 [data-theme="dark"] .btn-main:hover {
@@ -668,7 +668,7 @@ nav.scrolled {
     color: #FFFFFF !important;
 }
 
-/* About & Mission Grid */
+/* abo */
 .about-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -706,7 +706,7 @@ nav.scrolled {
     aspect-ratio: 1 / 1;
     object-fit: cover;
     object-position: 60% center;
-    /* Ensures you are in the middle */
+    /* ens */
     border-radius: 50%;
     box-shadow: 0 20px 40px rgba(107, 66, 38, 0.15);
     animation: fadeInUp 1.2s ease-out;
@@ -716,7 +716,7 @@ nav.scrolled {
 
 .about-image:hover {
     transform: translateY(-8px) scale(1.08);
-    /* Zoom and lift effect */
+    /* zoo */
     box-shadow: 0 30px 60px rgba(107, 66, 38, 0.25);
 }
 
@@ -737,7 +737,7 @@ nav.scrolled {
     }
 }
 
-/* Animations */
+/* ani */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -750,7 +750,7 @@ nav.scrolled {
     }
 }
 
-/* Global Hero Scroll Indicator (Mouse Icon) */
+/* glo */
 .hero-scroll-indicator {
     margin-top: 2rem;
     animation: mouseBounce 2s infinite;
@@ -807,7 +807,7 @@ nav.scrolled {
     }
 }
 
-/* Contact Form Styling */
+/* con */
 .form-group {
     margin-bottom: 2rem;
     text-align: left;
@@ -863,7 +863,7 @@ nav.scrolled {
     resize: vertical;
 }
 
-/* Visitor Counter */
+/* vis */
 .visitor-counter {
     margin-top: 1.5rem;
     font-size: 0.85rem;
@@ -880,13 +880,13 @@ nav.scrolled {
     margin-left: 0.3rem;
 }
 
-/* Partner Badge for Collaborator Cards */
+/* par */
 .partner-badge {
     position: absolute;
     top: 1rem;
     right: 1rem;
     background: linear-gradient(110deg, #D4AF37 35%, #FFDF73 50%, #D4AF37 65%);
-    /* Premium Gold */
+    /* pre */
     color: white !important;
     padding: 0.4rem 1rem;
     border-radius: 50px;
@@ -911,12 +911,12 @@ nav.scrolled {
 }
 
 
-/* Section Padding */
+/* sec */
 .section-padded {
     padding: 3rem 0;
 }
 
-/* Contact Section */
+/* con */
 .contact-section {
     padding: 3rem 0;
     background: var(--bg-accent);
@@ -926,18 +926,18 @@ nav.scrolled {
     max-width: 700px;
 }
 
-/* Contact Form */
+/* con */
 .contact-form-styled {
     padding: 2rem;
 }
 
-/* Submit Button Full Width */
+/* sub */
 .btn-full {
     width: 100%;
     margin-top: 1rem;
 }
 
-/* Direct Contact Box */
+/* dir */
 .direct-contact-box {
     margin-top: 3.5rem;
     padding: 2rem;
@@ -994,7 +994,7 @@ nav.scrolled {
     }
 }
 
-/* About Grid Text */
+/* abo */
 .about-text {
     color: var(--text-muted);
     font-size: 1.1rem;
@@ -1006,6 +1006,7 @@ nav.scrolled {
     0% {
         background-position: 200% center;
     }
+
     100% {
         background-position: -200% center;
     }
@@ -1059,10 +1060,10 @@ nav.scrolled {
     }
 }
 
-/* Footer */
+/* foo */
 footer {
     padding: 3.0rem 0 50px;
-    /* v-bugfix: 90px clearance ensures FAB buttons never block links */
+    /* v-b */
     text-align: center;
     background: var(--bg-main);
     border-top: 1px solid var(--glass-border);
@@ -1072,7 +1073,7 @@ footer {
 
 [data-theme="dark"] footer {
     background: #0a0a0a;
-    /* True deep black for premium feel */
+    /* tru */
 }
 
 .footer-content {
@@ -1201,7 +1202,7 @@ footer {
 
 
 
-/* Hamburger */
+/* ham */
 .nav-links a {
     text-decoration: none;
     color: var(--text-main);
@@ -1238,13 +1239,13 @@ a.nav-icon-link:hover {
     cursor: pointer;
 }
 
-/* Dark Mode Navbar override */
+/* dar */
 [data-theme="dark"] #navbar {
     background: rgba(18, 18, 18, 0.8);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Family Tree CTA Link */
+/* fam */
 .family-tree-cta {
     margin-top: 2.5rem;
     text-align: center;
@@ -1311,8 +1312,8 @@ a.nav-icon-link:hover {
     transform-origin: bottom left !important;
 }
 
-/* v62: Surgical Hide for Google Translate Bottom Bar */
-/* This removes the 'Original Text' and 'Rate Translation' box that appears at the bottom left */
+/* v62 */
+/* thi */
 .goog-te-banner-frame,
 .goog-te-gadget,
 .goog-te-gadget-simple,
@@ -1340,14 +1341,14 @@ html {
     min-height: 100vh;
 }
 
-/* Ensure Turnstile is visually centered regardless of device */
+/* ens */
 .cf-turnstile {
     transform: scale(0.9);
     transform-origin: center;
 }
 
-/* ── Google Translate Support ──────────────────────── */
-/* Since the bar is hidden, we lock the nav and body to top 0 to prevent "jumping" */
+/* goo */
+/* sin */
 .translated-ltr nav,
 .translated-rtl nav,
 nav {
@@ -1411,7 +1412,7 @@ body {
 }
 
 
-/* ── Share Menu ────────────────────────────────────── */
+/* sha */
 .share-menu {
     position: absolute;
     bottom: 85px;
@@ -1487,7 +1488,7 @@ body {
     transform: translateY(-5px);
 }
 
-/* Brand Colors */
+/* bra */
 .copy-link-btn:hover .icon-circle {
     background: var(--brand-brown);
     color: white;
@@ -1513,10 +1514,10 @@ body {
     color: white;
 }
 
-/* Share Toast */
+/* sha */
 .share-toast {
     position: fixed;
-    bottom: 110px;
+    top: 90px;
     right: 30px;
     padding: 1rem 2rem;
     border-radius: 50px;
@@ -1529,7 +1530,7 @@ body {
     gap: 0.8rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     z-index: 10005;
-    transform: translateY(20px);
+    transform: translateY(-40px);
     opacity: 0;
     pointer-events: none;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s ease, border-color 0.4s ease;
@@ -1612,7 +1613,7 @@ body {
     font-size: 0.8rem;
 }
 
-/* Custom Searchable Language Selector */
+/* cus */
 .language-search-container {
     width: 100%;
     position: relative;
@@ -1659,7 +1660,7 @@ body {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     display: none;
-    /* Shown dynamically via JS */
+    /* sho */
     margin-top: 5px;
 }
 
@@ -1697,7 +1698,7 @@ body {
     color: white !important;
 }
 
-/* Scrollbar for language results */
+/* scr */
 .language-results::-webkit-scrollbar {
     width: 6px;
 }
@@ -1711,7 +1712,7 @@ body {
     border-radius: 10px;
 }
 
-/* Hide original Google elements entirely */
+/* hid */
 #google_translate_element,
 .goog-te-banner-frame,
 .goog-te-menu-value,
@@ -1719,14 +1720,14 @@ body {
     display: none !important;
 }
 
-/* (body { top: 0 } consolidated into main body declaration) */
+/* bod */
 
-/* Ensure the widget inner parts are visible */
+/* ens */
 #google_translate_element .skiptranslate {
     display: block !important;
 }
 
-/* Mobile Responsiveness */
+/* mob */
 @media (max-width: 1280px) {
     .nav-links {
         gap: 1.2rem;
@@ -1739,10 +1740,10 @@ body {
 
 @media (max-width: 1024px) {
 
-    /* Navbar */
+    /* nav */
     .nav-links {
         display: none;
-        /* Hidden by default on mobile, toggled by JS */
+        /* hid */
         position: absolute;
         top: 100%;
         left: 0;
@@ -1776,7 +1777,7 @@ body {
         color: #FFFFFF;
     }
 
-    /* Nav Globe Button — hide text label on small screens */
+    /* nav */
     .nav-lang-label {
         display: none;
     }
@@ -1786,11 +1787,11 @@ body {
         gap: 0;
     }
 
-    /* Break the dropdown OUT of the nav bar on mobile — use fixed positioning */
+    /* bre */
     .nav-lang-dropdown {
         position: fixed;
         top: 70px;
-        /* sits just below the nav bar */
+        /* sit */
         left: 1rem;
         right: 1rem;
         width: auto;
@@ -1808,7 +1809,7 @@ body {
     }
 
 
-    /* Hero Section */
+    /* her */
     .hero {
         padding: 100px 0 60px;
         min-height: auto;
@@ -1829,7 +1830,7 @@ body {
         line-height: 1.6 !important;
     }
 
-    /* Social Grid */
+    /* soc */
     .social-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -1848,24 +1849,24 @@ body {
         font-size: 1rem;
     }
 
-    /* About section text */
+    /* abo */
     .about-text {
         font-size: 1rem;
     }
 
-    /* Buttons */
+    /* but */
     .btn,
     .btn-main {
         padding: 1rem 2rem;
         font-size: 0.95rem;
     }
 
-    /* Contact */
+    /* con */
     .email-link-card {
         font-size: 0.95rem;
     }
 
-    /* FABs & Accessibility */
+    /* fab */
     .accessibility-container {
         bottom: 15px;
         left: 15px;
@@ -1888,13 +1889,13 @@ body {
         max-width: calc(100vw - 40px);
     }
 
-    /* Share menu */
+    /* sha */
     .share-menu {
         width: calc(100vw - 30px);
         right: 0;
     }
 
-    /* Policy content */
+    /* pol */
     .policy-section p,
     .policy-section ul {
         font-size: 0.95rem;
@@ -1904,7 +1905,7 @@ body {
         font-size: 1.2rem;
     }
 
-    /* Footer */
+    /* foo */
     footer {
         padding: 2rem 0 60px;
     }
@@ -1993,7 +1994,7 @@ body {
         font-size: 16px;
     }
 
-    /* Footer — tightest */
+    /* foo */
     footer {
         padding: 1.5rem 0 60px;
     }
@@ -2023,7 +2024,7 @@ body {
     }
 }
 
-/* Privacy Policy & Notice Styles */
+/* pri */
 .privacy-notice {
     margin-bottom: 1.5rem;
     font-size: 0.85rem;
@@ -2049,7 +2050,7 @@ body {
 [data-theme="dark"] .privacy-notice a,
 [data-theme="dark"] .about-text a {
     color: #E6DCCF;
-    /* High contrast for dark mode */
+    /* hig */
 }
 
 .policy-content {
@@ -2059,13 +2060,13 @@ body {
     margin: 0 auto;
     text-align: left !important;
     font-family: 'Georgia', 'Times New Roman', serif;
-    /* Legal feel */
+    /* leg */
 }
 
 .policy-content h2,
 .policy-content strong {
     font-family: 'Outfit', sans-serif;
-    /* Keep headings modern */
+    /* kee */
 }
 
 .policy-section {
@@ -2138,7 +2139,7 @@ body {
     padding-top: 2rem;
 }
 
-/* Subtle Back Button */
+/* sub */
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -2170,7 +2171,7 @@ body {
     padding-top: 1rem;
 }
 
-/* Policy Content Link Styles */
+/* pol */
 .policy-content a {
     color: var(--brand-brown);
     text-decoration: underline;
@@ -2179,7 +2180,7 @@ body {
 
 [data-theme="dark"] .policy-content a {
     color: #D4C4B0;
-    /* High visibility in dark mode, matching brand-brown */
+    /* hig */
 }
 
 .policy-content a:hover {
@@ -2187,29 +2188,29 @@ body {
     text-decoration: none;
 }
 
-/* ── Share FAB (REMOVED) ────────────────────────────── */
+/* sha */
 
-/* ── Privacy Policy Table of Contents ────────────────── */
+/* pri */
 
 .policy-hero {
     padding-top: 160px;
-    /* Secure clearance for fixed navbar */
+    /* sec */
     padding-bottom: 2rem;
     text-align: center;
 }
 
 .policy-section h2 {
     scroll-margin-top: 370px;
-    /* Precise height (Navbar 86 + TOC 260 + Buffer) */
+    /* pre */
 }
 
 .policy-toc {
     position: sticky;
     top: 100px;
-    /* Offset from sticky navbar (86px height) */
+    /* off */
     width: 100%;
     margin: -1rem 0 3.5rem 0;
-    /* Align with glass padding and add bottom space */
+    /* ali */
     border-radius: 20px;
     padding: 1.5rem 2.5rem;
     border: 1px solid var(--glass-border);
@@ -2220,7 +2221,7 @@ body {
     transition: var(--transition-slow);
     backdrop-filter: blur(25px);
     z-index: 1001;
-    /* Stay on top of headings */
+    /* sta */
 }
 
 [data-theme="light"] .policy-toc {
@@ -2296,7 +2297,7 @@ body {
 
 }
 
-/* v37: Private/Incognito Mode Warning UI */
+/* v37 */
 .private-mode-banner {
     position: fixed;
     top: -120px;
@@ -2366,7 +2367,7 @@ body {
     }
 }
 
-/* Disabled state for Grow My Leaf button in Private Mode */
+/* dis */
 #family-submit-btn.btn-disabled-private {
     background: #555 !important;
     border-color: #666 !important;
@@ -2378,7 +2379,7 @@ body {
     box-shadow: none !important;
 }
 
-/* Heading Icons */
+/* hea */
 .about-grid h2 i {
     color: var(--brand-brown);
     margin-right: 0.8rem;
@@ -2387,7 +2388,7 @@ body {
 }
 
 
-/* ── Travel Card Animation Hook (Safe & Self-Contained) ── */
+/* tra */
 .reveal-on-scroll {
     opacity: 0;
     transform: translateY(30px) translateZ(0);
@@ -2598,7 +2599,7 @@ body {
     font-size: 0.65rem;
 }
 
-/* Smooth Image Loading */
+/* smo */
 .image-placeholder {
     background-color: var(--bg-soft);
     position: relative;
@@ -2626,20 +2627,20 @@ body {
     }
 }
 
-/* Starred Messages Filtering & Styling */
+/* sta */
 #chat-messages.show-starred-only .chat-message:not([data-is-starred="true"]) {
     display: none !important;
 }
 
 .chat-message .msg-star-indicator {
     display: none;
-    /* hidden by default */
+    /* hid */
 }
 
 .chat-message[data-is-starred="true"] .msg-star-indicator {
     display: inline-block;
     color: var(--brand-brown);
-    /* Brand brown */
+    /* bra */
     font-size: 0.75rem;
     margin-left: 6px;
     vertical-align: middle;
@@ -2647,7 +2648,7 @@ body {
 
 .chat-message.sent[data-is-starred="true"] .msg-star-indicator {
     color: var(--bg-main);
-    /* Match text color on dark brown bubbles */
+    /* mat */
 }
 
 .breadcrumb-current {
@@ -2728,10 +2729,10 @@ body {
     margin: 0 auto;
     border-radius: 50%;
     padding: 12px;
-    /* Add transition for reactive cursor */
+    /* add */
     transition: transform 0.1s ease-out, box-shadow 0.3s ease;
     transform-style: preserve-3d;
-    /* Premium Outer glowing ring */
+    /* pre */
     background: linear-gradient(135deg, #D4AF37, #F3E5AB, #B8860B);
     box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.3);
 }
@@ -2741,7 +2742,7 @@ body {
     height: 100%;
     border-radius: 50%;
     position: relative;
-    /* Clean conic gradient slices */
+    /* cle */
     background: conic-gradient(#FDFBF4 0deg 60deg,
             #F5F0DC 60deg 120deg,
             #FDFBF4 120deg 180deg,
@@ -2777,7 +2778,7 @@ body {
 }
 
 .lucky-draw-wheel.fast-spin {
-    /* 5 full rotations in 3 seconds, starting fast and ending on a specific angle */
+    /* 5-f */
     animation: fastSpin 3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
@@ -2796,14 +2797,14 @@ body {
     width: 100%;
     height: 100%;
     text-align: center;
-    /* Perfectly align each text slice */
+    /* per */
     transform: rotate(calc(var(--i) * 60deg + 30deg));
 }
 
 .wheel-text span {
     display: block;
     margin-top: 25px;
-    /* Push text to outer edge */
+    /* pus */
     color: var(--brand-brown);
     font-weight: 800;
     font-size: 1.4rem;
@@ -2871,7 +2872,7 @@ body {
     color: rgba(255, 255, 255, 0.5) !important;
 }
 
-/* Mobile Responsiveness for Lucky Draw */
+/* mob */
 @media (max-width: 600px) {
     .lucky-draw-section {
         padding: 2rem 1rem !important;
@@ -2922,7 +2923,7 @@ body {
         border-top: 20px solid #D4AF37;
     }
 
-    /* Lucky Draw Form — stack fields vertically */
+    /* luc */
     #lucky-draw-form>div:first-child {
         flex-direction: column !important;
         gap: 0.8rem !important;
@@ -2951,7 +2952,7 @@ body {
         font-size: 0.78rem !important;
     }
 
-    /* Shrink the success state text and lockout timers */
+    /* shr */
     #lucky-draw-success-container {
         padding: 1.5rem !important;
     }
@@ -2980,13 +2981,13 @@ body {
         font-size: 0.78rem !important;
     }
 
-    /* Turnstile CAPTCHA — scale for mobile */
+    /* tur */
     .cf-turnstile {
         transform: scale(0.85);
         transform-origin: center;
     }
 
-    /* ── Moderators Section ─────────────────────────── */
+    /* mod */
     .moderators-section {
         padding: 3rem 1rem !important;
     }
@@ -3005,7 +3006,7 @@ body {
         margin-top: 2rem !important;
     }
 
-    /* ── Collaborator Coming Soon Notice ─────────────── */
+    /* col */
     .coming-soon-notice h3 {
         font-size: 1.3rem;
     }
@@ -3041,7 +3042,7 @@ body {
     }
 }
 
-/* Global Horizontal Form Grid (mirrors family-tree) */
+/* glo */
 .horizontal-form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1.2fr;
@@ -3082,12 +3083,12 @@ body {
     border-radius: 50%;
 }
 
-/* Allow the wheel to slowly spin so it looks like a real lucky wheel */
+/* all */
 .lucky-draw-wheel-container.winner-edition .lucky-draw-wheel {
     animation: wheelSpin 20s linear infinite;
 }
 
-/* Elegant Center Plaque */
+/* ele */
 .wheel-center.winner-center {
     width: 130px;
     height: 130px;
@@ -3113,7 +3114,7 @@ body {
 }
 
 
-/* Responsive Adjustments for Winner Wheel */
+/* res */
 @media (max-width: 768px) {
     .lucky-draw-wheel-container.winner-edition {
         transform: scale(0.95);
@@ -3130,7 +3131,7 @@ body {
     }
 }
 
-/* Premium Icon Styling for Winner Edition Wheel */
+/* pre */
 .lucky-draw-wheel-container.winner-edition .wheel-text i {
     display: block;
     margin-top: 15px;
@@ -3144,9 +3145,9 @@ body {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
 }
 
-/* ========================================= */
-/* Matchmaking & Onboarding Styles          */
-/* ========================================= */
+/* x */
+/* mat */
+/* x */
 
 .matchmaking-layout {
     display: flex;
@@ -3176,9 +3177,9 @@ body {
         width: 25%;
         position: sticky;
         top: 120px;
-        /* Align stickiness with the button's original height */
+        /* ali */
         margin-top: -95px;
-        /* Pull it up into the row of the edit profile buttons */
+        /* pul */
         height: max-content;
     }
 }
@@ -3329,7 +3330,7 @@ select.filter-input {
     background: var(--brand-brown-hover);
 }
 
-/* Dark Mode Overrides for Filter Sidebar */
+/* dar */
 [data-theme="dark"] .filter-sidebar {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -3361,7 +3362,7 @@ select.filter-input {
     .matchmaking-main {
         width: 75%;
         margin-top: -95px;
-        /* Align top with filter sidebar and Edit Profile button */
+        /* ali */
     }
 }
 
@@ -3369,7 +3370,7 @@ select.filter-input {
     display: flex;
     justify-content: flex-start;
     gap: 2rem;
-    /* Increased gap */
+    /* inc */
     align-items: center;
     margin-bottom: 1.5rem;
 }
@@ -3394,7 +3395,7 @@ select.filter-input {
     gap: 1.5rem;
 }
 
-/* Profile Card Action Buttons */
+/* pro */
 .btn-interest {
     width: 100%;
     border-radius: 50px;
@@ -3488,7 +3489,7 @@ select.filter-input {
     position: relative;
     width: 100%;
     padding-top: 85%;
-    /* Shorter aspect ratio so the photo doesn't dominate the card */
+    /* sho */
     overflow: hidden;
     border-radius: 24px 24px 0 0;
 }
@@ -3662,7 +3663,7 @@ select.filter-input {
     }
 }
 
-/* Modal Styles */
+/* mod */
 .edit-modal-overlay {
     position: fixed;
     top: 0;
@@ -3741,7 +3742,7 @@ select.filter-input {
 }
 
 /* =========================================
-   Firebase Auth Modal UI
+   Cupid Auth Modal UI
 ========================================= */
 .auth-overlay {
     position: fixed;
@@ -3763,14 +3764,16 @@ select.filter-input {
     pointer-events: auto;
 }
 
-/* Hide spin arrows on the Math Captcha for a cleaner look */
+/* hid */
 #auth-captcha-answer::-webkit-outer-spin-button,
 #auth-captcha-answer::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 #auth-captcha-answer {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .auth-modal {
@@ -3917,7 +3920,7 @@ select.filter-input {
    MOBILE "DIAMOND" UX UPGRADES (CSS ONLY)
 ========================================= */
 
-/* Hide mobile-specific elements on desktop */
+/* hid */
 
 .mobile-filter-close {
     display: none;
@@ -3925,7 +3928,7 @@ select.filter-input {
 
 @media (max-width: 768px) {
 
-    /* Form Inputs (Mobile Optimization) */
+    /* for */
     input,
     select,
     textarea,
@@ -3937,14 +3940,14 @@ select.filter-input {
         overflow: hidden;
     }
 
-    /* iOS WebKit Glitch Fix: iOS already truncates natively, so we disable CSS ellipsis to prevent the selection bug */
+    /* ios */
     @supports (-webkit-touch-callout: none) {
         select {
             text-overflow: clip !important;
         }
     }
 
-    /* Top Action Buttons */
+    /* top */
     .container.auth-logged-in {
         justify-content: center !important;
         flex-wrap: wrap;
@@ -3952,7 +3955,7 @@ select.filter-input {
         gap: 10px !important;
     }
 
-    /* New Nav Filter Button on Mobile */
+    /* new */
     #mobile-filter-btn {
         display: flex !important;
     }
@@ -3963,23 +3966,23 @@ select.filter-input {
         left: 0;
         width: 100% !important;
         height: auto;
-        max-height: 85vh;
+        max-height: 80vh;
         overflow-y: auto;
         background: var(--glass-bg);
         backdrop-filter: blur(25px);
         -webkit-backdrop-filter: blur(25px);
         z-index: 2000;
         border-radius: 32px 32px 0 0;
-        padding: 40px 24px 30px !important;
+        padding: 25px 24px 30px !important;
         transform: translateY(110%);
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
         border-top: 1px solid var(--glass-border);
         box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0);
-        /* Invisible overlay */
+        /* inv */
         margin-top: 0 !important;
     }
 
-    /* iOS style drag handle */
+    /* ios */
     .filter-sidebar::before {
         content: '';
         position: absolute;
@@ -3994,8 +3997,17 @@ select.filter-input {
 
     .filter-sidebar.mobile-open {
         transform: translateY(0);
-        box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6);
-        /* Dims the background */
+        box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15), 0 0 0 100vmax rgba(0, 0, 0, 0.6);
+        /* top */
+    }
+
+    [data-theme="dark"] .filter-sidebar.mobile-open {
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.7), 0 0 0 100vmax rgba(0, 0, 0, 0.75);
+    }
+    
+    [data-theme="dark"] .filter-sidebar {
+        background: rgba(45, 45, 45, 0.85);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .filter-sidebar h2 {
@@ -4007,8 +4019,8 @@ select.filter-input {
     .mobile-filter-close {
         display: flex;
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 12px;
+        right: 15px;
         background: rgba(128, 128, 128, 0.15);
         border: none;
         width: 32px;
@@ -4022,7 +4034,7 @@ select.filter-input {
         z-index: 10;
     }
 
-    /* FIX: Force grid layout to be 100% and centered */
+    /* fix */
     .matchmaking-main {
         width: 100% !important;
         margin-left: 0 !important;
@@ -4035,36 +4047,36 @@ select.filter-input {
         padding-right: 0 !important;
     }
 
-    /* REDUCED PROFILE GRID (1 Column on Mobile for Bio readability) */
+    /* red */
     .profiles-grid {
         display: grid !important;
         grid-template-columns: 1fr !important;
-        /* 1 card per row (Industry standard for dating/matchmaking apps) */
+        /* 1-c */
         gap: 2rem !important;
         padding: 0 10px !important;
         width: 100% !important;
         justify-items: center !important;
-        /* Center the cards in the grid */
+        /* cen */
     }
 
     .profile-card {
         border-radius: 20px !important;
         max-width: 290px !important;
-        /* Reduced width for smaller profile cards on mobile */
+        /* red */
         width: 100% !important;
     }
 
     .profile-card .profile-content {
         padding: 1.2rem !important;
-        /* Slightly reduced padding */
+        /* sli */
     }
 
     .profile-card .profile-name {
         font-size: 1.3rem !important;
-        /* Reduced font size to match smaller card */
+        /* red */
     }
 
-    /* Show bio on 1-column layout, slightly reduced font size */
+    /* sho */
     .profile-card .profile-bio {
         display: -webkit-box !important;
         -webkit-box-orient: vertical !important;
@@ -4073,7 +4085,7 @@ select.filter-input {
         margin-bottom: 1.5rem !important;
     }
 
-    /* Make buttons comfortable for thumb tapping */
+    /* mak */
     .btn-interest,
     .btn-reject {
         font-size: 1.05rem !important;
@@ -4081,7 +4093,7 @@ select.filter-input {
         min-height: 48px !important;
     }
 
-    /* Full-Screen Chat on Mobile (Sits below navbar) */
+    /* ful */
     .chat-inbox-panel,
     .chat-panel {
         width: 100vw !important;
@@ -4095,7 +4107,7 @@ select.filter-input {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
         overscroll-behavior: none;
-        /* Keep it closed */
+        /* kee */
         border-radius: 0 !important;
         z-index: 1999 !important;
         transition: padding-bottom 0.1s ease-out, right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1);
@@ -4110,7 +4122,7 @@ select.filter-input {
         box-shadow: none !important;
     }
 
-    body.keyboard-open .chat-panel.open > *:not(#active-chat-view) {
+    body.keyboard-open .chat-panel.open>*:not(#active-chat-view) {
         visibility: hidden !important;
     }
 
@@ -4136,8 +4148,8 @@ select.filter-input {
         bottom: calc(var(--minimize-offset, 118px) + 8px) !important;
     }
 
-    /* Prevent visual viewport panning when dragging non-scrollable chat parts */
-    #active-chat-header, 
+    /* pre */
+    #active-chat-header,
     .chat-input-area,
     #chat-edit-banner,
     #chat-reply-banner {
@@ -4153,12 +4165,12 @@ select.filter-input {
     }
 }
 
-/* Hide FAB using JS class (Global so it hides on desktop chat open too) */
+/* hid */
 .accessibility-container.hide-fab {
     display: none !important;
 }
 
-/* Message Reactions */
+/* mes */
 .message-reactions {
     position: absolute;
     bottom: -14px;

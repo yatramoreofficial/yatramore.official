@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Prevents search engines from indexing this hidden page -->
+    <!-- pre -->
     <meta name="robots" content="noindex, nofollow">
 
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://challenges.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.gstatic.com https://unpkg.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://*.adtrafficquality.google https://www.googletagservices.com https://bat.bing.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://unpkg.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: https://translate.google.com https://www.google.com https://*.gstatic.com https://server.arcgisonline.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com https://translate-pa.googleapis.com https://*.google.com https://server.arcgisonline.com https://router.project-osrm.org https://*.google-analytics.com https://*.analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://*.adtrafficquality.google https://*.doubleclick.net https://unpkg.com https://adservice.google.com https://bat.bing.com; frame-src 'self' https://*.memberstack.com https://challenges.cloudflare.com https://translate.google.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://tpc.googlesyndication.com https://*.adtrafficquality.google; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://translate.google.com https://translate.googleapis.com https://challenges.cloudflare.com https://script.google.com https://translate-pa.googleapis.com https://www.gstatic.com https://script.googleusercontent.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.gstatic.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.google-analytics.com https://api.yatramore.com https://translate.googleapis.com https://translate-pa.googleapis.com https://script.google.com https://region1.analytics.google.com https://pagead2.googlesyndication.com https://script.googleusercontent.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; img-src 'self' data: blob: https: http://translate.google.com; media-src 'self' data: blob: https:; worker-src 'self' blob:; frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://googleads.g.doubleclick.net https://challenges.cloudflare.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google;">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
 
-    <!-- Immediate Theme Application -->
+    <!-- imm -->
     <script>
         (function () {
             let theme = 'light';
@@ -26,20 +26,20 @@
     </script>
 
     <title>YatrAmore Data Submission & Clearance Portal</title>
-    <!-- Core site styles -->
+    <!-- cor -->
     <link rel="stylesheet" href="style.css">
-    <!-- Specific portal styles -->
+    <!-- spe -->
     <link rel="stylesheet" href="submission-portal.css">
 
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- fon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <meta name="google-adsense-account" content="ca-pub-6715930730875600">
 </head>
 
 <body>
 
-    <!-- Navigation (Loads the translation icon and theme toggle) -->
+    <!-- nav -->
     <nav id="navbar" class="navbar" aria-label="Main navigation"></nav>
 
     <main class="portal-container">
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <!-- Success Message Container -->
+        <!-- suc -->
         <div id="success-message" class="hidden">
             <i class="fa-solid fa-circle-check"></i>
             <h2>Submission Received!</h2>
@@ -69,18 +69,18 @@
 
         <form id="submission-form" class="portal-form">
 
-            <!-- SPAM PROTECTION: Honeypot Field -->
-            <!-- Real users won't see this. Bots will fill it. If filled, the GAS script ignores the submission. -->
+            <!-- spa -->
+            <!-- rea -->
             <div class="honeypot-field" aria-hidden="true">
                 <label for="website_url">Leave this field blank if you are human:</label>
                 <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
             </div>
 
-            <!-- DEVICE FINGERPRINT: Hidden field for backend rate limiting -->
+            <!-- dev -->
             <input type="hidden" id="SystemFingerprint" name="SystemFingerprint" value="">
             <input type="hidden" id="DeviceID" name="DeviceID" value="">
 
-            <!-- SECTION 1 -->
+            <!-- sec -->
             <section class="form-section glass-panel">
                 <div class="section-header">
                     <h2><i class="fa-solid fa-user-check"></i> Section 1: Contributor Info & Verifications</h2>
@@ -105,7 +105,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 2 -->
+            <!-- sec -->
             <section class="form-section glass-panel">
                 <div class="section-header">
                     <h2><i class="fa-solid fa-scale-balanced"></i> Section 2: Universal Legal & Privacy Checkpoints</h2>
@@ -196,11 +196,11 @@
         </form>
     </main>
 
-    <!-- JS to handle form submission via GAS -->
+    <!-- js- -->
     <script>
-        // --- IMPORTANT: PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE ---
+        // --- imp ---
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbxpfpf9u9GMMfzBHwSABM4v7-VX3nF2TsEjM5zOTCo7ppJaSDK4BIxnGxyVz8kyVmwB/exec';
-        // ------------------------------------------------------------------
+        // --- x ---
 
         const form = document.getElementById('submission-form');
         const submitBtn = document.getElementById('submit-btn');
@@ -298,10 +298,10 @@
         });
     </script>
 
-    <!-- Footer (rendered by components.js) -->
+    <!-- foo -->
     <footer></footer>
 
-    <!-- Accessibility & Translation (rendered by components.js) -->
+    <!-- acc -->
     <div class="accessibility-container"></div>
     <script src="components.js"></script>
     <script>

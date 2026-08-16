@@ -194,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const roundTripTime = (destination.roadTime || 0) * 2;
         totalDrivingTime += roundTripTime;
 
-        console.log(`YA-VanLife: Discovery Stats Updated. Point: ${destination.title}, Road Dist: ${destination.roadDist}m, Road Time: ${destination.roadTime}s`);
+        window.debugLog(`YA-VanLife: Discovery Stats Updated. Point: ${destination.title}, Road Dist: ${destination.roadDist}m, Road Time: ${destination.roadTime}s`);
 
-        // Update UI with Premium Formatting
+        // Update UI with Styling
         const distanceEl = document.getElementById('stat-distance');
         const timeEl = document.getElementById('stat-time');
         const campingEl = document.getElementById('stat-camping');
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('scanning');
     globalDiscoveryLoop();
 
-    // P-2 Fix: Pause RAF loop when tab is hidden (saves battery on mobile)
+    // Logic update: Pause RAF loop when tab is hidden (saves battery on mobile)
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             radarStartTime = null; // Pauses the loop (RAF still fires but returns immediately)
@@ -296,5 +296,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 6. MISSION CONTROL READY
-    console.log("YA-VanLife: Mission Control Root Engine Synchronized.");
+    window.debugLog("YA-VanLife: Mission Control Root Engine Synchronized.");
 });

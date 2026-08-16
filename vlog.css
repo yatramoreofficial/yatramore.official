@@ -1,19 +1,19 @@
-/* vlog.css */
+/* vlo */
 
 .vlog-hero-video {
     width: 100%;
-    height: clamp(250px, 50vw, 450px); /* Keeps the height exactly what you liked */
+    height: clamp(250px, 50vw, 450px); /* kee */
     margin: 0 auto;
     background-color: transparent;
-    /* Remove the box look */
+    /* rem */
     border-radius: 0;
     box-shadow: none;
-    /* Dissolve the left and right sides into the page */
+    /* dis */
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
 }
 
-/* Override the 16:9 ratio specifically for the hero so it doesn't grow too tall */
+/* ove */
 .vlog-hero-video .lite-youtube {
     padding-bottom: 0;
     height: 100%;
@@ -26,7 +26,7 @@
     display: block;
 }
 
-/* Sections */
+/* sec */
 .video-section {
     padding: 3rem 0;
 }
@@ -52,7 +52,7 @@
     margin-bottom: 3rem;
 }
 
-/* Vlogs Grid */
+/* vlo */
 .vlogs-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -76,7 +76,7 @@
     }
 }
 
-/* Shorts Grid */
+/* sho */
 .shorts-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -98,7 +98,7 @@
     }
 }
 
-/* Lite YouTube Embed Facade */
+/* lit */
 .lite-youtube {
     position: relative;
     display: block;
@@ -115,10 +115,10 @@
 
 .lite-youtube:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2); /* Subtle gold glow on hover */
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2); /* sub */
 }
 
-/* Dark overlay for contrast */
+/* dar */
 .lite-youtube::before {
     content: '';
     display: block;
@@ -136,7 +136,7 @@
     background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.3) 100%);
 }
 
-/* Aspect Ratios */
+/* asp */
 .lite-youtube.vlog-format {
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -151,7 +151,7 @@
     margin: 0 auto;
 }
 
-/* Play Button - Premium Transparent Glass Style */
+/* pla */
 .lite-youtube-playbtn {
     width: 64px;
     height: 64px;
@@ -160,7 +160,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 50%; /* Circle shape */
+    border-radius: 50%; /* cir */
     border: 1px solid rgba(255, 255, 255, 0.4);
     z-index: 1;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s ease, border-color 0.4s ease;
@@ -231,7 +231,7 @@ body.cinema-active .cinema-overlay {
     box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
 
-/* Specifically scale up Active Reels for the "Genie Effect" in place */
+/* spe */
 .lite-youtube[data-short].cinema-active-player {
     transform: scale(1.2) !important;
 }
@@ -240,7 +240,7 @@ body.cinema-active .cinema-overlay {
     z-index: 1;
 }
 
-/* Lightbox Mode for FLIP Animation */
+/* lig */
 .lite-youtube.lightbox-mode {
     position: fixed !important;
     top: 50% !important;
@@ -250,16 +250,16 @@ body.cinema-active .cinema-overlay {
     z-index: 1001 !important;
     box-shadow: 0 0 100px rgba(0,0,0,1) !important;
     margin: 0 !important;
-    /* transform is managed dynamically by FLIP logic in vlog.js */
+    /* tra */
 }
 
-/* Hide YouTube iframe when paused in background to remove tools */
+/* hid */
 .lite-youtube.is-paused-hidden iframe {
     opacity: 0 !important;
     pointer-events: none !important;
 }
 
-/* Completely disable mouse interactions on Shorts so YouTube's hover tools NEVER appear */
+/* com */
 @media (min-width: 768px) {
     .lite-youtube[data-short] iframe {
         pointer-events: none !important;

@@ -1526,6 +1526,22 @@ let selectedHobbies = [];
 window.openEditProfileModal = async function (isExplicitlyEditing = false) {
     if (!currentUser) return;
 
+    if (currentUser.is_profile_completed && currentUser.last_profile_edit) {
+        const lastEditDate = new Date(currentUser.last_profile_edit.replace(' ', 'T'));
+        const now = new Date();
+        const hoursPassed = (now.getTime() - lastEditDate.getTime()) / (1000 * 60 * 60);
+        if (hoursPassed < 72) {
+            const hoursLeft = Math.ceil(72 - hoursPassed);
+            Swal.fire({
+                icon: 'info',
+                title: 'Profile Edit Locked',
+                text: `You can only edit your profile details once every 3 days. Please wait another ${hoursLeft} hours.`,
+                confirmButtonColor: 'var(--brand-brown)'
+            });
+            return;
+        }
+    }
+
     document.getElementById('profile-firstName').value = currentUser.name || '';
     const bdateInput = document.getElementById('profile-birthdate');
     if (bdateInput) {

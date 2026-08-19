@@ -1133,16 +1133,9 @@ window.resendVerificationEmail = async function () {
         return;
     }
     
-    // PocketBase hides the email if emailVisibility is false
-    let targetEmail = currentUser.email;
-    if (!targetEmail) {
-        targetEmail = prompt("Please confirm your email address to receive the verification link:");
-        if (!targetEmail) return; // User cancelled
-    }
-
     if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
     try {
-        await pb.collection('users').requestVerification(targetEmail);
+        await pb.collection('users').requestVerification(currentUser.email);
         localStorage.setItem('lastVerificationSent', Date.now());
         window.showToast("Verification email sent! Please check your inbox and spam folder.", true);
     } catch (e) {

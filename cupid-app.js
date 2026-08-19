@@ -1132,16 +1132,28 @@ window.resendVerificationEmail = async function () {
         window.showToast(`Please wait ${remainingMinutes} minutes before requesting another verification email.`, false);
         return;
     }
+    
+    // PocketBase hides the email if emailVisibility is false
+    let targetEmail = currentUser.email;
+    if (!targetEmail) {
+        targetEmail = prompt("Please confirm your email address to receive the verification link:");
+        if (!targetEmail) return; // User cancelled
+    }
+
     if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
     try {
-        await pb.collection('users').requestVerification(currentUser.email);
+        await pb.collection('users').requestVerification(targetEmail);
         localStorage.setItem('lastVerificationSent', Date.now());
         window.showToast("Verification email sent! Please check your inbox and spam folder.", true);
     } catch (e) {
         console.error("Resend error:", e);
-        window.showToast("Failed to send verification email. (Is SMTP configured in PocketBase Admin?)", false);
+        if (e.data && e.data.data && e.data.data.email) {
+            window.showToast(e.data.data.email.message || "Invalid or already verified email.", false);
+        } else {
+            window.showToast("Failed to send verification email. (Is SMTP configured in PocketBase Admin?)", false);
+        }
     } finally {
-        if (btn) { btn.textContent = 'Resend Verification Request'; btn.disabled = false; }
+        if (btn) { btn.textContent = 'Resend email verification'; btn.disabled = false; }
     }
 };
 let verifyIdFile = null;

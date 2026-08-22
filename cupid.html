@@ -2170,6 +2170,13 @@
             <h2
                 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--brand-brown)">
                 <i class="fa-solid fa-feather-pointed"></i> The Aviary
+                <button type="button"
+                    onclick="event.preventDefault(); document.getElementById('aviary-how-it-works-modal').style.display='flex'; setTimeout(() => { document.getElementById('aviary-how-it-works-modal').style.opacity='1'; }, 10);"
+                    style="background:transparent; border:1px solid var(--brand-brown); color:var(--brand-brown); font-size:0.75rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; margin-left:12px; padding:4px 10px; border-radius:20px; transition:all 0.2s;"
+                    onmouseover="this.style.background='var(--brand-brown)'; this.style.color='#fff';"
+                    onmouseout="this.style.background='transparent'; this.style.color='var(--brand-brown)';">
+                    <i class="fa-solid fa-feather"></i> How it Works
+                </button>
             </h2>
             <button id="aviary-close-btn"
                 style="background:none;border:none;color:var(--text-main);font-size:1.3rem;cursor:pointer;opacity:0.7;transition:opacity 0.2s"
@@ -2440,7 +2447,7 @@
 
                 <label style="font-weight:600;font-size:0.9rem;color:var(--brand-brown)">Send to</label>
                 <select id="aviary-recipient-select" required
-                    style="padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--brand-brown);font-size:0.9rem;font-weight:600;"
+                    style="padding:10px 36px 10px 14px; border-radius:12px; border:1px solid var(--glass-border); background:var(--glass-bg) url('data:image/svg+xml;charset=UTF-8,%3Csvg fill=%22%23b59265%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M7 10l5 5 5-5z%22/%3E%3C/svg%3E') no-repeat right 14px center; appearance:none; -webkit-appearance:none; -moz-appearance:none; color:var(--brand-brown); font-size:0.9rem; font-weight:600;"
                     onfocus="if(this.options.length<=1)window.loadAviaryRecipients()">
                     <option value="">— Select a match —</option>
                 </select>
@@ -2454,23 +2461,19 @@
                         style="position:absolute;bottom:8px;right:12px;font-size:0.75rem;color:var(--text-muted)">0/1000</span>
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:2px;">
                     <label
                         style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);cursor:pointer;">
-                        <input type="checkbox" id="aviary-burn-toggle" style="accent-color:#f44336">
-                        🔥 Burn letter if bird crashes (will appear as an anonymous ash pile)
+                        <input type="checkbox" id="aviary-burn-toggle" style="accent-color:#f44336; flex-shrink: 0;">
+                        <span>🔥 Burn letter if bird crashes</span>
                         <i class="fa-solid fa-circle-info"
-                            title="COMMUNITY RESCUE vs BURN&#10;&#10;If left unchecked: A crashed bird falls to the World Map where the Yatramore community can discover it. If enough users push your bird, it will be rescued and delivered to your match!&#10;&#10;If checked (Burn): The letter is instantly destroyed upon crashing to protect your privacy. It will never appear on the map, but it can never be rescued."
+                            title="COMMUNITY RESCUE vs BURN&#10;&#10;If left unchecked: A crashed bird falls to the World Map where the YatrAmore community can discover it. If enough users push your bird, it will be rescued and delivered to your match!&#10;&#10;If checked (Burn): The letter is instantly destroyed upon crashing to protect your privacy. It will never appear on the map, but it can never be rescued."
                             style="opacity:0.7; transition:opacity 0.2s;" onmouseover="this.style.opacity=1"
                             onmouseout="this.style.opacity=0.7"
                             onclick="event.preventDefault(); document.getElementById('aviary-rescue-info-modal').style.display='flex'; setTimeout(() => { document.getElementById('aviary-rescue-info-modal').style.opacity='1'; }, 10);"></i>
                     </label>
 
-                    <button type="button"
-                        onclick="event.preventDefault(); document.getElementById('aviary-how-it-works-modal').style.display='flex'; setTimeout(() => { document.getElementById('aviary-how-it-works-modal').style.opacity='1'; }, 10);"
-                        style="background:none; border:none; color:var(--text-muted); font-size:0.85rem; cursor:pointer; text-decoration:underline; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-                        <i class="fa-solid fa-feather" style="color:var(--brand-brown);"></i> How The Aviary Works
-                    </button>
+
 
                     <button type="submit" id="aviary-dispatch-btn" class="btn"
                         style="background:var(--brand-brown);color:#fff;border:none;padding:12px 24px;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;transition:background 0.3s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;"
@@ -2536,58 +2539,220 @@
 
     <div id="aviary-how-it-works-modal" class="aviary-modal-overlay" style="display:none;opacity:0;">
         <div class="glass-card"
-            style="position:relative;width:95%;max-width:500px;max-height:85vh;overflow-y:auto;border-radius:20px;padding:30px;border:1px solid var(--glass-border);color:var(--text-main);transform:translateY(20px);transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            style="position:relative;width:95%;max-width:500px;max-height:85vh;overflow-y:auto;border-radius:20px;padding:30px 30px 12px 30px;border:1px solid var(--glass-border);color:var(--text-main);transform:translateY(20px);transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
             <button
                 onclick="document.getElementById('aviary-how-it-works-modal').style.opacity='0';setTimeout(()=>document.getElementById('aviary-how-it-works-modal').style.display='none',300)"
                 style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text-main);font-size:1.2rem;cursor:pointer;opacity:0.7;transition:opacity 0.2s;"
                 onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><i
                     class="fa-solid fa-xmark"></i></button>
 
-            <h3 style="margin:0 0 20px 0;font-size:1.5rem;font-weight:700;text-align:center;color:var(--brand-brown);">
-                <i class="fa-solid fa-feather"></i> How The Aviary Works
+            <h3
+                style="margin:0 0 10px 0;font-size:1.6rem;font-weight:800;text-align:center;color:var(--brand-brown); letter-spacing: -0.5px;">
+                <i class="fa-solid fa-feather-pointed" style="color:var(--brand-brown);"></i> How The Aviary Works
             </h3>
 
-            <div style="font-size:0.9rem; line-height:1.6; color:var(--text-muted);">
-                <strong style="color:var(--brand-brown);display:block;margin-bottom:8px;font-size:1.05rem;">📤 For the
-                    Sender (You):</strong>
-                <p style="margin:0 0 12px 0;">When you release your bird, it embarks on a physical journey across the
-                    globe based on real-world geographic distance. Your bird will fly in real-time, taking hours or even
-                    days depending on its base speed, weather, and rest stops.</p>
+            <p
+                style="text-align:center; font-size:0.95rem; color:var(--text-muted); margin-bottom: 25px; line-height:1.4;">
+                Send a romantic, slow-paced letter across the globe. But beware, the journey is perilous!</p>
 
-                <strong style="color:var(--text-main);display:block;margin-bottom:8px;">⚠️ The Risk of the
-                    Journey:</strong>
-                <p style="margin:0 0 8px 0;">Every bird has a "Risk Rate" which dictates its chance of crashing due to
-                    exhaustion, storms, or predators. If your bird crashes, it fails its delivery.</p>
-                <ul style="margin:0 0 20px; padding-left:20px;">
-                    <li style="margin-bottom:8px;"><strong style="color:#f44336">If you checked "Burn":</strong> The
-                        letter is instantly destroyed to protect your privacy. It is gone forever.</li>
-                    <li><strong style="color:var(--text-main)">If you left "Burn" unchecked:</strong> Your crashed bird
-                        falls to the public World Map. It now relies on the Yatramore community. Other strangers can
-                        discover your crashed bird and tap "Rescue". <strong>If exactly 2 rescuers push your bird, it
-                            will recover and complete its journey!</strong> <em>(Don't worry, rescuers can only read a
-                            tiny 80-character snippet of your smudged letter—your privacy is safe).</em></li>
-                </ul>
+            <div
+                style="display:flex; flex-direction:column; gap:15px; margin-bottom:4px; overflow-y:auto; max-height:60vh; padding-right:5px;">
 
-                <strong style="color:var(--brand-brown);display:block;margin-bottom:8px;font-size:1.05rem;">📥 For the
-                    Receiver (Your Match):</strong>
-                <ul style="margin:0 0 20px; padding-left:20px;">
-                    <li style="margin-bottom:8px;"><strong>Building Anticipation:</strong> Your match will actually see
-                        the incoming bird flying towards them in their "My Perch" inbox! They can track its flight
-                        progress in real-time, building anticipation, but they cannot read the letter until it safely
-                        lands.</li>
-                    <li style="margin-bottom:8px;"><strong>A Flawless Flight:</strong> If the bird survives the journey
-                        without crashing, they will receive your letter in pristine, perfect condition.</li>
-                    <li><strong>A Rescued Flight:</strong> If your bird crashed and was saved by 2 community rescuers,
-                        the letter will arrive damaged. About 35% of your words will be washed away or torn, replaced
-                        with mysterious smudges like <em>[weather-stained]</em>. Your match will receive a beautifully
-                        fragmented message that survived against all odds!</li>
-                </ul>
+                <!-- Bird Selection Section -->
+                <div
+                    style="background:var(--bg-accent); border:1px solid var(--glass-border); border-radius:16px; padding:18px;">
+                    <h4
+                        style="margin:0 0 12px 0; font-size:1.1rem; color:var(--brand-brown); display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-kiwi-bird"></i> 1. Choose Your Bird
+                    </h4>
+
+                    <div
+                        style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span style="display:inline-flex; width:56px; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 140 100" width="45" height="34" style="overflow:visible;">
+                                    <g style="transform-origin: center;">
+                                        <g style="transform-origin: 48px 40px; transform: rotate(-5deg) scaleY(0.5);">
+                                            <path d="M 48 40 C 35 15 30 -5 50 -10 C 65 5 62 25 48 40 Z"
+                                                fill="#27272b" />
+                                        </g>
+                                        <g fill="#0f0b17">
+                                            <path d="M 30 48 L 0 38 L 10 48 L 0 58 L 30 52 Z" />
+                                        </g>
+                                        <path d="M 28 46 C 28 32 45 28 65 34 C 76 38 80 48 74 58 C 65 68 38 65 28 46 Z"
+                                            fill="#1a1a1d" />
+                                        <circle cx="76" cy="35" r="12" fill="#1a1a1d" />
+                                        <circle cx="80" cy="33" r="3.2" fill="#110d18" />
+                                        <path d="M 85 30 C 105 34 112 40 108 44 C 98 46 86 42 85 38 Z" fill="#181322"
+                                            stroke="#322842" stroke-width="0.8" />
+                                        <g style="transform-origin: 52px 44px; transform: rotate(5deg) scaleY(0.5);">
+                                            <path d="M 52 44 C 38 15 32 -10 58 -14 C 78 5 72 28 52 44 Z" fill="#393940"
+                                                stroke="#7b68a3" stroke-width="0.7" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </span>
+                            <span><strong>Raven:</strong> The trusty all-rounder. Flies at a steady 80 km/h with an
+                                average 8% risk of crashing. Great for any distance!</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span style="display:inline-flex; width:56px; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 140 100" width="45" height="34" style="overflow:visible;">
+                                    <g style="transform-origin: center;">
+                                        <g style="transform-origin: 50px 40px; transform: rotate(-3deg) scaleY(0.5);">
+                                            <path d="M 50 40 C 35 15 30 -5 50 -10 C 70 5 65 25 50 40 Z"
+                                                fill="#784a28" />
+                                        </g>
+                                        <path d="M 28 48 C 15 44 5 38 0 44 C 10 52 20 54 28 50 Z" fill="#663c1f" />
+                                        <path d="M 28 46 C 28 25 45 25 65 30 C 80 34 85 45 78 55 C 65 70 38 65 28 46 Z"
+                                            fill="#a46838" />
+                                        <path d="M 45 42 C 50 35 60 30 70 32 C 80 34 83 45 78 52 C 70 60 55 58 45 42 Z"
+                                            fill="#f7ede2" />
+                                        <circle cx="72" cy="38" r="4" fill="#0b0914" />
+                                        <circle cx="68" cy="38" r="4" fill="#0b0914" />
+                                        <path d="M 80 40 C 85 42 88 44 85 46 Z" fill="#e2b868" />
+                                        <g style="transform-origin: 52px 42px; transform: rotate(-1deg) scaleY(0.5);">
+                                            <path d="M 52 42 C 38 15 32 -10 60 -10 C 80 5 72 28 52 42 Z"
+                                                fill="#8d562f" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </span>
+                            <span><strong>Owl:</strong> Master of the night. Very safe (5% crash risk) and gains speed
+                                boosts after dark, but is sluggish and sleepy during the day.</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span style="display:inline-flex; width:56px; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 210 100" width="56" height="26" style="overflow:visible;">
+                                    <g style="transform-origin: center;">
+                                        <g style="transform-origin: 52px 34px; transform: rotate(-5deg) scaleY(0.5);">
+                                            <path d="M 52 34 C 18 20 -15 15 -35 22 C -10 32 25 40 46 42 Z"
+                                                fill="#e2e8f0" />
+                                            <polygon points="-35,22 -28,27 -20,26" fill="#020617" />
+                                        </g>
+                                        <g style="transform-origin: 64px 34px; transform: rotate(5deg) scaleY(0.5);">
+                                            <path d="M 64 34 C 98 10 135 15 155 24 C 130 36 95 42 74 42 Z"
+                                                fill="#cbd5e1" />
+                                            <polygon points="155,24 148,29 140,28" fill="#020617" />
+                                        </g>
+                                        <path d="M 35 42 L 20 40 L 15 45 L 20 50 L 35 48 Z" fill="#ffffff"
+                                            stroke="#cbd5e1" stroke-width="0.8" />
+                                        <path d="M 30 40 C 30 30 48 26 72 32 C 85 36 88 44 80 50 C 65 56 30 52 30 40 Z"
+                                            fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" />
+                                        <circle cx="78" cy="34" r="9" fill="#ffffff" />
+                                        <circle cx="80" cy="32" r="2.4" fill="#0f172a" />
+                                        <path d="M 85 30 C 104 31 106 38 98 42 C 90 42 85 38 85 34 Z" fill="#fca5a5"
+                                            stroke="#f43f5e" stroke-width="0.8" />
+                                    </g>
+                                </svg>
+                            </span>
+                            <span><strong>Albatross:</strong> The ocean voyager. Extremely fast (up to 130 km/h) and
+                                safe for long global journeys, but highly prone to crashing on short local trips!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sender Section -->
+                <div
+                    style="background:var(--bg-accent); border:1px solid var(--glass-border); border-radius:16px; padding:18px;">
+                    <h4
+                        style="margin:0 0 12px 0; font-size:1.1rem; color:var(--brand-brown); display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-paper-plane"></i> 2. The Journey (Sender)
+                    </h4>
+
+                    <div
+                        style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-earth-americas"
+                                style="color:#4CAF50; margin-top:4px; font-size:1.1rem;"></i>
+                            <span><strong>Real-time Flight:</strong> Birds fly across the world based on actual
+                                geographic distance. Delivery takes hours or days.</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-cloud-bolt"
+                                style="color:#f44336; margin-top:4px; font-size:1.1rem;"></i>
+                            <span><strong>The Risk:</strong> Exhaustion or storms can cause a bird to crash before
+                                delivery, depending on its unique Risk Rate!</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-hands-holding-circle"
+                                style="color:#FF9800; margin-top:4px; font-size:1.1rem;"></i>
+                            <span><strong>Community Rescue:</strong> If a bird crashes, it falls to the World Map where
+                                two strangers can rescue it! Rescuers will see a 100-character snippet of your letter
+                                (35% degraded) to inspire them to help. (Check "Burn" to destroy it instead).</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Receiver Section -->
+                <div
+                    style="background:var(--bg-accent); border:1px solid var(--glass-border); border-radius:16px; padding:18px;">
+                    <h4
+                        style="margin:0 0 12px 0; font-size:1.1rem; color:var(--brand-brown); display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-envelope-open-text"></i> 3. The Delivery (Receiver)
+                    </h4>
+
+                    <div
+                        style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-regular fa-clock" style="color:#2196F3; margin-top:4px; font-size:1.1rem;"></i>
+                            <span><strong>Building Anticipation:</strong> Your match can track the incoming bird in
+                                real-time, but cannot read the letter until it safely lands.</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-check-double"
+                                style="color:#4CAF50; margin-top:4px; font-size:1.1rem;"></i>
+                            <span><strong>Flawless Flight:</strong> If the bird survives without crashing, the letter
+                                arrives in pristine condition.</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-droplet" style="color:#9C27B0; margin-top:4px; font-size:1.1rem;"></i>
+                            <span><strong>A Rescued Letter:</strong> If a crashed bird was rescued, it arrives
+                                beautifully damaged! 35% of words wash away into mysterious smudges like
+                                <em>[weather-stained]</em>.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Section -->
+                <div
+                    style="background:var(--bg-accent); border:1px solid var(--glass-border); border-radius:16px; padding:18px;">
+                    <h4
+                        style="margin:0 0 12px 0; font-size:1.1rem; color:var(--brand-brown); display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-compass"></i> 4. Navigating The Aviary
+                    </h4>
+
+                    <div
+                        style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-paper-plane" style="color:var(--text-main); margin-top:4px;"></i>
+                            <span><strong>Dispatch:</strong> Choose a bird, select a match, and send your letters across
+                                the world.</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-inbox" style="color:var(--text-main); margin-top:4px;"></i>
+                            <span><strong>My Perch:</strong> Track your outgoing flights and watch incoming birds slowly
+                                approach.</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-globe" style="color:var(--text-main); margin-top:4px;"></i>
+                            <span><strong>World Map:</strong> Explore the globe to find and rescue crashed birds
+                                belonging to other strangers!</span>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:flex-start;">
+                            <i class="fa-solid fa-book" style="color:var(--text-main); margin-top:4px;"></i>
+                            <span><strong>Collection:</strong> A beautiful archive of all the letters you've
+                                successfully sent and received.</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <button
                 onclick="document.getElementById('aviary-how-it-works-modal').style.opacity='0';setTimeout(()=>document.getElementById('aviary-how-it-works-modal').style.display='none',300)"
                 class="btn"
-                style="width:100%;background:var(--brand-brown);color:#fff;border:none;padding:12px;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;transition:background 0.3s;"
+                style="width:100%;background:var(--brand-brown);color:#fff;border:none;padding:12px;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;transition:background 0.3s; margin-top:0px;"
                 onmouseover="this.style.background='var(--brand-brown-hover)'"
                 onmouseout="this.style.background='var(--brand-brown)'">I'm Ready</button>
         </div>
@@ -2617,12 +2782,12 @@
                 <h4 style="margin:0 0 5px 0;color:var(--text-main);"><i class="fa-solid fa-globe"></i> World Map
                     (Unchecked)</h4>
                 <p style="margin:0;font-size:0.85rem;color:var(--text-muted);line-height:1.5;">Your crashed bird will
-                    appear on the public World Map. Any other user on Yatramore can discover it and tap
+                    appear on the public World Map. Any other user on YatrAmore can discover it and tap
                     <strong>"Rescue"</strong> to help it along. If enough kind strangers push your bird, it will
                     complete its journey and deliver your letter safely to your match!<br><br><strong>Note:</strong>
                     Surviving a crash is tough! About 35% of the words in your letter will be randomly destroyed and
                     replaced with atmospheric smudges like <em>[weather-stained]</em>. <strong>Rescuers will be able to
-                        see a short, 80-character snippet of this smudged letter</strong> on the map to give them a
+                        see a short, 100-character snippet of this smudged letter</strong> on the map to give them a
                     glimpse of the mysterious message they are saving!
                 </p>
             </div>

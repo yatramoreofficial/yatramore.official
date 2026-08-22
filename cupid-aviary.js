@@ -1108,6 +1108,11 @@
             L.tileLayer(tileUrl, {
                 attribution: 'Tiles &copy; Esri'
             }).addTo(aviaryLeafletMap);
+            window.addEventListener('resize', () => {
+                if (aviaryLeafletMap) {
+                    requestAnimationFrame(() => aviaryLeafletMap.invalidateSize());
+                }
+            });
 
             const homeControl = L.control({ position: 'topleft' });
             homeControl.onAdd = function (map) {
@@ -1434,7 +1439,7 @@
                     const safeName = escapeHtml(user.name || 'Unknown');
                     const opt = document.createElement('option');
                     opt.value = otherId;
-                    opt.textContent = `${safeName} (${escapeHtml(user.city || 'Unknown')})`;
+                    opt.textContent = `${safeName} (${escapeHtml(user.country || 'Unknown')})`;
                     select.appendChild(opt);
                 } catch (e) { console.warn("Non-critical error:", e); }
             }

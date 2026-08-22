@@ -322,4 +322,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.95</priority>
   </url>
+  <!-- YatrAmore Cupid Matchmaking -->
+  <url>
+    <loc>https://yatramore.com/cupid</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.00</priority>
+  </url>
+  <!-- The Aviary - Long Distance Letter Delivery -->
+  <url>
+    <loc>https://yatramore.com/cupid#aviary</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>

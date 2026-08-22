@@ -168,7 +168,7 @@ function initializeYatrAmore() {
                     try {
                         const { quota } = await navigator.storage.estimate();
                         if (quota > 0 && quota < 800000000) signals.push('B');
-                    } catch (e) { }
+                    } catch (e) { console.warn("Non-critical error:", e); }
                 }
 
                 if ('caches' in window) {

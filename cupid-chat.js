@@ -434,7 +434,7 @@ function setupChatUIListeners() {
         const content = document.getElementById('chat-profile-modal-content');
         if (!modal || !content) return;
         const p = currentChatOtherUser;
-        const avatarUrl = (p.photos && p.photos.length > 0) ? pb.files.getUrl(p, p.photos[0]) : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&size=400`;
+        const avatarUrl = (p.photos && p.photos.length > 0) ? pb.files.getUrl(p, p.photos[0], {'thumb': '1024x1024f'}) : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&size=400`;
         const safeName = window.escapeHtml ? window.escapeHtml(p.name) : p.name;
         let hobbiesHTML = '';
         if (p.hobbies && Array.isArray(p.hobbies) && p.hobbies.length > 0) {
@@ -630,7 +630,7 @@ async function listenForMatches() {
                 try {
                     const otherUser = await pb.collection('users').getOne(e.record.user1);
                     const otherUserAvatar = (otherUser.photos && otherUser.photos.length > 0)
-                        ? pb.files.getUrl(otherUser, otherUser.photos[0])
+                        ? pb.files.getUrl(otherUser, otherUser.photos[0], {'thumb': '1024x1024f'})
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name)}&background=random`;
                     if (typeof window.showToast === 'function') {
                         setTimeout(() => {
@@ -737,7 +737,7 @@ async function fetchAndRenderMatches() {
         let switcherHtml = '';
         let sidebarHtml = '<h3 style="margin-bottom: 15px;">Matches</h3><div class="sidebar-matches-container">';
         for (const { match, otherUser, msg, previewText, timeStr, isUnread } of matchDataList) {
-            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0]) : `https://ui-avatars.com/api/?name=${otherUser.name}&background=random`;
+            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], {'thumb': '1024x1024f'}) : `https://ui-avatars.com/api/?name=${otherUser.name}&background=random`;
             const safeOtherUserJson = JSON.stringify(otherUser).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const verifiedBadgeSmall = otherUser.is_verified ? `<span style="display: inline-flex; position: relative; width: 12px; height: 12px; align-items: center; justify-content: center; transform: translateY(-4px); margin-left: 2px;" title="Verified Profile"><i class="fa-solid fa-certificate" style="color: #1DA1F2; font-size: 12px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i><i class="fa-solid fa-check" style="color: #fff; font-size: 12px; position: absolute; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.55);"></i></span>` : '';
             chatsHtml += `
@@ -820,7 +820,7 @@ async function fetchAndRenderMatches() {
                     try {
                         const oUser = JSON.parse(oUserRaw);
                         window.triggerUnmatchModal(mId, oUser);
-                    } catch (e) { }
+                    } catch (e) { console.warn("Non-critical error:", e); }
                 }
             };
             el.addEventListener('mousedown', startPress);
@@ -1022,9 +1022,9 @@ window.openPocketBaseChat = async function (matchId, otherUser, isRestore = fals
         if (document.getElementById('unblock-user-btn')) document.getElementById('unblock-user-btn').style.display = 'none';
     }
     await loadChatHistory(matchId);
-    // Aviary: Render in-chat bird perch widget for active flights
+
     if (window.renderChatBirdPerch && otherUser && otherUser.id) {
-        try { window.renderChatBirdPerch(otherUser.id); } catch (e) { }
+        try { window.renderChatBirdPerch(otherUser.id); } catch (e) { console.warn("Non-critical error:", e); }
     }
 }
 async function loadChatHistory(matchId) {
@@ -1287,7 +1287,7 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
             const safeReplyText = window.escapeHtml ? window.escapeHtml(msg.reply_to_text) : msg.reply_to_text.replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[m]; });
             const safeReplySender = window.escapeHtml ? window.escapeHtml(msg.reply_to_sender || '') : (msg.reply_to_sender || '').replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[m]; });
             const truncatedReply = safeReplyText.length > 100 ? safeReplyText.substring(0, 100) + '…' : safeReplyText;
-            replyQuoteHtml = `<div class="reply-quote" data-reply-id="${safeReplyId}" style="background: rgba(0,0,0,0.08); border-left: 3px solid var(--brand-brown); border-radius: 6px; padding: 6px 10px; margin-bottom: 6px; cursor: pointer; font-size: 0.82rem; max-width: 100%;" onclick="const el=document.querySelector('[data-msg-id=&quot;${safeReplyId}&quot;]'); if(el){el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.background='rgba(107,66,38,0.15)'; setTimeout(()=>el.style.background='',1500);}">
+            replyQuoteHtml = `<div class="reply-quote" data-reply-id="${safeReplyId}" style="background: rgba(0,0,0,0.08); border-left: 3px solid var(--brand-brown); border-radius: 6px; padding: 6px 10px; margin-bottom: 6px; cursor: pointer; font-size: 0.82rem; max-width: 100%;" onclick="const rid=this.getAttribute('data-reply-id'); const el=document.querySelector('[data-msg-id=&quot;'+rid+'&quot;]'); if(el){el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.background='rgba(107,66,38,0.15)'; setTimeout(()=>el.style.background='',1500);}">
                 <div style="font-weight: 600; color: var(--brand-brown); font-size: 0.78rem; margin-bottom: 2px;">${safeReplySender}</div>
                 <div style="color: var(--text-muted); opacity: 0.85;">${truncatedReply}</div>
             </div>`;
@@ -1315,7 +1315,7 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
         try {
             const targetLang = currentUser.preferredLanguage || 'en';
             let chatTranslationCache = {};
-            try { chatTranslationCache = JSON.parse(localStorage.getItem('chatTranslationCache') || '{}'); } catch(e) {}
+            try { chatTranslationCache = JSON.parse(localStorage.getItem('chatTranslationCache') || '{}'); } catch(e) { console.warn("Non-critical error:", e); }
             const cacheKey = msg.id + '_' + targetLang;
             let translatedText = '';
             if (chatTranslationCache[cacheKey] && chatTranslationCache[cacheKey].original === msg.text) {

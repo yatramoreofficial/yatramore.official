@@ -1,6 +1,6 @@
 const pb = new PocketBase('https://api.yatramore.com');
-window.debugLog = window.debugLog || function() {};
-window.secureYatramoreLogout = function() {
+window.debugLog = window.debugLog || function () { };
+window.secureYatramoreLogout = function () {
     const killList = [
         'activeChatMatchId',
         'activeChatOtherUser',
@@ -47,7 +47,7 @@ window.showMatchPopup = function (otherUserName, otherUserAvatar) {
     subtext.textContent = `You and ${otherUserName} have liked each other.`;
     const avatars = document.createElement('div');
     avatars.style.cssText = 'display: flex; gap: 20px; justify-content: center; margin-bottom: 40px; align-items: center;';
-    const myAvatarUrl = (currentUser.photos && currentUser.photos.length > 0) ? pb.files.getUrl(currentUser, currentUser.photos[0]) : `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=random`;
+    const myAvatarUrl = (currentUser.photos && currentUser.photos.length > 0) ? pb.files.getUrl(currentUser, currentUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=random`;
     const avatar1 = document.createElement('img');
     avatar1.src = myAvatarUrl;
     avatar1.style.cssText = 'width: 120px; height: 120px; border-radius: 50%; border: 4px solid #fff; object-fit: cover; box-shadow: 0 10px 20px rgba(0,0,0,0.3);';
@@ -86,13 +86,13 @@ if (pb.authStore.isValid) {
 }
 function calculateAge(birthdate) {
     if (!birthdate) return '';
-    const dob = new Date(birthdate);
+    const dob = new Date(String(birthdate).replace(' ', 'T'));
     if (isNaN(dob.getTime())) return '';
     const diff_ms = Date.now() - dob.getTime();
     const age_dt = new Date(diff_ms);
     return Math.abs(age_dt.getUTCFullYear() - 1970);
 }
-window.calculateAge = calculateAge; 
+window.calculateAge = calculateAge;
 async function compressToWebP(file, maxKB = 500) {
     if (!file.type.startsWith('image/')) return file;
     return new Promise((resolve, reject) => {
@@ -155,7 +155,7 @@ pb.authStore.onChange((token, model) => {
             let diffDays = 0;
             if (currentUser.verification_locked_until) {
                 const dateStr = currentUser.verification_locked_until.replace(' ', 'T');
-                const lockDate = new Date(dateStr);
+                const lockDate = new Date(String(dateStr).replace(' ', 'T'));
                 const now = new Date();
                 if (lockDate > now) {
                     isLocked = true;
@@ -241,7 +241,7 @@ pb.authStore.onChange((token, model) => {
                     fabContainer.style.left = '20px';
                 }
             }, 100);
-            return; 
+            return;
         }
         if (currentUser.DeletionRequested === true) {
             const gateRequested = document.getElementById('gate-deletion-requested');
@@ -292,7 +292,7 @@ pb.authStore.onChange((token, model) => {
             } catch (err) {
                 console.error("Realtime subscription failed:", err);
             }
-            return; 
+            return;
         }
         let isAccountLocked = false;
         let lockTitle = '';
@@ -304,15 +304,15 @@ pb.authStore.onChange((token, model) => {
             lockTitle = 'Account Suspended';
             lockMessage = 'Your account has been permanently banned for violating our community guidelines. If you believe this is a mistake, please contact support.';
             lockIconClass = 'fa-solid fa-ban';
-            lockIconColor = '#ff4757'; 
+            lockIconColor = '#ff4757';
         } else if (currentUser.suspendedUntil) {
-            const suspendDate = new Date(currentUser.suspendedUntil);
+            const suspendDate = new Date(String(currentUser.suspendedUntil).replace(' ', 'T'));
             if (suspendDate > new Date()) {
                 isAccountLocked = true;
                 lockTitle = 'Account Temporarily Suspended';
                 lockMessage = `Your account is suspended until ${suspendDate.toLocaleDateString()}. Please contact support if you have questions.`;
                 lockIconClass = 'fa-solid fa-user-lock';
-                lockIconColor = '#f39c12'; 
+                lockIconColor = '#f39c12';
             }
         }
         if (isAccountLocked) {
@@ -333,7 +333,7 @@ pb.authStore.onChange((token, model) => {
                     const contactBtn = document.createElement('a');
                     contactBtn.id = 'ban-contact-btn';
                     contactBtn.href = 'mailto:contact@yatramore.com';
-                    contactBtn.className = 'btn logout-btn'; 
+                    contactBtn.className = 'btn logout-btn';
                     contactBtn.style.textDecoration = 'none';
                     contactBtn.innerHTML = '<i class="fa-solid fa-envelope"></i> contact@yatramore.com';
                     actionsContainer.appendChild(contactBtn);
@@ -352,7 +352,7 @@ pb.authStore.onChange((token, model) => {
                     fabContainer.style.left = '20px';
                 }
             }, 100);
-            return; 
+            return;
         }
         let missingFields = [];
         if (!currentUser.name) missingFields.push('Name');
@@ -369,7 +369,7 @@ pb.authStore.onChange((token, model) => {
                 }, 1000);
             }
             setTimeout(() => {
-                window.canCloseEditModal = false; 
+                window.canCloseEditModal = false;
                 if (window.openEditProfileModal) window.openEditProfileModal();
                 const editModal = document.getElementById('edit-modal');
                 if (editModal) {
@@ -450,14 +450,14 @@ pb.authStore.onChange((token, model) => {
                         return;
                     }
                     if (e.record.suspendedUntil && e.record.suspendedUntil !== currentUser.suspendedUntil) {
-                        const suspendDate = new Date(e.record.suspendedUntil);
+                        const suspendDate = new Date(String(e.record.suspendedUntil).replace(' ', 'T'));
                         if (suspendDate > new Date()) {
                             window.location.reload();
                             return;
                         }
                     }
                     if (e.record.is_verified === true && currentUser.is_verified === false) {
-                        currentUser.is_verified = true; 
+                        currentUser.is_verified = true;
                         if (window.showToast) {
                             window.showToast("<strong>Congratulations! You're Verified.</strong><br><span style='font-size:0.85em; opacity:0.85;'>Enjoy your exclusive Verified Profile Perks.</span>", true, true);
                         }
@@ -470,7 +470,7 @@ pb.authStore.onChange((token, model) => {
                     }
                     if (e.record.verification_status === "rejected" && currentUser.verification_status !== "rejected") {
                         currentUser.verification_status = "rejected";
-                        currentUser.verification_locked_until = e.record.verification_locked_until; 
+                        currentUser.verification_locked_until = e.record.verification_locked_until;
                         if (window.showToast) {
                             window.showToast("<strong>Verification Rejected</strong><br><span style='font-size:0.85em; opacity:0.85;'>Your request was denied. You cannot apply again for 14 days.</span>", false);
                         }
@@ -482,7 +482,7 @@ pb.authStore.onChange((token, model) => {
                         }
                     }
                     if (e.record.is_premium === true && currentUser.is_premium === false) {
-                        currentUser.is_premium = true; 
+                        currentUser.is_premium = true;
                         if (window.showToast) {
                             window.showToast("<strong>Welcome to the Premium Club!</strong><br><span style='font-size:0.85em; opacity:0.85;'>Enjoy your exclusive Premium Profile Perks.</span>", true);
                         }
@@ -499,7 +499,7 @@ pb.authStore.onChange((token, model) => {
                 if (!card) return;
                 let isOnline = false;
                 if (e.record.last_active && !e.record.ghost_status) {
-                    const diffMs = Date.now() - new Date(e.record.last_active).getTime();
+                    const diffMs = Date.now() - new Date(String(e.record.last_active).replace(' ', 'T')).getTime();
                     isOnline = diffMs < 5 * 60 * 1000;
                 }
                 const imageArea = card.querySelector('.tinder-card-image') || card;
@@ -527,9 +527,9 @@ pb.authStore.onChange((token, model) => {
             if (window.pb && window.pb.realtime) {
                 window.pb.realtime.unsubscribe();
             }
-        } catch(e) {}
+        } catch (e) { console.warn("Non-critical error:", e); }
     }
-}, true); 
+}, true);
 window.generateAuthCaptcha = () => {
 };
 function setupAuthUIListeners() {
@@ -815,7 +815,7 @@ async function handleSwipeAction(targetUserId, liked, isSuperLike = false) {
                     user2: targetUserId
                 }, { requestKey: null });
                 const otherUser = await pb.collection('users').getOne(targetUserId);
-                const otherUserAvatar = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0]) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name)}&background=random`;
+                const otherUserAvatar = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name)}&background=random`;
                 window.showMatchPopup(window.escapeHtml(otherUser.name), otherUserAvatar);
             } catch (err) {
                 window.debugLog("No mutual match yet.");
@@ -833,7 +833,7 @@ async function handleSwipeAction(targetUserId, liked, isSuperLike = false) {
             window.cupidRemainingTotal++;
         }
         if (err.status === 400) {
-            window.cupidRemainingSwipes = 0; 
+            window.cupidRemainingSwipes = 0;
             const modal = document.getElementById('swipe-limit-modal');
             if (modal) modal.style.display = 'flex';
         }
@@ -910,9 +910,9 @@ async function loadSwipingProfiles() {
         const swipedIds = mySwipes.map(s => s.swiped_on);
         const startOfDay = new Date();
         startOfDay.setUTCHours(0, 0, 0, 0);
-        const todaysNormalSwipes = mySwipes.filter(s => new Date(s.created).getTime() >= startOfDay.getTime() && s.action === 'like');
-        const todaysSuperLikes = mySwipes.filter(s => new Date(s.created).getTime() >= startOfDay.getTime() && s.action === 'super_like');
-        const todaysTotalSwipes = mySwipes.filter(s => new Date(s.created).getTime() >= startOfDay.getTime());
+        const todaysNormalSwipes = mySwipes.filter(s => new Date(String(s.created).replace(' ', 'T')).getTime() >= startOfDay.getTime() && s.action === 'like');
+        const todaysSuperLikes = mySwipes.filter(s => new Date(String(s.created).replace(' ', 'T')).getTime() >= startOfDay.getTime() && s.action === 'super_like');
+        const todaysTotalSwipes = mySwipes.filter(s => new Date(String(s.created).replace(' ', 'T')).getTime() >= startOfDay.getTime());
         const isVerified = currentUser.is_verified;
         const isPremium = currentUser.is_premium;
         const customSwipe = currentUser.custom_swipe_limit;
@@ -920,7 +920,7 @@ async function loadSwipingProfiles() {
         if (customSwipe && customSwipe > 0) {
             swipeLimit = customSwipe;
         } else if (isPremium) {
-            swipeLimit = 30; 
+            swipeLimit = 30;
         }
         window.cupidRemainingSwipes = swipeLimit - todaysNormalSwipes.length;
         const customSuper = currentUser.custom_superlike_limit;
@@ -928,7 +928,7 @@ async function loadSwipingProfiles() {
         if (customSuper && customSuper > 0) {
             superLikeLimit = customSuper;
         } else if (isPremium) {
-            superLikeLimit = 15; 
+            superLikeLimit = 15;
         }
         window.cupidRemainingSuperLikes = superLikeLimit - todaysSuperLikes.length;
         const customTotal = currentUser.custom_total_limit;
@@ -983,7 +983,7 @@ async function loadSwipingProfiles() {
             filterStr += ` && religion = "${sanitize(religionFilter)}"`;
         }
         if (countryFilter && countryFilter !== 'All' && countryFilter !== 'Any' && countryFilter !== 'Any Country') {
-            filterStr += ` && location = "${sanitize(countryFilter)}"`;
+            filterStr += ` && country = "${sanitize(countryFilter)}"`;
         }
         const today = new Date();
         if (ageMin > 18) {
@@ -1026,7 +1026,7 @@ async function loadSwipingProfiles() {
         } catch (e) {
             console.error("Failed to fetch super likers:", e);
         }
-        tinderContainer.innerHTML = ''; 
+        tinderContainer.innerHTML = '';
         if (profilesList.items.length === 0) {
             checkIfEmpty();
             return;
@@ -1049,7 +1049,7 @@ async function loadSwipingProfiles() {
 window.generateTinderCardHTML = function (p, isModal = false) {
     let photoUrls = [];
     if (p.photos && p.photos.length > 0) {
-        photoUrls = p.photos.map(photoId => pb.files.getUrl(p, photoId));
+        photoUrls = p.photos.map(photoId => pb.files.getUrl(p, photoId, { 'thumb': '1024x1024f' }));
     } else {
         photoUrls = [`https://ui-avatars.com/api/?name=${encodeURIComponent(p.name || 'Unknown')}&background=random`];
     }
@@ -1067,7 +1067,7 @@ window.generateTinderCardHTML = function (p, isModal = false) {
             `</div>`;
     }
     const safeName = window.escapeHtml((p.name || 'Anonymous').trim());
-    const safeLocation = window.escapeHtml(p.location || 'Unknown');
+    const safeLocation = window.escapeHtml(p.country || 'Unknown');
     const safeReligion = window.escapeHtml(p.religion || '');
     let displayGender = 'N/A';
     if (p.gender === 'Male') displayGender = 'M';
@@ -1081,10 +1081,10 @@ window.generateTinderCardHTML = function (p, isModal = false) {
     let ageText = window.calculateAge ? window.calculateAge(p.birthDate || p.birthdate) : '';
     let onlineHTML = '';
     if (p.last_active && !p.ghost_status) {
-        const lastActiveTime = new Date(p.last_active).getTime();
+        const lastActiveTime = new Date(String(p.last_active).replace(' ', 'T')).getTime();
         const now = new Date().getTime();
         const diffMinutes = (now - lastActiveTime) / (1000 * 60);
-        if (diffMinutes < 5) { 
+        if (diffMinutes < 5) {
             onlineHTML = '<div style="position: absolute; top: 12px; left: 12px; display: flex; align-items: center; gap: 6px; z-index: 20; background: rgba(0,0,0,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 5px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);"><div class="online-dot-image" title="Online Now" style="position: static; margin:0;"></div><span style="font-size: 0.75rem; font-weight: 500; color: #44e88b; letter-spacing: 0.3px;">Online</span></div>';
         }
     }
@@ -1122,17 +1122,17 @@ window.generateTinderCardHTML = function (p, isModal = false) {
     `;
 }
 window.pb = pb;
-window.loadSwipingProfiles = loadSwipingProfiles; 
+window.loadSwipingProfiles = loadSwipingProfiles;
 window.resendVerificationEmail = async function () {
     if (!currentUser) return;
-    const btn = document.getElementById('btn-resend-verification'); 
+    const btn = document.getElementById('btn-resend-verification');
     const lastSent = localStorage.getItem('lastVerificationSent');
     if (lastSent && Date.now() - parseInt(lastSent) < 1200000) {
         const remainingMinutes = Math.ceil((1200000 - (Date.now() - parseInt(lastSent))) / 60000);
         window.showToast(`Please wait ${remainingMinutes} minutes before requesting another verification email.`, false);
         return;
     }
-    
+
     if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
     try {
         await pb.collection('users').requestVerification(currentUser.email);
@@ -1246,7 +1246,7 @@ window.openVerificationModal = function () {
     if (!currentUser) return;
     if (currentUser.verification_locked_until) {
         const dateStr = currentUser.verification_locked_until.replace(' ', 'T');
-        const lockDate = new Date(dateStr);
+        const lockDate = new Date(String(dateStr).replace(' ', 'T'));
         const now = new Date();
         if (lockDate > now) {
             const diffTime = Math.abs(lockDate - now);
@@ -1270,7 +1270,7 @@ let selectedHobbies = [];
 window.openEditProfileModal = async function (isExplicitlyEditing = false) {
     if (!currentUser) return;
     if (currentUser.is_profile_completed && currentUser.last_profile_edit) {
-        const lastEditDate = new Date(currentUser.last_profile_edit.replace(' ', 'T'));
+        const lastEditDate = new Date(String(currentUser.last_profile_edit).replace(' ', 'T'));
         const now = new Date();
         const hoursPassed = (now.getTime() - lastEditDate.getTime()) / (1000 * 60 * 60);
         if (hoursPassed < 72) {
@@ -1340,7 +1340,7 @@ window.openEditProfileModal = async function (isExplicitlyEditing = false) {
         const preview = document.getElementById(`preview-${i}`);
         const icon = document.querySelector(`#profile-photo-${i}`).parentElement.querySelector('.fa-plus');
         if (currentUser.photos && currentUser.photos.length >= i) {
-            preview.src = pb.files.getUrl(currentUser, currentUser.photos[i - 1]);
+            preview.src = pb.files.getUrl(currentUser, currentUser.photos[i - 1], { 'thumb': '1024x1024f' });
             preview.style.display = 'block';
             if (icon) icon.style.display = 'none';
         } else {
@@ -1439,7 +1439,7 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
         await pb.collection('users').update(currentUser.id, formData, { requestKey: null });
         await pb.collection('users').authRefresh();
         window.showToast("Profile saved successfully!", true);
-        selectedFiles = {}; 
+        selectedFiles = {};
         window.location.reload();
     } catch (err) {
         console.error("Error saving profile:", err, err.data, err.originalError);
@@ -1450,8 +1450,8 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
     }
 });
 let cropperInstance = null;
-let currentCropTarget = null; 
-let selectedFiles = {}; 
+let currentCropTarget = null;
+let selectedFiles = {};
 function openCropModal(imageUrl, targetContext) {
     const cropModal = document.getElementById('cropper-modal');
     const image = document.getElementById('cropper-image');
@@ -1462,13 +1462,34 @@ function openCropModal(imageUrl, targetContext) {
     if (cropperInstance) cropperInstance.destroy();
     setTimeout(() => {
         cropperInstance = new Cropper(image, {
-            aspectRatio: targetContext.type === 'verify' && targetContext.previewId === 'verify-preview-id' ? NaN : 3 / 4, 
+            aspectRatio: targetContext.type === 'verify' && targetContext.previewId === 'verify-preview-id' ? NaN : 3 / 4,
             viewMode: 1,
             autoCropArea: 1,
         });
     }, 50);
 }
+let nsfwModel = null;
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    if (window.nsfwjs) {
+        nsfwjs.load('/nsfw_model/').then(model => {
+            nsfwModel = model;
+            console.log("NSFWJS model loaded successfully.");
+        }).catch(err => {
+            console.error("Failed to load NSFWJS model:", err);
+        });
+    } else {
+
+        const checkInterval = setInterval(() => {
+            if (window.nsfwjs) {
+                clearInterval(checkInterval);
+                nsfwjs.load('/nsfw_model/').then(model => { nsfwModel = model; });
+            }
+        }, 500);
+        setTimeout(() => clearInterval(checkInterval), 10000);
+    }
+
     for (let i = 1; i <= 4; i++) {
         const input = document.getElementById(`profile-photo-${i}`);
         if (input) {
@@ -1479,7 +1500,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         openCropModal(ev.target.result, { type: 'profile', index: i, fileInput: input });
                     };
                     reader.readAsDataURL(e.target.files[0]);
-                    e.target.value = ''; 
+                    e.target.value = '';
                 }
             });
         }
@@ -1497,10 +1518,41 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
             if (!cropperInstance || !currentCropTarget) return;
+
+            const originalSaveText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...';
+            saveBtn.disabled = true;
+
             cropperInstance.getCroppedCanvas({
                 maxWidth: 1024,
                 maxHeight: 1024
-            }).toBlob((blob) => {
+            }).toBlob(async (blob) => {
+                saveBtn.innerHTML = originalSaveText;
+                saveBtn.disabled = false;
+
+                if (nsfwModel && (currentCropTarget.type === 'profile' || currentCropTarget.type === 'verify')) {
+                    try {
+                        const imgEl = document.createElement('img');
+                        imgEl.src = URL.createObjectURL(blob);
+                        await new Promise((resolve) => { imgEl.onload = resolve; });
+
+                        const predictions = await nsfwModel.classify(imgEl);
+                        const isPorn = predictions.find(p => p.className === 'Porn' && p.probability > 0.8);
+                        const isHentai = predictions.find(p => p.className === 'Hentai' && p.probability > 0.8);
+
+                        if (isPorn || isHentai) {
+                            if (window.showToast) window.showToast("Upload blocked: Inappropriate content detected.", false);
+                            cropModal.style.display = 'none';
+                            cropperInstance.destroy();
+                            cropperInstance = null;
+                            currentCropTarget = null;
+                            return;
+                        }
+                    } catch (e) {
+                        console.error("NSFW scan failed, proceeding normally:", e);
+                    }
+                }
+
                 const file = new File([blob], 'cropped.webp', { type: 'image/webp' });
                 if (currentCropTarget.type === 'profile') {
                     const index = currentCropTarget.index;
@@ -1547,7 +1599,7 @@ window.attachTranslationToMessage = function (messageBubbleEl, originalText) {
         popup.innerHTML = `<i class="fa-solid fa-language"></i> Translate`;
         popup.style.top = (event.center.y - 40) + 'px';
         popup.style.left = (event.center.x - 20) + 'px';
-        popup.style.position = 'fixed'; 
+        popup.style.position = 'fixed';
         document.body.appendChild(popup);
         const removePopup = () => {
             popup.remove();
@@ -1748,7 +1800,7 @@ document.getElementById('report-form')?.addEventListener('submit', async (e) => 
                     localStorage.setItem('chatPanelState', 'closed');
                     document.body.style.overflow = '';
                 }
-                window.loadSwipingProfiles(); 
+                window.loadSwipingProfiles();
             }
         }
         showToast("Report submitted successfully", true);
@@ -1843,7 +1895,7 @@ window.openBlockedUsersModal = async function () {
         }
         let html = '';
         blockedUsers.forEach(u => {
-            const avatarUrl = (u.photos && u.photos.length > 0) ? pb.files.getUrl(u, u.photos[0]) : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`;
+            const avatarUrl = (u.photos && u.photos.length > 0) ? pb.files.getUrl(u, u.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`;
             html += `
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--glass-border);">
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -1894,14 +1946,14 @@ document.addEventListener('DOMContentLoaded', () => {
             await pb.collection('users').update(currentUser.id, { blocked_users: newBlockedList });
             currentUser.blocked_users = newBlockedList;
             showToast("User unblocked", true);
-            if (typeof window.openBlockedUsersModal === 'function') window.openBlockedUsersModal(); 
+            if (typeof window.openBlockedUsersModal === 'function') window.openBlockedUsersModal();
             if (typeof window.fetchAndRenderMatches === 'function') {
                 window.fetchAndRenderMatches();
             } else {
                 const event = new Event('matchesUpdated');
                 document.dispatchEvent(event);
             }
-            if (typeof window.loadSwipingProfiles === 'function') window.loadSwipingProfiles(); 
+            if (typeof window.loadSwipingProfiles === 'function') window.loadSwipingProfiles();
             if (typeof window.openPocketBaseChat === 'function' && window.currentChatOtherUser && window.currentChatOtherUser.id === userIdToUnblock) {
                 window.openPocketBaseChat(window.currentChatMatchId, window.currentChatOtherUser, true);
             }
@@ -1926,7 +1978,7 @@ function adjustAuthControlsPosition() {
         }
     } else {
         const authControls = document.querySelector('.auth-controls-container');
-        if (authControls) authControls.style.top = ''; 
+        if (authControls) authControls.style.top = '';
     }
 }
 document.addEventListener('DOMContentLoaded', () => {
@@ -2014,8 +2066,8 @@ window.openPremiumModal = () => {
             if (title) title.textContent = 'Premium Member';
             if (desc) desc.textContent = 'As a Premium member, you are actively enjoying these exclusive VIP features:';
             if (headerIcon) {
-                const avatarUrl = (window.pb.authStore.model.photos && window.pb.authStore.model.photos.length > 0) 
-                    ? window.pb.files.getUrl(window.pb.authStore.model, window.pb.authStore.model.photos[0]) 
+                const avatarUrl = (window.pb.authStore.model.photos && window.pb.authStore.model.photos.length > 0)
+                    ? window.pb.files.getUrl(window.pb.authStore.model, window.pb.authStore.model.photos[0], { 'thumb': '1024x1024f' })
                     : `https://ui-avatars.com/api/?name=${encodeURIComponent(window.pb.authStore.model.name)}&background=random`;
                 headerIcon.innerHTML = `
                     <div style="position: relative; width: 100%; height: 100%; border-radius: 50%;">
@@ -2064,7 +2116,7 @@ window.closePremiumModal = () => {
     modal.classList.remove('active');
     setTimeout(() => {
         modal.style.display = 'none';
-    }, 300); 
+    }, 300);
 };
 document.addEventListener('DOMContentLoaded', () => {
     const pModal = document.getElementById('premium-perks-modal');
@@ -2081,7 +2133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (autocompleteContainer && typeof autocomplete !== 'undefined') {
         const geocoder = new autocomplete.GeocoderAutocomplete(
             autocompleteContainer,
-            '7030f92f56f347b6b962987f7aeee229', 
+            '7030f92f56f347b6b962987f7aeee229',
             {
                 type: 'city',
                 lang: 'en'

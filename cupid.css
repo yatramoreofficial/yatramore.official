@@ -409,12 +409,16 @@ body.cupid-page.match-grid-active {
         font-size: 1.2rem !important;
     }
 
-    body.is-logged-in .accessibility-container .accessibility-menu,
-    body.is-logged-in .accessibility-container .share-menu {
+    body.is-logged-in .accessibility-container .accessibility-menu {
         top: 55px !important;
         bottom: auto !important;
         left: 0 !important;
         transform-origin: top left !important;
+    }
+
+    body.is-logged-in .accessibility-container .share-fab,
+    body.is-logged-in .accessibility-container #accessibility-fab {
+        display: none !important;
     }
 
     .auth-controls-container button {
@@ -606,15 +610,23 @@ body.cupid-page.match-grid-active {
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .reply-quote {
     transition: background 0.15s ease;
 }
+
 .reply-quote:active {
-    background: rgba(0,0,0,0.15) !important;
+    background: rgba(0, 0, 0, 0.15) !important;
 }
 
 .chat-message {
@@ -1027,6 +1039,11 @@ body.keyboard-open .chat-input-area {
     align-items: flex-start;
 }
 
+.chat-message-wrapper.is-sent + .chat-message-wrapper.is-received,
+.chat-message-wrapper.is-received + .chat-message-wrapper.is-sent {
+    margin-top: 8px;
+}
+
 
 .chat-bubble {
     width: fit-content;
@@ -1075,7 +1092,7 @@ body.keyboard-open .chat-input-area {
 }
 
 [data-theme="dark"] .is-sent .chat-bubble.theme-basic {
-    color: var(--bg-main); 
+    color: var(--bg-main);
 }
 
 .is-sent .chat-bubble.theme-basic .chat-meta {
@@ -1127,7 +1144,7 @@ body.keyboard-open .chat-input-area {
     box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -2px 6px rgba(0, 0, 0, 0.2), 0 5px 20px rgba(212, 175, 55, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #1a1a1a;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 [data-theme="dark"] .is-sent .chat-bubble.theme-premium {
@@ -1928,25 +1945,31 @@ body.show-footer-override .chat-panel {
     font-size: 1rem !important;
     box-sizing: border-box !important;
 }
+
 .geoapify-autocomplete-input:focus {
     outline: none !important;
     border-color: var(--accent-main) !important;
 }
+
 .geoapify-autocomplete-items {
     background-color: var(--bg-main) !important;
     border: 1px solid var(--glass-border) !important;
     border-radius: 8px !important;
     margin-top: 5px !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
+
 .geoapify-autocomplete-item {
     color: var(--text-main) !important;
     padding: 10px !important;
 }
+
 .geoapify-autocomplete-item .secondary-part {
     color: var(--text-muted) !important;
 }
-.geoapify-autocomplete-item:hover, .geoapify-autocomplete-item.active {
+
+.geoapify-autocomplete-item:hover,
+.geoapify-autocomplete-item.active {
     background-color: rgba(218, 165, 32, 0.1) !important;
     cursor: pointer !important;
 }
@@ -1968,15 +1991,17 @@ body.show-footer-override .chat-panel {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     border: 1px solid var(--glass-border);
     opacity: 0;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s, width 0.4s cubic-bezier(0.25, 1, 0.5, 1), max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     overflow: hidden;
 }
 
 .aviary-backdrop {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(255, 255, 255, 0.2);
     z-index: 9999;
     backdrop-filter: blur(4px);
@@ -1984,6 +2009,7 @@ body.show-footer-override .chat-panel {
     opacity: 0;
     transition: opacity 0.3s;
 }
+
 [data-theme="dark"] .aviary-backdrop {
     background: rgba(0, 0, 0, 0.6);
 }
@@ -1991,8 +2017,10 @@ body.show-footer-override .chat-panel {
 .aviary-modal-overlay {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(255, 255, 255, 0.4);
     z-index: 10000;
     backdrop-filter: blur(6px);
@@ -2002,6 +2030,7 @@ body.show-footer-override .chat-panel {
     opacity: 0;
     transition: opacity 0.2s;
 }
+
 [data-theme="dark"] .aviary-modal-overlay {
     background: rgba(0, 0, 0, 0.7);
 }
@@ -2009,6 +2038,7 @@ body.show-footer-override .chat-panel {
 .aviary-details-anim-bg {
     background: radial-gradient(circle at 50% 50%, rgba(107, 66, 38, 0.1) 0%, transparent 70%);
 }
+
 [data-theme="dark"] .aviary-details-anim-bg {
     background: radial-gradient(circle at 50% 50%, #1c212e 0%, transparent 70%);
 }
@@ -2132,11 +2162,30 @@ body.show-footer-override .chat-panel {
     flex-shrink: 0;
 }
 
-.aviary-status-flying { background: rgba(76, 175, 80, 0.12); color: #4caf50; }
-.aviary-status-delivered { background: rgba(33, 150, 243, 0.12); color: #2196f3; }
-.aviary-status-crashed { background: rgba(244, 67, 54, 0.12); color: #f44336; }
-.aviary-status-rescued { background: rgba(255, 152, 0, 0.12); color: #ff9800; }
-.aviary-status-degraded { background: rgba(158, 158, 158, 0.12); color: #9e9e9e; }
+.aviary-status-flying {
+    background: rgba(76, 175, 80, 0.12);
+    color: #4caf50;
+}
+
+.aviary-status-delivered {
+    background: rgba(33, 150, 243, 0.12);
+    color: #2196f3;
+}
+
+.aviary-status-crashed {
+    background: rgba(244, 67, 54, 0.12);
+    color: #f44336;
+}
+
+.aviary-status-rescued {
+    background: rgba(255, 152, 0, 0.12);
+    color: #ff9800;
+}
+
+.aviary-status-degraded {
+    background: rgba(158, 158, 158, 0.12);
+    color: #9e9e9e;
+}
 
 
 .aviary-perch-card {
@@ -2332,18 +2381,22 @@ body.show-footer-override .chat-panel {
 
 .aviary-toast {
     position: fixed;
-    bottom: 30px;
+    top: 100px;
     left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    padding: 12px 24px;
-    border-radius: 12px;
+    transform: translateX(-50%) translateY(-20px);
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-family: var(--font-primary), sans-serif;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     z-index: 20000;
     opacity: 0;
-    transition: all 0.3s;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     max-width: 90vw;
+    min-width: 250px;
     text-align: center;
+    pointer-events: auto;
     backdrop-filter: blur(10px);
 }
 
@@ -2352,9 +2405,23 @@ body.show-footer-override .chat-panel {
     transform: translateX(-50%) translateY(0);
 }
 
-.aviary-toast-success { background: rgba(76, 175, 80, 0.9); color: #fff; }
-.aviary-toast-error { background: rgba(244, 67, 54, 0.9); color: #fff; }
-.aviary-toast-info { background: rgba(33, 150, 243, 0.9); color: #fff; }
+.aviary-toast-success {
+    background: rgba(43, 31, 26, 0.95);
+    border: 1px solid rgba(76, 175, 80, 0.5);
+    color: #fff;
+}
+
+.aviary-toast-error {
+    background: rgba(43, 31, 26, 0.95);
+    border: 1px solid rgba(244, 67, 54, 0.5);
+    color: #fff;
+}
+
+.aviary-toast-info {
+    background: rgba(43, 31, 26, 0.95);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    color: #fff;
+}
 
 
 @media (max-width: 480px) {
@@ -2367,12 +2434,15 @@ body.show-footer-override .chat-panel {
         left: 0;
         transform: none;
     }
+
     .aviary-panel.open {
         transform: none;
     }
+
     .aviary-bird-selector {
         flex-direction: column;
     }
+
     .aviary-bird-card {
         flex-direction: row;
         display: flex;
@@ -2381,6 +2451,7 @@ body.show-footer-override .chat-panel {
         text-align: left;
         padding: 10px 14px;
     }
+
     .aviary-bird-icon {
         font-size: 1.5rem;
         margin-bottom: 0;
@@ -2389,173 +2460,608 @@ body.show-footer-override .chat-panel {
 
 
 .bird-card-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
 .bird-select-card {
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 12px 8px 14px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 12px 8px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 .bird-select-card:hover {
-  border-color: rgba(212, 163, 115, 0.4);
-  transform: translateY(-2px);
+    border-color: rgba(212, 163, 115, 0.4);
+    transform: translateY(-2px);
 }
 
 .bird-select-card.active {
-  border-color: #d4a373;
-  box-shadow: 0 0 16px rgba(212, 163, 115, 0.25);
+    border-color: #d4a373;
+    box-shadow: 0 0 16px rgba(212, 163, 115, 0.25);
 }
 
 
-.bird-select-card[data-bird="raven"] { background: radial-gradient(circle at 50% 20%, #2b1f33 0%, #15101a 100%); }
-.bird-select-card[data-bird="raven"]:hover { background: radial-gradient(circle at 50% 20%, #3a2a45 0%, #1c1524 100%); }
-.bird-select-card[data-bird="raven"].active { background: radial-gradient(circle at 50% 20%, #463354 0%, #271d31 100%); }
+.bird-select-card[data-bird="raven"] {
+    background: radial-gradient(circle at 50% 20%, #2b1f33 0%, #15101a 100%);
+}
 
-[data-theme="light"] .bird-select-card[data-bird="raven"] { background: radial-gradient(circle at 50% 20%, #e8e3f2 0%, #cec5df 100%); }
-[data-theme="light"] .bird-select-card[data-bird="raven"]:hover { background: radial-gradient(circle at 50% 20%, #f3effa 0%, #dcd4ea 100%); }
-[data-theme="light"] .bird-select-card[data-bird="raven"].active { background: radial-gradient(circle at 50% 20%, #ffffff 0%, #ebe5f5 100%); }
+.bird-select-card[data-bird="raven"]:hover {
+    background: radial-gradient(circle at 50% 20%, #3a2a45 0%, #1c1524 100%);
+}
 
+.bird-select-card[data-bird="raven"].active {
+    background: radial-gradient(circle at 50% 20%, #463354 0%, #271d31 100%);
+}
 
-.bird-select-card[data-bird="owl"] { background: radial-gradient(circle at 50% 20%, #1f2c25 0%, #0d120f 100%); }
-.bird-select-card[data-bird="owl"]:hover { background: radial-gradient(circle at 50% 20%, #293b32 0%, #131a16 100%); }
-.bird-select-card[data-bird="owl"].active { background: radial-gradient(circle at 50% 20%, #32473c 0%, #19231e 100%); }
+[data-theme="light"] .bird-select-card[data-bird="raven"] {
+    background: radial-gradient(circle at 50% 20%, #e8e3f2 0%, #cec5df 100%);
+}
 
-[data-theme="light"] .bird-select-card[data-bird="owl"] { background: radial-gradient(circle at 50% 20%, #e2ece3 0%, #c4d6c6 100%); }
-[data-theme="light"] .bird-select-card[data-bird="owl"]:hover { background: radial-gradient(circle at 50% 20%, #edf5ee 0%, #d3e2d5 100%); }
-[data-theme="light"] .bird-select-card[data-bird="owl"].active { background: radial-gradient(circle at 50% 20%, #f7fcf7 0%, #e1eee2 100%); }
+[data-theme="light"] .bird-select-card[data-bird="raven"]:hover {
+    background: radial-gradient(circle at 50% 20%, #f3effa 0%, #dcd4ea 100%);
+}
 
-
-.bird-select-card[data-bird="albatross"] { background: radial-gradient(circle at 50% 20%, #143657 0%, #0a1b2b 100%); }
-.bird-select-card[data-bird="albatross"]:hover { background: radial-gradient(circle at 50% 20%, #1c4975 0%, #0d253a 100%); }
-.bird-select-card[data-bird="albatross"].active { background: radial-gradient(circle at 50% 20%, #22578c 0%, #12314d 100%); }
-
-[data-theme="light"] .bird-select-card[data-bird="albatross"] { background: radial-gradient(circle at 50% 20%, #e0effc 0%, #bbdbf7 100%); }
-[data-theme="light"] .bird-select-card[data-bird="albatross"]:hover { background: radial-gradient(circle at 50% 20%, #f0f7fe 0%, #cce5f9 100%); }
-[data-theme="light"] .bird-select-card[data-bird="albatross"].active { background: radial-gradient(circle at 50% 20%, #ffffff 0%, #deeffb 100%); }
+[data-theme="light"] .bird-select-card[data-bird="raven"].active {
+    background: radial-gradient(circle at 50% 20%, #ffffff 0%, #ebe5f5 100%);
+}
 
 
-.albatross-wave-1 { stroke: #2a4e7a; stroke-width: 2px; stroke-linecap: round; fill: none; opacity: 0.4; transition: stroke 0.3s; }
-.albatross-wave-2 { stroke: #1e3a5f; stroke-width: 3px; stroke-linecap: round; fill: none; opacity: 0.7; transition: stroke 0.3s; }
-.albatross-wave-3 { stroke: #102a4a; stroke-width: 3.5px; stroke-linecap: round; fill: none; opacity: 0.6; transition: stroke 0.3s; }
-.albatross-wave-4 { stroke: #0b1b36; stroke-width: 4px; stroke-linecap: round; fill: none; opacity: 0.9; transition: stroke 0.3s; }
-.albatross-wave-5 { stroke: #081224; stroke-width: 5px; stroke-linecap: round; fill: none; opacity: 0.95; transition: stroke 0.3s; }
-.albatross-wave-6 { stroke: #040914; stroke-width: 6px; stroke-linecap: round; fill: none; opacity: 1; transition: stroke 0.3s; }
+.bird-select-card[data-bird="owl"] {
+    background: radial-gradient(circle at 50% 20%, #1f2c25 0%, #0d120f 100%);
+}
 
-[data-theme="light"] .albatross-wave-1 { stroke: #8ab4f8; opacity: 0.6; }
-[data-theme="light"] .albatross-wave-2 { stroke: #669df6; opacity: 0.7; }
-[data-theme="light"] .albatross-wave-3 { stroke: #4285f4; opacity: 0.8; }
-[data-theme="light"] .albatross-wave-4 { stroke: #1a73e8; opacity: 0.9; }
-[data-theme="light"] .albatross-wave-5 { stroke: #1558d6; opacity: 0.95; }
-[data-theme="light"] .albatross-wave-6 { stroke: #0d42a6; opacity: 1; }
+.bird-select-card[data-bird="owl"]:hover {
+    background: radial-gradient(circle at 50% 20%, #293b32 0%, #131a16 100%);
+}
+
+.bird-select-card[data-bird="owl"].active {
+    background: radial-gradient(circle at 50% 20%, #32473c 0%, #19231e 100%);
+}
+
+[data-theme="light"] .bird-select-card[data-bird="owl"] {
+    background: radial-gradient(circle at 50% 20%, #e2ece3 0%, #c4d6c6 100%);
+}
+
+[data-theme="light"] .bird-select-card[data-bird="owl"]:hover {
+    background: radial-gradient(circle at 50% 20%, #edf5ee 0%, #d3e2d5 100%);
+}
+
+[data-theme="light"] .bird-select-card[data-bird="owl"].active {
+    background: radial-gradient(circle at 50% 20%, #f7fcf7 0%, #e1eee2 100%);
+}
+
+
+.bird-select-card[data-bird="albatross"] {
+    background: radial-gradient(circle at 50% 20%, #143657 0%, #0a1b2b 100%);
+}
+
+.bird-select-card[data-bird="albatross"]:hover {
+    background: radial-gradient(circle at 50% 20%, #1c4975 0%, #0d253a 100%);
+}
+
+.bird-select-card[data-bird="albatross"].active {
+    background: radial-gradient(circle at 50% 20%, #22578c 0%, #12314d 100%);
+}
+
+[data-theme="light"] .bird-select-card[data-bird="albatross"] {
+    background: radial-gradient(circle at 50% 20%, #e0effc 0%, #bbdbf7 100%);
+}
+
+[data-theme="light"] .bird-select-card[data-bird="albatross"]:hover {
+    background: radial-gradient(circle at 50% 20%, #f0f7fe 0%, #cce5f9 100%);
+}
+
+[data-theme="light"] .bird-select-card[data-bird="albatross"].active {
+    background: radial-gradient(circle at 50% 20%, #ffffff 0%, #deeffb 100%);
+}
+
+
+.albatross-wave-1 {
+    stroke: #2a4e7a;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.4;
+    transition: stroke 0.3s;
+}
+
+.albatross-wave-2 {
+    stroke: #1e3a5f;
+    stroke-width: 3px;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.7;
+    transition: stroke 0.3s;
+}
+
+.albatross-wave-3 {
+    stroke: #102a4a;
+    stroke-width: 3.5px;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.6;
+    transition: stroke 0.3s;
+}
+
+.albatross-wave-4 {
+    stroke: #0b1b36;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.9;
+    transition: stroke 0.3s;
+}
+
+.albatross-wave-5 {
+    stroke: #081224;
+    stroke-width: 5px;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.95;
+    transition: stroke 0.3s;
+}
+
+.albatross-wave-6 {
+    stroke: #040914;
+    stroke-width: 6px;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 1;
+    transition: stroke 0.3s;
+}
+
+[data-theme="light"] .albatross-wave-1 {
+    stroke: #8ab4f8;
+    opacity: 0.6;
+}
+
+[data-theme="light"] .albatross-wave-2 {
+    stroke: #669df6;
+    opacity: 0.7;
+}
+
+[data-theme="light"] .albatross-wave-3 {
+    stroke: #4285f4;
+    opacity: 0.8;
+}
+
+[data-theme="light"] .albatross-wave-4 {
+    stroke: #1a73e8;
+    opacity: 0.9;
+}
+
+[data-theme="light"] .albatross-wave-5 {
+    stroke: #1558d6;
+    opacity: 0.95;
+}
+
+[data-theme="light"] .albatross-wave-6 {
+    stroke: #0d42a6;
+    opacity: 1;
+}
 
 .bird-anim-stage {
-  width: 100%;
-  height: 95px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+    width: 100%;
+    height: 95px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
 
 @keyframes ravenFlyCycle {
-  0%, 100% { transform: translateY(0px) rotate(1deg); }
-  50% { transform: translateY(-7px) rotate(-3deg); }
-}
-@keyframes ravenFlapBack {
-  0%   { transform: rotate(-22deg) scaleY(1); }
-  7%   { transform: rotate(38deg) scaleY(-0.65); }
-  14%  { transform: rotate(-22deg) scaleY(1); }
-  21%  { transform: rotate(38deg) scaleY(-0.65); }
-  28%  { transform: rotate(-22deg) scaleY(1); }
-  35%  { transform: rotate(38deg) scaleY(-0.65); }
-  42%  { transform: rotate(-5deg) scaleY(0.15); }
-  90%  { transform: rotate(-5deg) scaleY(0.15); }
-  100% { transform: rotate(-22deg) scaleY(1); }
-}
-@keyframes ravenFlapFront {
-  0%   { transform: rotate(18deg) scaleY(1); }
-  7%   { transform: rotate(-36deg) scaleY(-0.7); }
-  14%  { transform: rotate(18deg) scaleY(1); }
-  21%  { transform: rotate(-36deg) scaleY(-0.7); }
-  28%  { transform: rotate(18deg) scaleY(1); }
-  35%  { transform: rotate(-36deg) scaleY(-0.7); }
-  42%  { transform: rotate(5deg) scaleY(0.2); }
-  90%  { transform: rotate(5deg) scaleY(0.2); }
-  100% { transform: rotate(18deg) scaleY(1); }
+
+    0%,
+    10%,
+    20%,
+    30%,
+    40% {
+        transform: translateY(2px) rotate(1deg);
+    }
+
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: translateY(-4px) rotate(-1deg);
+    }
+
+    45% {
+        transform: translateY(-8px) rotate(-2deg);
+    }
+
+    75% {
+        transform: translateY(5px) rotate(3deg);
+    }
+
+    100% {
+        transform: translateY(2px) rotate(1deg);
+    }
 }
 
+@keyframes ravenFlapBack {
+
+    0%,
+    10%,
+    20%,
+    30%,
+    40% {
+        transform: rotate(-22deg) scaleY(1);
+    }
+
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: rotate(38deg) scaleY(-0.65);
+    }
+
+    45%,
+    95% {
+        transform: rotate(-5deg) scaleY(0.15);
+    }
+}
+
+@keyframes ravenFlapFront {
+
+    0%,
+    10%,
+    20%,
+    30%,
+    40% {
+        transform: rotate(18deg) scaleY(1);
+    }
+
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: rotate(-36deg) scaleY(-0.7);
+    }
+
+    45%,
+    95% {
+        transform: rotate(5deg) scaleY(0.2);
+    }
+}
+
+@keyframes owlSideFlapBack {
+
+    0%,
+    10%,
+    20%,
+    30% {
+        transform: rotate(-20deg) scaleY(1);
+    }
+
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: rotate(30deg) scaleY(-0.6);
+    }
+
+    40%,
+    95% {
+        transform: rotate(-5deg) scaleY(0.15);
+    }
+}
+
+@keyframes owlSideFlapFront {
+
+    0%,
+    10%,
+    20%,
+    30% {
+        transform: rotate(15deg) scaleY(1);
+    }
+
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: rotate(-25deg) scaleY(-0.7);
+    }
+
+    40%,
+    95% {
+        transform: rotate(5deg) scaleY(0.2);
+    }
+}
 
 @keyframes owlDescendCycle {
-  0% { transform: translateY(-16px) scale(0.9); }
-  35% { transform: translateY(-6px) scale(0.96); }
-  55% { transform: translateY(2px) scale(1.03); }
-  70%, 100% { transform: translateY(0px) scale(1); }
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: translateY(-4px) rotate(-1deg);
+    }
+
+    10%,
+    20%,
+    30% {
+        transform: translateY(2px) rotate(1deg);
+    }
+
+    45% {
+        transform: translateY(-8px) rotate(-2deg);
+    }
+
+    75% {
+        transform: translateY(6px) rotate(2deg);
+    }
 }
 
 @keyframes owlWingFlapLeft {
-  0%, 18%, 36% { transform: rotate(-25deg) scaleY(1); }
-  9%, 27% { transform: rotate(35deg) scaleY(-0.7); }
-  48% { transform: rotate(-40deg) scale(1.25); } 
-  65%, 100% { transform: rotate(0deg) scale(0.24, 0.95) translate(22px, 14px); } 
+
+    0%,
+    18%,
+    36% {
+        transform: rotate(-25deg) scaleY(1);
+    }
+
+    9%,
+    27% {
+        transform: rotate(35deg) scaleY(-0.7);
+    }
+
+    48% {
+        transform: rotate(-40deg) scale(1.25);
+    }
+
+    65%,
+    100% {
+        transform: rotate(0deg) scale(0.24, 0.95) translate(22px, 14px);
+    }
 }
 
 @keyframes owlWingFlapRight {
-  0%, 18%, 36% { transform: rotate(25deg) scaleY(1); }
-  9%, 27% { transform: rotate(-35deg) scaleY(-0.7); }
-  48% { transform: rotate(40deg) scale(1.25); }
-  65%, 100% { transform: rotate(0deg) scale(0.24, 0.95) translate(-22px, 14px); }
+
+    0%,
+    18%,
+    36% {
+        transform: rotate(25deg) scaleY(1);
+    }
+
+    9%,
+    27% {
+        transform: rotate(-35deg) scaleY(-0.7);
+    }
+
+    48% {
+        transform: rotate(40deg) scale(1.25);
+    }
+
+    65%,
+    100% {
+        transform: rotate(0deg) scale(0.24, 0.95) translate(-22px, 14px);
+    }
 }
 
 
 @keyframes albatrossBodyFlightCycle {
 
-  0% { transform: translateY(0px) rotate(0deg); }
-  12% { transform: translateY(-4px) rotate(-2deg); }
-  24% { transform: translateY(-8px) rotate(-3deg); }
-  35% { transform: translateY(-10px) rotate(-1deg); }
+    0%,
+    10%,
+    20%,
+    30%,
+    40% {
+        transform: translateY(2px) rotate(0deg);
+    }
 
-  50% { transform: translateY(-6px) rotate(1.5deg); }
-  75% { transform: translateY(-2px) rotate(0.5deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: translateY(-4px) rotate(-1deg);
+    }
+
+    45% {
+        transform: translateY(-8px) rotate(-1deg);
+    }
+
+    75% {
+        transform: translateY(5px) rotate(1.5deg);
+    }
+
+    100% {
+        transform: translateY(2px) rotate(0deg);
+    }
 }
 
 @keyframes albatrossFlapGlideLeft {
 
-  0%, 12%, 24%, 36% { transform: rotate(-22deg) scaleY(1); }
-  6%, 18%, 30% { transform: rotate(26deg) scaleY(-0.6); }
+    0%,
+    10%,
+    20%,
+    30%,
+    40% {
+        transform: rotate(-22deg) scaleY(1);
+    }
 
-  42%, 100% { transform: rotate(0deg) scaleY(1); }
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: rotate(26deg) scaleY(-0.6);
+    }
+
+    45%,
+    95% {
+        transform: rotate(0deg) scaleY(1);
+    }
 }
 
 @keyframes albatrossFlapGlideRight {
-  0%, 12%, 24%, 36% { transform: rotate(22deg) scaleY(1); }
-  6%, 18%, 30% { transform: rotate(-26deg) scaleY(-0.6); }
-  42%, 100% { transform: rotate(0deg) scaleY(1); }
+
+    0%,
+    10%,
+    20%,
+    30%,
+    40% {
+        transform: rotate(22deg) scaleY(1);
+    }
+
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: rotate(-26deg) scaleY(-0.6);
+    }
+
+    45%,
+    95% {
+        transform: rotate(0deg) scaleY(1);
+    }
 }
+
 @keyframes waveSway {
-  0% { transform: translateX(-5px) translateY(1px); }
-  100% { transform: translateX(5px) translateY(-1px); }
+    0% {
+        transform: translateX(-5px) translateY(1px);
+    }
+
+    100% {
+        transform: translateX(5px) translateY(-1px);
+    }
 }
 
 @keyframes windFlow {
-  0% { transform: translateX(20px); opacity: 0; }
-  20% { opacity: 0.4; }
-  80% { opacity: 0.4; }
-  100% { transform: translateX(-40px); opacity: 0; }
+    0% {
+        transform: translateX(100%) skewX(-15deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.1;
+    }
+
+    40% {
+        opacity: 0.15;
+    }
+
+    90% {
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(-100%) skewX(-15deg);
+        opacity: 0;
+    }
+}
+
+@keyframes owlFlyInAndSit {
+    0% {
+        transform: translate(120px, -60px) scale(0.8);
+    }
+
+    25% {
+        transform: translate(25px, 6px) scale(1);
+    }
+
+    32% {
+        transform: translate(25px, 10px) scale(1.05, 0.95);
+    }
+
+    40% {
+        transform: translate(25px, 6px) scale(1);
+    }
+
+    75% {
+        transform: translate(25px, 6px) scale(1);
+    }
+
+    82% {
+        transform: translate(25px, 0px) scale(0.95, 1.05);
+    }
+
+    100% {
+        transform: translate(-100px, -60px) scale(0.8);
+    }
+}
+
+@keyframes owlWingFlapLandingLeft {
+
+    0%,
+    6.25%,
+    12.5%,
+    18.75%,
+    25%,
+    82%,
+    88%,
+    94%,
+    100% {
+        transform: rotate(-25deg) scaleY(1);
+    }
+
+    3.12%,
+    9.37%,
+    15.62%,
+    21.87%,
+    85%,
+    91%,
+    97% {
+        transform: rotate(35deg) scaleY(-0.7);
+    }
+
+    32% {
+        transform: rotate(-40deg) scale(1.25);
+    }
+
+    40%,
+    78% {
+        transform: rotate(0deg) scale(0.24, 0.95) translate(22px, 14px);
+    }
+}
+
+@keyframes owlWingFlapLandingRight {
+
+    0%,
+    6.25%,
+    12.5%,
+    18.75%,
+    25%,
+    82%,
+    88%,
+    94%,
+    100% {
+        transform: rotate(25deg) scaleY(1);
+    }
+
+    3.12%,
+    9.37%,
+    15.62%,
+    21.87%,
+    85%,
+    91%,
+    97% {
+        transform: rotate(-35deg) scaleY(-0.7);
+    }
+
+    32% {
+        transform: rotate(40deg) scale(1.25);
+    }
+
+    40%,
+    78% {
+        transform: rotate(0deg) scale(0.24, 0.95) translate(-22px, 14px);
+    }
 }
 
 
@@ -2563,15 +3069,101 @@ body.show-footer-override .chat-panel {
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: auto !important; 
+    pointer-events: auto !important;
     transition: transform 3s linear;
 }
 
 .bird-map-marker {
-    filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
+    filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.3));
     transition: all 0.3s ease;
 }
 
 .bird-resting {
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Leaflet Custom Controls to match Van Page */
+.leaflet-control-zoom,
+.leaflet-control-home {
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: none !important;
+}
+
+.leaflet-bar a,
+.leaflet-control-home a {
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    border-radius: 50% !important;
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    color: var(--brand-brown) !important;
+    border: 1px solid var(--glass-border) !important;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+
+.leaflet-bar a:hover {
+    background: var(--brand-gold) !important;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+/* Leaflet Popup Theming & Glassmorphism */
+.leaflet-popup-content-wrapper {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+    padding: 2px !important;
+}
+
+.leaflet-popup-tip {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-top: none !important;
+    border-left: none !important;
+}
+
+.leaflet-popup-content {
+    margin: 10px 14px !important;
+    text-align: center;
+    line-height: 1.3 !important;
+}
+
+.aviary-map-popup {
+    font-family: 'Inter', sans-serif;
+    min-width: 110px;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+    color: var(--text-color) !important;
+    opacity: 0.5;
+    padding: 4px 4px 0 0 !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+    opacity: 1;
+    color: var(--brand-gold) !important;
+}
+
+@media (min-width: 768px) {
+    .aviary-panel[data-active-tab="map"] {
+        width: min(900px, 95vw);
+        max-height: 90vh;
+    }
 }

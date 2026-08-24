@@ -586,7 +586,7 @@
                 "Blown far off course by oceanic gales..."
             ]);
         }
-        
+
         if (birdType === "owl") {
             if (reasonLower.includes("aurora")) {
                 return getSeededItem([
@@ -602,7 +602,7 @@
                 "Spotted a large predator circling nearby..."
             ]);
         }
-        
+
         return getSeededItem([
             "Flying into a heavy thunderstorm...",
             "Taking evasive maneuvers from rival scouts...",
@@ -724,7 +724,7 @@
     }
 
     function generateBirdPath(recordId, mOrigin, mDest, birdType) {
-        const cacheKey = recordId === 'schedule_temp' ? `temp_${birdType}_${mOrigin.lat},${mOrigin.lng}_${mDest.lat},${mDest.lng}` : recordId;
+        const cacheKey = recordId === 'schedule_temp' ? `temp_${birdType}_${mOrigin.lat}_${mDest.lat}_${Math.random()}` : recordId;
         if (window.aviaryGeneratedPaths && window.aviaryGeneratedPaths[cacheKey]) {
             return window.aviaryGeneratedPaths[cacheKey];
         }
@@ -872,16 +872,48 @@
         let path = [];
         path.push({ lat: mOrigin.lat, lng: mOrigin.lng, distFromStart: 0 });
 
-        for (let i = 1; i < rawPath.length; i += 1) {
-            let pt = rawPath[i];
-            let lat = yToLat(pt.y);
-            let lng = xToLng(pt.x);
+        let directDistKm = calculateDistanceKm(mOrigin, mDest);
 
-            let prevLng = path[path.length - 1].lng;
-            if (Math.abs(lng - prevLng) > 180) {
-                continue;
+        if (directDistKm < 1) {
+            mDest = { lat: mDest.lat + 0.01, lng: mDest.lng + 0.01 };
+            directDistKm = calculateDistanceKm(mOrigin, mDest);
+        }
+
+        if (directDistKm > 150) {
+            for (let i = 1; i < rawPath.length - 1; i += 1) {
+                let pt = rawPath[i];
+                let lat = yToLat(pt.y);
+                let lng = xToLng(pt.x);
+
+                let prevLng = path[path.length - 1].lng;
+                if (Math.abs(lng - prevLng) > 180) {
+                    continue;
+                }
+                path.push({ lat, lng, distFromStart: 0 });
             }
-            path.push({ lat, lng, distFromStart: 0 });
+        } else {
+            let seed = 0;
+            if (recordId && recordId !== 'schedule_temp') {
+                for (let i = 0; i < recordId.length; i++) seed += recordId.charCodeAt(i);
+            } else {
+                seed = Math.floor(Math.random() * 10000);
+            }
+
+            let flip = seed % 2 === 0 ? 1 : -1;
+            let magnitude1 = 0.05 + ((seed % 15) / 100);
+            let magnitude2 = 0.05 + ((Math.floor(seed / 3) % 15) / 100);
+
+            let pt1Lat = mOrigin.lat + (mDest.lat - mOrigin.lat) * 0.33;
+            let pt1Lng = mOrigin.lng + (mDest.lng - mOrigin.lng) * 0.33;
+            let offset1Lat = (mDest.lng - mOrigin.lng) * magnitude1 * flip;
+            let offset1Lng = (mOrigin.lat - mDest.lat) * magnitude1 * flip;
+            path.push({ lat: pt1Lat + offset1Lat, lng: pt1Lng + offset1Lng, distFromStart: 0 });
+
+            let pt2Lat = mOrigin.lat + (mDest.lat - mOrigin.lat) * 0.66;
+            let pt2Lng = mOrigin.lng + (mDest.lng - mOrigin.lng) * 0.66;
+            let offset2Lat = (mDest.lng - mOrigin.lng) * magnitude2 * flip;
+            let offset2Lng = (mOrigin.lat - mDest.lat) * magnitude2 * flip;
+            path.push({ lat: pt2Lat + offset2Lat, lng: pt2Lng + offset2Lng, distFromStart: 0 });
         }
 
         path.push({ lat: mDest.lat, lng: mDest.lng, distFromStart: 0 });
@@ -899,7 +931,7 @@
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         };
 
-        if (path.length > 3) {
+        if (path.length > 3 && directDistKm > 150) {
             let smoothed = [path[0]];
             for (let i = 1; i < path.length - 1; i++) {
                 smoothed.push({

@@ -1023,9 +1023,7 @@ window.openPocketBaseChat = async function (matchId, otherUser, isRestore = fals
     }
     await loadChatHistory(matchId);
 
-    if (window.renderChatBirdPerch && otherUser && otherUser.id) {
-        try { window.renderChatBirdPerch(otherUser.id); } catch (e) { console.warn("Non-critical error:", e); }
-    }
+
 }
 async function loadChatHistory(matchId) {
     const container = document.getElementById('chat-messages');

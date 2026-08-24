@@ -257,11 +257,11 @@
             document.querySelectorAll('.bird-select-card').forEach(c => c.classList.remove('active'));
             const pool = AE.BIRD_QUIRK_POOLS[birdType];
             showAviaryToast(`${pool.name} released! Your letter is on its way. ETA: ${Math.round(schedule.durationHours)}h`, 'success');
-            
+
             if (window.fetchAndRenderNotifications) {
                 setTimeout(() => window.fetchAndRenderNotifications(), 500);
             }
-            
+
             switchAviaryTab('perch');
         } catch (err) {
             showAviaryToast(err.message || 'Failed to dispatch bird.', 'error');
@@ -280,7 +280,7 @@
             records.forEach(r => {
                 if (counts[r.bird_type] !== undefined) counts[r.bird_type]++;
             });
-            
+
             document.querySelectorAll('.bird-select-card').forEach(card => {
                 const bird = card.dataset.bird;
                 let badge = card.querySelector('.bird-active-badge');
@@ -386,9 +386,9 @@
 
         let directionStr = isSender ? `Sent to ${otherUserName}` : `Received from ${otherUserName}`;
         const dirIcon = isSender ? 'fa-paper-plane' : 'fa-inbox';
-        
-        const dateSent = new Date(record.departed_at).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-        const dateArrived = new Date(record.estimated_arrival).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+
+        const dateSent = new Date(record.departed_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const dateArrived = new Date(record.estimated_arrival).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
         const escRecord = encodeURIComponent(JSON.stringify(record)).replace(/'/g, "%27");
         const viewContext = isSender ? 'sender' : (record.status === 'rescued' ? 'receiver_spoiled' : 'receiver_intact');
@@ -399,7 +399,7 @@
             const h = new Date().getHours();
             const isNightNow = h >= 20 || h < 6;
             if (!isNightNow) {
-                onClickAction = `alert('This letter can only be read under the stars. Come back after 8 PM.')`;
+                onClickAction = `document.getElementById('aviary-night-lock-modal').style.display='flex'`;
                 nightLockedHTML = `<div style="font-size:0.75rem; color:#9c27b0; margin-top:4px;"><i class="fa-solid fa-moon"></i> Locked until 8 PM</div>`;
             }
         }
@@ -458,38 +458,38 @@
         return card;
     }
 
-    window.openLetterReader = function(recordJson, viewContext) {
+    window.openLetterReader = function (recordJson, viewContext) {
         const modal = document.getElementById('aviary-letter-reader-modal');
         const container = document.getElementById('aviary-letter-dynamic-container');
         if (!modal || !container) return;
-        
+
         let record;
         try { record = JSON.parse(recordJson); } catch (e) { return; }
 
         container.innerHTML = '';
-        
+
         let templateId = 'tpl-letter-pristine';
         if (viewContext === 'rescuer') templateId = 'tpl-letter-rescuer';
         else if (viewContext === 'receiver_spoiled') templateId = 'tpl-letter-spoiled';
-        
+
         const tmpl = document.getElementById(templateId);
         if (!tmpl) return;
-        
+
         const clone = tmpl.content.cloneNode(true);
         const titleEl = clone.querySelector('.cursive-title');
         const textEl = clone.querySelector('.vintage-text');
         const signatureEl = clone.querySelector('.cursive-signature');
         const dateEl = clone.querySelector('.letter-date');
-        
-        const dateSent = new Date(record.departed_at).toLocaleString('en-US', {month:'long', day:'numeric', year:'numeric'});
-        
+
+        const dateSent = new Date(record.departed_at).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
         if (titleEl) titleEl.innerText = '';
         if (signatureEl) signatureEl.innerHTML = `${escapeHtml(record.expand?.sender?.name || 'A traveler')}`;
         if (dateEl) dateEl.innerText = dateSent;
-        
+
         if (textEl) {
             let letterText = record.letter_original || '';
-            
+
             if (viewContext === 'rescuer') {
                 textEl.innerHTML = '<p>' + escapeHtml(letterText) + '</p>';
             } else if (viewContext === 'receiver_spoiled') {
@@ -504,7 +504,7 @@
                     }
                     return escapeHtml(w);
                 }).join('');
-                
+
                 textEl.innerHTML = '<p>' + degradedHtml.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
             } else {
                 textEl.innerHTML = '<p>' + escapeHtml(letterText).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
@@ -719,11 +719,11 @@
             }
         }
         const letterText = record.status === 'rescued' ? (record.letter_smudged || record.letter_original) : record.letter_original;
-        
+
         const isRescued = record.status === 'rescued';
         const viewContext = isRescued ? 'receiver_spoiled' : 'receiver_intact';
         const escRecord = encodeURIComponent(JSON.stringify(record)).replace(/'/g, "%27");
-        
+
         return `
             <div class="aviary-letter-content">
                 <div class="aviary-wax-seal" style="margin: 0 auto; cursor: pointer; display: flex; flex-direction: column; align-items: center; max-width: 120px;" onclick="
@@ -900,7 +900,7 @@
                         </svg>
                     </div>`;
                 }
-                
+
                 let cracks = '';
                 if (type === 'raven') {
                     cracks = `
@@ -1264,7 +1264,7 @@
                 div.onclick = function (e) {
                     e.preventDefault();
                     if (currentUser && currentUser.city_lat && currentUser.city_lng) {
-                        map.setView([parseFloat(currentUser.city_lat), parseFloat(currentUser.city_lng)], window.innerWidth <= 768 ? 12 : 10);
+                        map.setView([parseFloat(currentUser.city_lat), parseFloat(currentUser.city_lng)], window.innerWidth <= 768 ? 6 : 6);
                     }
                 };
                 return div;
@@ -1313,7 +1313,7 @@
                 const isParticipant = record.isParticipant;
 
                 const pathDataEvent = record.flight_events ? record.flight_events.find(e => e.type === 'path_data') : null;
-                
+
                 let currentLat = mOrigin.lat;
                 let currentLng = mOrigin.lng;
                 let state = null;
@@ -1323,7 +1323,7 @@
                         record, record.departed_at, record.estimated_arrival,
                         origin, dest, record.flight_events, record.bird_type
                     );
-                    
+
                     if (state && state.currentCoords) {
                         currentLat = state.currentCoords.lat;
                         currentLng = state.currentCoords.lng;
@@ -1491,80 +1491,7 @@
         }
     };
     window.renderChatBirdPerch = async function (otherUserId) {
-        const container = document.getElementById('chat-bird-perch');
-        if (!container || !pb || !currentUser || !otherUserId) {
-            if (container) container.style.display = 'none';
-            return;
-        }
-        try {
-            const filter = `(sender = '${currentUser.id}' && recipient = '${otherUserId}') || (sender = '${otherUserId}' && recipient = '${currentUser.id}')`;
-            const records = await pb.collection('bird_deliveries').getList(1, 5, {
-                filter: filter + " && (status = 'flying' || status = 'delivered' || status = 'rescued')",
-                sort: '-created',
-                requestKey: null
-            });
-            if (!records.items.length) {
-                container.style.display = 'none';
-                return;
-            }
-            const latest = records.items[0];
-            const pool = AE.BIRD_QUIRK_POOLS[latest.bird_type] || AE.BIRD_QUIRK_POOLS.raven;
-            if (latest.status === 'flying') {
-                const state = AE.evaluateLiveFlightState(
-                    latest, latest.departed_at, latest.estimated_arrival,
-                    latest.origin_coords, latest.dest_coords,
-                    latest.flight_events, latest.bird_type
-                );
-                if (state.isCrashedNow) {
-                    container.style.display = 'flex';
-                    container.innerHTML = `
-                        <div class="chat-perch-inner crashed">
-                            <span class="chat-perch-icon">🪦</span>
-                            <div class="chat-perch-info">
-                                <div class="chat-perch-title">${escapeHtml(pool.name)} — Crashed!</div>
-                                <div class="chat-perch-detail">${escapeHtml(latest.crash_reason || 'Bird intercepted')}</div>
-                            </div>
-                        </div>`;
-                    return;
-                }
-
-
-                container.style.display = 'none';
-                return;
-            } else if (latest.status === 'delivered' || latest.status === 'rescued') {
-                if (latest.is_night_locked && latest.bird_type === 'owl') {
-                    const h = new Date().getHours();
-                    const isNightNow = h >= 20 || h < 6;
-                    const iAmRecipient = latest.recipient === currentUser.id;
-                    if (iAmRecipient && !isNightNow) {
-                        container.style.display = 'flex';
-                        container.innerHTML = `
-                            <div class="chat-perch-inner midnight-locked">
-                                <span class="chat-perch-icon">🌙</span>
-                                <div class="chat-perch-info">
-                                    <div class="chat-perch-title">Midnight Letter by ${escapeHtml(pool.name)}</div>
-                                    <div class="chat-perch-detail" style="color:#7c4dff">Unlocks under the stars at 8:00 PM</div>
-                                </div>
-                                <i class="fa-solid fa-lock" style="color:#7c4dff;font-size:1.2rem"></i>
-                            </div>`;
-                        return;
-                    }
-                }
-                container.style.display = 'flex';
-                container.innerHTML = `
-                    <div class="chat-perch-inner delivered">
-                        <span class="chat-perch-icon">📜</span>
-                        <div class="chat-perch-info">
-                            <div class="chat-perch-title">${escapeHtml(pool.name)} — Letter Delivered!</div>
-                            <div class="chat-perch-detail">Tap to read in My Perch</div>
-                        </div>
-                        <i class="fa-solid fa-stamp" style="color:var(--brand-brown);font-size:1.2rem"></i>
-                    </div>`;
-                container.onclick = () => { openAviaryPanel(); switchAviaryTab('perch'); };
-            }
-        } catch (err) {
-            container.style.display = 'none';
-        }
+        // Disabled per user request: no aviary elements in chat inbox.
     };
     window.loadAviaryRecipients = async function () {
         const select = document.getElementById('aviary-recipient-select');

@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.google-analytics.com">
+    <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@400;700&display=swap" rel="stylesheet">
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LN14GGMXSK"></script>
     <script>
@@ -2207,8 +2208,9 @@
                 <div class="bird-card-container">
 
 
-                    <div class="bird-select-card" data-bird="raven">
-                        <div class="bird-anim-stage">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                        <div class="bird-select-card" data-bird="raven" style="width:100%; box-sizing:border-box;">
+                            <div class="bird-anim-stage">
                             <svg viewBox="0 0 140 100" width="120" height="90"
                                 style="animation: ravenFlyCycle 4s ease-in-out infinite;">
                                 <defs>
@@ -2286,11 +2288,16 @@
                             </svg>
                         </div>
                         <div style="font-weight: 600; color: #f1f5f9; font-size: 14px; margin-top: 4px;">Raven</div>
+                        </div>
+                        <div class="quick-tick-circle" onclick="event.stopPropagation(); document.querySelectorAll('.bird-select-card').forEach(c => c.classList.remove('active')); this.previousElementSibling.classList.add('active'); window.currentlyViewingBird = this.previousElementSibling;">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
                     </div>
 
 
-                    <div class="bird-select-card" data-bird="owl">
-                        <div class="bird-anim-stage">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                        <div class="bird-select-card" data-bird="owl" style="width:100%; box-sizing:border-box;">
+                            <div class="bird-anim-stage">
                             <svg viewBox="0 0 140 100" width="120" height="90">
                                 <defs>
                                     <linearGradient id="owlCape" x1="0" y1="0" x2="0" y2="1">
@@ -2366,11 +2373,16 @@
                             </svg>
                         </div>
                         <div style="font-weight: 600; color: #f1f5f9; font-size: 14px; margin-top: 4px;">Owl</div>
+                        </div>
+                        <div class="quick-tick-circle" onclick="event.stopPropagation(); document.querySelectorAll('.bird-select-card').forEach(c => c.classList.remove('active')); this.previousElementSibling.classList.add('active'); window.currentlyViewingBird = this.previousElementSibling;">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
                     </div>
 
 
-                    <div class="bird-select-card" data-bird="albatross">
-                        <div class="bird-anim-stage">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                        <div class="bird-select-card" data-bird="albatross" style="width:100%; box-sizing:border-box;">
+                            <div class="bird-anim-stage">
                             <svg viewBox="-30 0 210 100" width="130" height="90">
                                 <defs>
                                     <linearGradient id="albWingGlider" x1="0" y1="0" x2="1" y2="0">
@@ -2441,6 +2453,10 @@
                             </svg>
                         </div>
                         <div style="font-weight: 600; color: #f1f5f9; font-size: 14px; margin-top: 4px;">Albatross</div>
+                        </div>
+                        <div class="quick-tick-circle" onclick="event.stopPropagation(); document.querySelectorAll('.bird-select-card').forEach(c => c.classList.remove('active')); this.previousElementSibling.classList.add('active'); window.currentlyViewingBird = this.previousElementSibling;">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
                     </div>
 
                 </div>
@@ -2496,10 +2512,204 @@
         </div>
     </div>
 
+    <!-- Global SVG Filters for Aviary Letters -->
+    <svg style="position:absolute; width:0; height:0;">
+        <defs>
+            <filter id="pristine-edges" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="4" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+                <feDropShadow in="displaced" dx="5" dy="10" stdDeviation="15" flood-color="rgba(0,0,0,0.6)" />
+            </filter>
+            <filter id="spoiled-edges" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="5" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="75" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+                <feDropShadow in="displaced" dx="5" dy="10" stdDeviation="15" flood-color="rgba(0,0,0,0.9)" />
+            </filter>
+            <filter id="ink-smudge-heavy" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="smudged" />
+                <feGaussianBlur in="smudged" stdDeviation="0.3" result="blurred" />
+            </filter>
+            <filter id="ink-smudge-light" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+            <filter id="vintageShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="2" dy="6" stdDeviation="3" flood-color="#000000" flood-opacity="0.5" />
+            </filter>
+            <radialGradient id="classicWax" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#ff3344" />
+                <stop offset="50%" stop-color="#d61c2c" />
+                <stop offset="100%" stop-color="#800000" />
+            </radialGradient>
+            <radialGradient id="classicIndent" cx="50%" cy="50%" r="50%">
+                <stop offset="50%" stop-color="#99111c" />
+                <stop offset="100%" stop-color="#5e0b15" />
+            </radialGradient>
+            <radialGradient id="waxHighlight" cx="30%" cy="30%" r="50%">
+                <stop offset="0%" stop-color="#ff4d4d" stop-opacity="0.6" />
+                <stop offset="100%" stop-color="#ff4d4d" stop-opacity="0" />
+            </radialGradient>
+        </defs>
+    </svg>
+
+    <!-- HTML Templates for Aviary Letters -->
+    <template id="tpl-letter-pristine">
+        <div class="letter-wrapper pristine">
+            <div class="paper-background pristine-bg"></div>
+            <div class="content-area">
+                <div style="text-align:center; margin-bottom:5px; opacity:0.6;">
+                    <i class="fa-solid fa-feather-pointed" style="font-size:1.5rem; color:#2b1a10; transform: scale(1.6);"></i>
+                </div>
+                <div class="cursive-title"></div>
+                <div class="vintage-text pristine dynamic-content"></div>
+                <div class="cursive-signature"></div>
+                <div class="letter-date"></div>
+            </div>
+            <div class="seal-wrapper pristine-seal">
+                <svg viewBox="0 0 120 120" width="100%" height="100%" style="overflow:visible; position:relative; z-index:5;">
+                    <g filter="url(#vintageShadow)">
+                        <path d="M 58 12 C 78 8, 98 22, 105 40 C 112 60, 95 88, 75 98 C 50 110, 22 95, 12 75 C 2 55, 18 25, 35 18 C 45 14, 50 14, 58 12 Z" fill="url(#classicWax)" />
+                        <circle cx="58" cy="55" r="32" fill="url(#classicIndent)" />
+                        <circle cx="58" cy="55" r="30" fill="url(#classicWax)" />
+                        <circle cx="58" cy="55" r="26" fill="none" stroke="#2b0308" stroke-width="1.5" opacity="0.8" />
+                        <circle cx="58" cy="55" r="25" fill="none" stroke="#5e0b15" stroke-width="0.5" opacity="0.5" />
+                        <g transform="translate(58, 55) rotate(-25) scale(0.48) translate(-50, -50)">
+                            <path d="M35 45 C 15 25, 5 35, 10 45 C 5 50, 10 60, 20 55 C 15 65, 25 70, 35 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                            <path d="M65 45 C 85 25, 95 35, 90 45 C 95 50, 90 60, 80 55 C 85 65, 75 70, 65 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                            <path d="M50 80 C 50 80, 25 55, 25 35 C 25 20, 40 15, 50 25 C 60 15, 75 20, 75 35 C 75 55, 50 80, 50 80 Z" fill="#2b0308" stroke="#2b0308" stroke-width="4" stroke-linejoin="round" />
+                        </g>
+                    </g>
+                    <path d="M 70 95 C 80 98, 75 118, 65 120 C 55 122, 58 100, 70 95 Z" fill="url(#classicWax)" filter="url(#vintageShadow)" />
+                </svg>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-letter-spoiled">
+        <div class="letter-wrapper spoiled">
+            <div class="paper-background spoiled-bg"></div>
+            <div class="content-area">
+                <div style="text-align:center; margin-bottom:15px; opacity:0.4;">
+                    <i class="fa-solid fa-feather-pointed" style="font-size:1.5rem; color:#1a0f09; transform: scale(1.6) rotate(15deg);"></i>
+                </div>
+                <div class="cursive-title"></div>
+                <div class="vintage-text spoiled dynamic-content"></div>
+                <div class="cursive-signature"></div>
+                <div class="letter-date"></div>
+            </div>
+            <div class="seal-wrapper">
+                <svg viewBox="0 0 120 120" width="100%" height="100%" style="overflow:visible; position:relative; z-index:5;">
+                    <g filter="url(#vintageShadow)">
+                        <path d="M 58 12 C 78 8, 98 22, 105 40 C 112 60, 95 88, 75 98 C 50 110, 22 95, 12 75 C 2 55, 18 25, 35 18 C 45 14, 50 14, 58 12 Z" fill="url(#classicWax)" />
+                        <circle cx="58" cy="55" r="32" fill="url(#classicIndent)" />
+                        <circle cx="58" cy="55" r="30" fill="url(#classicWax)" />
+                        <circle cx="58" cy="55" r="26" fill="none" stroke="#2b0308" stroke-width="1.5" opacity="0.8" />
+                        <circle cx="58" cy="55" r="25" fill="none" stroke="#5e0b15" stroke-width="0.5" opacity="0.5" />
+                        <g transform="translate(58, 55) rotate(-25) scale(0.48) translate(-50, -50)">
+                            <path d="M35 45 C 15 25, 5 35, 10 45 C 5 50, 10 60, 20 55 C 15 65, 25 70, 35 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                            <path d="M65 45 C 85 25, 95 35, 90 45 C 95 50, 90 60, 80 55 C 85 65, 75 70, 65 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                            <path d="M50 80 C 50 80, 25 55, 25 35 C 25 20, 40 15, 50 25 C 60 15, 75 20, 75 35 C 75 55, 50 80, 50 80 Z" fill="#2b0308" stroke="#2b0308" stroke-width="4" stroke-linejoin="round" />
+                        </g>
+                        <!-- Crack -->
+                        <path d="M 25 10 L 40 35 L 35 55 L 60 75 L 50 95 L 65 118" fill="none" stroke="#1a0204" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#vintageShadow)" />
+                        <path d="M 25 10 L 40 35 L 35 55 L 60 75 L 50 95 L 65 118" fill="none" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                    <path d="M 70 95 C 80 98, 75 118, 65 120 C 55 122, 58 100, 70 95 Z" fill="url(#classicWax)" filter="url(#vintageShadow)" />
+                </svg>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-letter-rescuer">
+        <div class="letter-wrapper spoiled">
+            <div class="paper-background spoiled-bg"></div>
+            <div class="content-area">
+                <div style="text-align:center; margin-bottom:15px; opacity:0.4;">
+                    <i class="fa-solid fa-feather-pointed" style="font-size:1.5rem; color:#1a0f09; transform: scale(1.6) rotate(15deg);"></i>
+                </div>
+                <div class="vintage-text spoiled dynamic-content"></div>
+                <div class="rescuer-note">
+                    Thank you, kind traveler.<br>
+                    Your aid in rescuing this bird ensures its message<br>
+                    may yet reach the one who waits.
+                </div>
+            </div>
+            <div class="seal-wrapper">
+                <svg viewBox="0 0 120 120" width="100%" height="100%" style="overflow:visible; position:relative; z-index:5;">
+                    <g filter="url(#vintageShadow)">
+                        <path d="M 58 12 C 78 8, 98 22, 105 40 C 112 60, 95 88, 75 98 C 50 110, 22 95, 12 75 C 2 55, 18 25, 35 18 C 45 14, 50 14, 58 12 Z" fill="url(#classicWax)" />
+                        <circle cx="58" cy="55" r="32" fill="url(#classicIndent)" />
+                        <circle cx="58" cy="55" r="30" fill="url(#classicWax)" />
+                        <circle cx="58" cy="55" r="26" fill="none" stroke="#2b0308" stroke-width="1.5" opacity="0.8" />
+                        <circle cx="58" cy="55" r="25" fill="none" stroke="#5e0b15" stroke-width="0.5" opacity="0.5" />
+                        <g transform="translate(58, 55) rotate(-25) scale(0.48) translate(-50, -50)">
+                            <path d="M35 45 C 15 25, 5 35, 10 45 C 5 50, 10 60, 20 55 C 15 65, 25 70, 35 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                            <path d="M65 45 C 85 25, 95 35, 90 45 C 95 50, 90 60, 80 55 C 85 65, 75 70, 65 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                            <path d="M50 80 C 50 80, 25 55, 25 35 C 25 20, 40 15, 50 25 C 60 15, 75 20, 75 35 C 75 55, 50 80, 50 80 Z" fill="#2b0308" stroke="#2b0308" stroke-width="4" stroke-linejoin="round" />
+                        </g>
+                        <!-- Crack -->
+                        <path d="M 25 10 L 40 35 L 35 55 L 60 75 L 50 95 L 65 118" fill="none" stroke="#1a0204" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#vintageShadow)" />
+                        <path d="M 25 10 L 40 35 L 35 55 L 60 75 L 50 95 L 65 118" fill="none" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                    <path d="M 70 95 C 80 98, 75 118, 65 120 C 55 122, 58 100, 70 95 Z" fill="url(#classicWax)" filter="url(#vintageShadow)" />
+                </svg>
+            </div>
+        </div>
+    </template>
+
+    <!-- Letter Reader Modal -->
+    <div id="aviary-letter-reader-modal" class="aviary-modal-overlay" style="display:none;opacity:0; align-items:center; justify-content:center; overflow-y:auto; padding: 20px;">
+        <button
+            onclick="document.getElementById('aviary-letter-reader-modal').style.opacity='0';setTimeout(()=>document.getElementById('aviary-letter-reader-modal').style.display='none',300)"
+            style="position:fixed; top:20px; right:20px; background:none; border:none; color:#fff; font-size:2.5rem; cursor:pointer; opacity:0.8; transition:opacity 0.2s; z-index:1000; text-shadow:0 2px 8px rgba(0,0,0,0.8);"
+            onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="aviary-letter-dynamic-container" style="position:relative; width:100%; display:flex; justify-content:center; align-items:center;">
+        </div>
+    </div>
+
+    <!-- Delete Warning Modal -->
+    <div id="aviary-delete-modal" class="aviary-modal-overlay" style="display:none; align-items: center; z-index: 20000; padding: 2rem 1rem;">
+        <div class="edit-modal-content glass-card" style="border-radius: 20px; margin: auto; max-width: 380px; position:relative;">
+            <button onclick="document.getElementById('aviary-delete-modal').style.display='none'" class="edit-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div style="padding: 2.5rem 1.5rem 1.5rem; text-align: center;">
+                <i class="fa-solid fa-trash-can" style="font-size:2.5rem;color:#f44336;margin-bottom:15px; opacity:0.9;"></i>
+                <h2 style="color: var(--brand-brown); margin-bottom: 0.5rem; font-size:1.4rem;">Delete Letter?</h2>
+                <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.95rem; line-height:1.4;">
+                    Are you sure you want to remove this letter from your collection?
+                </p>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button class="btn btn-secondary" style="flex:1; border-radius:50px; font-weight:700;" onclick="document.getElementById('aviary-delete-modal').style.display='none'">Cancel</button>
+                    <button class="btn" style="flex:1; background:#f44336; color:#fff; border:none; border-radius:50px; font-weight:700; cursor:pointer;"
+                        onclick="
+                            const btn = this;
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class=\'fa-solid fa-spinner fa-spin\'></i> Deleting...';
+                            if(window.aviaryDeleteTarget) {
+                                window.aviaryLogEvent(window.aviaryDeleteTarget.id, window.aviaryDeleteTarget.isSender ? 'hide_sender' : 'hide_recipient').then(() => {
+                                    window.aviaryDeleteTarget.el.remove();
+                                    document.getElementById('aviary-delete-modal').style.display='none';
+                                    if(document.getElementById('aviary-collection-list').children.length === 0) {
+                                        if(window.loadLetterCollection) window.loadLetterCollection();
+                                    }
+                                    btn.disabled = false;
+                                    btn.innerHTML = 'Delete';
+                                });
+                            }
+                        ">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div id="aviary-bird-details-modal" class="aviary-modal-overlay">
         <div class="glass-card" id="aviary-bird-details-card"
-            style="position:relative;width:90%;max-width:400px;border-radius:20px;padding:20px;border:1px solid var(--glass-border);color:var(--text-main);transform:translateY(20px);transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            style="position:relative;width:90%;max-width:500px;max-height:85vh;overflow-y:auto;border-radius:20px;padding:20px;border:1px solid var(--glass-border);color:var(--text-main);transform:translateY(20px);transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
             <button id="aviary-bird-details-close"
                 style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text-main);font-size:1.2rem;cursor:pointer;opacity:0.7;"><i
                     class="fa-solid fa-xmark"></i></button>
@@ -2521,7 +2731,7 @@
             </div>
 
             <div
-                style="background:var(--bg-accent);padding:15px;border-radius:12px;border:1px solid var(--glass-border);margin-bottom:20px;">
+                style="background:var(--bg-accent);padding:15px;border-radius:12px;border:1px solid var(--glass-border);">
                 <h4 style="margin:0 0 10px 0;font-size:0.9rem;color:var(--brand-brown);">Behaviors</h4>
                 <ul id="aviary-bird-details-behaviors"
                     style="margin:0;padding-left:20px;font-size:0.85rem;color:var(--text-muted);display:flex;flex-direction:column;gap:6px;">
@@ -2530,7 +2740,7 @@
             </div>
 
             <button id="aviary-bird-details-select-btn" class="btn"
-                style="width:100%;background:var(--brand-brown);color:#fff;border:none;padding:12px;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;transition:background 0.3s;"
+                style="width:100%;margin-top:10px;background:var(--brand-brown);color:#fff;border:none;padding:12px;border-radius:50px;font-weight:700;font-size:1rem;cursor:pointer;transition:background 0.3s;"
                 onmouseover="this.style.background='var(--brand-brown-hover)'"
                 onmouseout="this.style.background='var(--brand-brown)'">Select this Bird</button>
         </div>
@@ -2569,7 +2779,7 @@
                     <div
                         style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
                         <div style="display:flex; gap:10px; align-items:center;">
-                            <span style="display:inline-flex; width:56px; align-items:center; justify-content:center;">
+                            <span style="display:inline-flex; width:56px; min-width:56px; flex-shrink:0; align-items:center; justify-content:center;">
                                 <svg viewBox="0 0 140 100" width="45" height="34" style="overflow:visible;">
                                     <g style="transform-origin: center;">
                                         <g style="transform-origin: 48px 40px; transform: rotate(-5deg) scaleY(0.5);">
@@ -2596,7 +2806,7 @@
                                 average 8% risk of crashing. Great for any distance!</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:center;">
-                            <span style="display:inline-flex; width:56px; align-items:center; justify-content:center;">
+                            <span style="display:inline-flex; width:56px; min-width:56px; flex-shrink:0; align-items:center; justify-content:center;">
                                 <svg viewBox="0 0 140 100" width="45" height="34" style="overflow:visible;">
                                     <g style="transform-origin: center;">
                                         <g style="transform-origin: 50px 40px; transform: rotate(-3deg) scaleY(0.5);">
@@ -2622,7 +2832,7 @@
                                 boosts after dark, but is sluggish and sleepy during the day.</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:center;">
-                            <span style="display:inline-flex; width:56px; align-items:center; justify-content:center;">
+                            <span style="display:inline-flex; width:56px; min-width:56px; flex-shrink:0; align-items:center; justify-content:center;">
                                 <svg viewBox="0 0 210 100" width="56" height="26" style="overflow:visible;">
                                     <g style="transform-origin: center;">
                                         <g style="transform-origin: 52px 34px; transform: rotate(-5deg) scaleY(0.5);">
@@ -2664,19 +2874,19 @@
                         style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
                         <div style="display:flex; gap:10px; align-items:flex-start;">
                             <i class="fa-solid fa-earth-americas"
-                                style="color:#4CAF50; margin-top:4px; font-size:1.1rem;"></i>
+                                style="color:var(--brand-brown); margin-top:4px; font-size:1.1rem;"></i>
                             <span><strong>Real-time Flight:</strong> Birds fly across the world based on actual
                                 geographic distance. Delivery takes hours or days.</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:flex-start;">
                             <i class="fa-solid fa-cloud-bolt"
-                                style="color:#f44336; margin-top:4px; font-size:1.1rem;"></i>
+                                style="color:var(--brand-brown); margin-top:4px; font-size:1.1rem;"></i>
                             <span><strong>The Risk:</strong> Exhaustion or storms can cause a bird to crash before
                                 delivery, depending on its unique Risk Rate!</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:flex-start;">
                             <i class="fa-solid fa-hands-holding-circle"
-                                style="color:#FF9800; margin-top:4px; font-size:1.1rem;"></i>
+                                style="color:var(--brand-brown); margin-top:4px; font-size:1.1rem;"></i>
                             <span><strong>Community Rescue:</strong> If a bird crashes, it falls to the World Map where
                                 two strangers can rescue it! Rescuers will see a 100-character snippet of your letter
                                 (35% degraded) to inspire them to help. (Check "Burn" to destroy it instead).</span>
@@ -2695,18 +2905,18 @@
                     <div
                         style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
                         <div style="display:flex; gap:10px; align-items:flex-start;">
-                            <i class="fa-regular fa-clock" style="color:#2196F3; margin-top:4px; font-size:1.1rem;"></i>
+                            <i class="fa-regular fa-clock" style="color:var(--brand-brown); margin-top:4px; font-size:1.1rem;"></i>
                             <span><strong>Building Anticipation:</strong> Your match can track the incoming bird in
                                 real-time, but cannot read the letter until it safely lands.</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:flex-start;">
                             <i class="fa-solid fa-check-double"
-                                style="color:#4CAF50; margin-top:4px; font-size:1.1rem;"></i>
+                                style="color:var(--brand-brown); margin-top:4px; font-size:1.1rem;"></i>
                             <span><strong>Flawless Flight:</strong> If the bird survives without crashing, the letter
                                 arrives in pristine condition.</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:flex-start;">
-                            <i class="fa-solid fa-droplet" style="color:#9C27B0; margin-top:4px; font-size:1.1rem;"></i>
+                            <i class="fa-solid fa-droplet" style="color:var(--brand-brown); margin-top:4px; font-size:1.1rem;"></i>
                             <span><strong>A Rescued Letter:</strong> If a crashed bird was rescued, it arrives
                                 beautifully damaged! 35% of words wash away into mysterious smudges like
                                 <em>[weather-stained]</em>.</span>
@@ -2725,22 +2935,22 @@
                     <div
                         style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:var(--text-muted); line-height:1.5;">
                         <div style="display:flex; gap:10px; align-items:flex-start;">
-                            <i class="fa-solid fa-paper-plane" style="color:var(--text-main); margin-top:4px;"></i>
+                            <i class="fa-solid fa-paper-plane" style="color:var(--brand-brown); margin-top:4px;"></i>
                             <span><strong>Dispatch:</strong> Choose a bird, select a match, and send your letters across
                                 the world.</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:flex-start;">
-                            <i class="fa-solid fa-inbox" style="color:var(--text-main); margin-top:4px;"></i>
+                            <i class="fa-solid fa-inbox" style="color:var(--brand-brown); margin-top:4px;"></i>
                             <span><strong>My Perch:</strong> Track your outgoing flights and watch incoming birds slowly
                                 approach.</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:flex-start;">
-                            <i class="fa-solid fa-globe" style="color:var(--text-main); margin-top:4px;"></i>
+                            <i class="fa-solid fa-globe" style="color:var(--brand-brown); margin-top:4px;"></i>
                             <span><strong>World Map:</strong> Explore the globe to find and rescue crashed birds
                                 belonging to other strangers!</span>
                         </div>
                         <div style="display:flex; gap:10px; align-items:flex-start;">
-                            <i class="fa-solid fa-book" style="color:var(--text-main); margin-top:4px;"></i>
+                            <i class="fa-solid fa-book" style="color:var(--brand-brown); margin-top:4px;"></i>
                             <span><strong>Collection:</strong> A beautiful archive of all the letters you've
                                 successfully sent and received.</span>
                         </div>

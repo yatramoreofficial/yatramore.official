@@ -38,6 +38,7 @@
             pb.collection('bird_deliveries').subscribe('*', function (e) {
                 if (activeTab === 'perch') loadMyPerch();
                 if (activeTab === 'map') loadWorldMap();
+                if (activeTab === 'dispatch') updateActiveBirdCounts();
             });
         }
         if (dispatchForm) dispatchForm.addEventListener('submit', handleDispatch);
@@ -95,6 +96,7 @@
                         statsContainer.innerHTML += createStat('Risk Rate', '4% - 12%');
                     } else if (birdId === 'raven') {
                         statsContainer.innerHTML += createStat('Top Speed', '80 km/h (Land)');
+                        statsContainer.innerHTML += createStat('Forest Speed', '60 km/h');
                         statsContainer.innerHTML += createStat('Min Speed', '40 km/h (Water)');
                         statsContainer.innerHTML += createStat('Risk Rate', '8%');
                     } else {
@@ -169,6 +171,7 @@
         if (activeBtn) activeBtn.classList.add('active');
         const activeContent = document.getElementById(`aviary-tab-${tab}`);
         if (activeContent) activeContent.style.display = 'flex';
+        if (tab === 'dispatch') updateActiveBirdCounts();
         if (tab === 'perch') loadMyPerch();
         if (tab === 'collection') loadLetterCollection();
         if (tab === 'map') {
@@ -254,6 +257,11 @@
             document.querySelectorAll('.bird-select-card').forEach(c => c.classList.remove('active'));
             const pool = AE.BIRD_QUIRK_POOLS[birdType];
             showAviaryToast(`${pool.name} released! Your letter is on its way. ETA: ${Math.round(schedule.durationHours)}h`, 'success');
+            
+            if (window.fetchAndRenderNotifications) {
+                setTimeout(() => window.fetchAndRenderNotifications(), 500);
+            }
+            
             switchAviaryTab('perch');
         } catch (err) {
             showAviaryToast(err.message || 'Failed to dispatch bird.', 'error');
@@ -262,6 +270,36 @@
             submitBtn.innerHTML = '<i class="fa-solid fa-feather-pointed"></i> Release Bird';
         }
     }
+    async function updateActiveBirdCounts() {
+        if (!pb || !pb.authStore.isValid || !currentUser) return;
+        try {
+            const records = await pb.collection('bird_deliveries').getFullList({
+                filter: `sender = "${currentUser.id}" && (status = "flying" || status = "crashed")`
+            });
+            const counts = { raven: 0, owl: 0, albatross: 0 };
+            records.forEach(r => {
+                if (counts[r.bird_type] !== undefined) counts[r.bird_type]++;
+            });
+            
+            document.querySelectorAll('.bird-select-card').forEach(card => {
+                const bird = card.dataset.bird;
+                let badge = card.querySelector('.bird-active-badge');
+                if (counts[bird] > 0) {
+                    if (!badge) {
+                        badge = document.createElement('div');
+                        badge.className = 'bird-active-badge';
+                        card.appendChild(badge);
+                    }
+                    badge.innerHTML = `<i class="fa-solid fa-clock"></i>`;
+                } else if (badge) {
+                    badge.remove();
+                }
+            });
+        } catch (e) {
+            console.error("Failed to fetch active bird counts:", e);
+        }
+    }
+
     async function loadMyPerch() {
         const container = document.getElementById('aviary-perch-list');
         if (!container || !pb || !currentUser) return;
@@ -348,55 +386,135 @@
 
         let directionStr = isSender ? `Sent to ${otherUserName}` : `Received from ${otherUserName}`;
         const dirIcon = isSender ? 'fa-paper-plane' : 'fa-inbox';
-        let badgeText = record.status === 'rescued' ? 'RESCUED (SMUDGED)' : record.status.toUpperCase();
+        
+        const dateSent = new Date(record.departed_at).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+        const dateArrived = new Date(record.estimated_arrival).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
 
-        const card = document.createElement('div');
-        card.className = 'aviary-perch-card';
-        card.style.border = '1px solid var(--brand-brown)';
+        const escRecord = encodeURIComponent(JSON.stringify(record)).replace(/'/g, "%27");
+        const viewContext = isSender ? 'sender' : (record.status === 'rescued' ? 'receiver_spoiled' : 'receiver_intact');
+        let onClickAction = `window.openLetterReader(decodeURIComponent('${escRecord}'), '${viewContext}')`;
+        let nightLockedHTML = '';
 
-        let letterHTML = '';
         if (record.is_night_locked && record.bird_type === 'owl') {
             const h = new Date().getHours();
             const isNightNow = h >= 20 || h < 6;
             if (!isNightNow) {
-                letterHTML = `<div class="aviary-letter-locked"><i class="fa-solid fa-moon"></i> This letter can only be read under the stars. Come back after 8 PM.</div>`;
-            } else {
-                const text = record.status === 'rescued' ? (record.letter_smudged || record.letter_original) : record.letter_original;
-                letterHTML = `<div class="aviary-letter-content" style="padding:15px; background:rgba(124, 77, 255, 0.05);"><div class="aviary-letter-text" style="display:block;">${escapeHtml(text).replace(/\\n/g, '<br>')}</div></div>`;
+                onClickAction = `alert('This letter can only be read under the stars. Come back after 8 PM.')`;
+                nightLockedHTML = `<div style="font-size:0.75rem; color:#9c27b0; margin-top:4px;"><i class="fa-solid fa-moon"></i> Locked until 8 PM</div>`;
             }
-        } else {
-            const text = record.status === 'rescued' ? (record.letter_smudged || record.letter_original) : record.letter_original;
-            letterHTML = `<div class="aviary-letter-content" style="padding:15px;"><div class="aviary-letter-text" style="display:block;">${escapeHtml(text).replace(/\\n/g, '<br>')}</div></div>`;
         }
 
+        const card = document.createElement('div');
+        card.className = 'aviary-perch-card';
+        card.style.border = '1px solid var(--brand-brown)';
+        card.style.cursor = 'pointer';
+        card.style.position = 'relative';
+        card.style.padding = '12px 15px';
+        card.style.transition = 'background 0.2s';
+        card.onmouseover = () => { card.style.background = 'var(--bg-accent)'; };
+        card.onmouseout = () => { card.style.background = 'transparent'; };
+
+        const scrollSVG = `
+            <svg viewBox="0 0 120 120" width="38" height="38" style="overflow:visible; filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.4)); transform: translateY(-3px);">
+                <ellipse cx="60" cy="95" rx="45" ry="12" fill="#000" opacity="0.4" />
+                <path d="M 20 85 L 85 45 Q 95 40 100 55 L 35 95 Q 25 100 20 85 Z" fill="#FFF3E0" stroke="#BCAAA4" stroke-width="1" />
+                <path d="M 20 85 Q 12 90 15 95 Q 25 100 35 95 L 20 85 Z" fill="#FFCC80" stroke="#BCAAA4" stroke-width="1" />
+                <path d="M 17 88 Q 25 85 28 92" stroke="#8D6E63" stroke-width="1.5" fill="none" />
+                <path d="M 45 70 L 65 57" stroke="#b91c1c" stroke-width="12" stroke-linecap="round" />
+                <circle cx="55" cy="62" r="14" fill="#991b1b" />
+                <circle cx="54" cy="61" r="12" fill="#dc2626" />
+                <circle cx="55" cy="62" r="8" fill="none" stroke="#7f1d1d" stroke-width="2" />
+                <path d="M 52 59 L 58 65 M 58 59 L 52 65" stroke="#fca5a5" stroke-width="2" stroke-linecap="round" />
+                <path d="M 55 74 C 58 74 60 78 55 80 C 50 78 52 74 55 74 Z" fill="#dc2626" />
+            </svg>
+        `;
+
         card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-                <div style="display:flex; flex-direction:column; gap:4px;">
-                    <div style="font-weight:600;font-size:0.9rem;display:flex;align-items:center;gap:8px;">
-                        <span style="display:flex; align-items:center; width:30px; justify-content:center;">${getBirdSVG(record.bird_type, 'still', false)}</span>
-                        ${escapeHtml(pool.name)}
+            <div onclick="${onClickAction}" style="display:flex; justify-content:space-between; align-items:center; padding-right:15px;">
+                <div style="display:flex; align-items:flex-start; gap:12px;">
+                    <div style="display:flex; flex-direction:column; align-items:center; width:45px; margin-left:6px; margin-top:2px; gap:6px;">
+                        <span>${getBirdSVG(record.bird_type, 'still', false)}</span>
+                        <span style="opacity:0.95; display:flex; justify-content:center; margin-top:-5px;">${scrollSVG}</span>
                     </div>
-                    <div style="font-size:0.75rem;color:var(--text-muted)"><i class="fa-solid ${dirIcon}"></i> ${escapeHtml(directionStr)}</div>
-                </div>
-                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
-                    <span class="aviary-status-badge aviary-status-${record.status}">${badgeText}</span>
-                    <button onclick="
-                        if(confirm('Delete this letter from your collection? It will remain in the database.')) {
-                            this.disabled = true;
-                            window.aviaryLogEvent('${record.id}', '${isSender ? 'hide_sender' : 'hide_recipient'}').then(() => {
-                                this.closest('.aviary-perch-card').remove();
-                                if(document.getElementById('aviary-collection-list').children.length === 0) {
-                                    loadLetterCollection();
-                                }
-                            });
-                        }
-                    " style="background:none; border:none; color:#f44336; cursor:pointer; font-size:0.85rem;" title="Delete for me"><i class="fa-solid fa-trash-can"></i> Delete</button>
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <div style="font-weight:600;font-size:0.95rem;color:var(--text-main);">${escapeHtml(pool.name)}</div>
+                        <div style="font-size:0.8rem;color:var(--text-muted); display:flex; align-items:center; gap:10px;">
+                            <span><i class="fa-solid ${dirIcon}"></i> ${escapeHtml(directionStr)}</span>
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--text-muted); opacity:0.8;">Sent: ${dateSent} &nbsp;&bull;&nbsp; Arrived: ${dateArrived}</div>
+                        ${nightLockedHTML}
+                    </div>
                 </div>
             </div>
-            ${letterHTML}
+            <button onclick="
+                event.stopPropagation();
+                window.aviaryDeleteTarget = { id: '${encodeURIComponent(record.id)}', isSender: ${isSender}, el: this.closest('.aviary-perch-card') };
+                document.getElementById('aviary-delete-modal').style.display = 'flex';
+                setTimeout(() => document.getElementById('aviary-delete-modal').style.opacity = '1', 10);
+            " style="position:absolute; top:12px; right:15px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.1rem; opacity:0.7; padding:4px;" title="Delete for me" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         `;
         return card;
     }
+
+    window.openLetterReader = function(recordJson, viewContext) {
+        const modal = document.getElementById('aviary-letter-reader-modal');
+        const container = document.getElementById('aviary-letter-dynamic-container');
+        if (!modal || !container) return;
+        
+        let record;
+        try { record = JSON.parse(recordJson); } catch (e) { return; }
+
+        container.innerHTML = '';
+        
+        let templateId = 'tpl-letter-pristine';
+        if (viewContext === 'rescuer') templateId = 'tpl-letter-rescuer';
+        else if (viewContext === 'receiver_spoiled') templateId = 'tpl-letter-spoiled';
+        
+        const tmpl = document.getElementById(templateId);
+        if (!tmpl) return;
+        
+        const clone = tmpl.content.cloneNode(true);
+        const titleEl = clone.querySelector('.cursive-title');
+        const textEl = clone.querySelector('.vintage-text');
+        const signatureEl = clone.querySelector('.cursive-signature');
+        const dateEl = clone.querySelector('.letter-date');
+        
+        const dateSent = new Date(record.departed_at).toLocaleString('en-US', {month:'long', day:'numeric', year:'numeric'});
+        
+        if (titleEl) titleEl.innerText = '';
+        if (signatureEl) signatureEl.innerHTML = `${escapeHtml(record.expand?.sender?.name || 'A traveler')}`;
+        if (dateEl) dateEl.innerText = dateSent;
+        
+        if (textEl) {
+            let letterText = record.letter_original || '';
+            
+            if (viewContext === 'rescuer') {
+                textEl.innerHTML = '<p>' + escapeHtml(letterText) + '</p>';
+            } else if (viewContext === 'receiver_spoiled') {
+                const tokens = letterText.split(/(\s+)/);
+                const degradedHtml = tokens.map(w => {
+                    if (/^\s+$/.test(w)) return escapeHtml(w);
+                    if (w.length > 3) {
+                        const r = Math.random();
+                        if (r < 0.1) return `<span class="missing">${escapeHtml(w)}</span>`;
+                        if (r < 0.25) return `<span class="washed-out">${escapeHtml(w)}</span>`;
+                        if (r < 0.4) return `<span class="smudged-heavy">${escapeHtml(w)}</span>`;
+                    }
+                    return escapeHtml(w);
+                }).join('');
+                
+                textEl.innerHTML = '<p>' + degradedHtml.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
+            } else {
+                textEl.innerHTML = '<p>' + escapeHtml(letterText).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
+            }
+        }
+
+        container.appendChild(clone);
+        modal.style.display = 'flex';
+        setTimeout(() => { modal.style.opacity = '1'; }, 10);
+    };
 
     function renderPerchCard(record) {
         const pool = AE.BIRD_QUIRK_POOLS[record.bird_type] || AE.BIRD_QUIRK_POOLS.raven;
@@ -414,6 +532,7 @@
         }
         const dirIcon = isSender ? 'fa-paper-plane' : 'fa-inbox';
         let statusHTML = '';
+        let rescueHTML = '';
         let progressHTML = '';
         let badgeText = record.status.toUpperCase();
         let visualStatus = record.status;
@@ -435,10 +554,10 @@
             if (visualStatus === 'crashed') {
                 statusHTML = `<span style="color:#f44336"><i class="fa-solid fa-skull-crossbones"></i> ${escapeHtml(record.crash_reason || 'Crashed')}</span>`;
                 if (record.rescue_target > 0) {
-                    statusHTML += `<div style="margin-top:6px;font-size:0.8rem;color:var(--text-muted)">🛟 Rescue: ${record.rescue_count || 0}/${record.rescue_target} pushes</div>`;
+                    rescueHTML = `<div style="margin-top:6px;font-size:0.8rem;color:var(--text-muted)">🛟 Rescue: ${record.rescue_count || 0}/${record.rescue_target} pushes</div>`;
                 }
             } else {
-                const statusColor = state.isWarningNow ? '#ff9800' : '#4caf50';
+                const statusColor = (state.isWarningNow || state.currentSpeed === 0 || state.isResting) ? '#ff9800' : '#4caf50';
                 statusHTML = `<span style="color:${statusColor}">${escapeHtml(state.statusIcon)} ${escapeHtml(state.statusText)}</span>`;
                 progressHTML = `
                     <div style="display:flex; align-items:center; gap:8px; font-size:0.75rem; color:var(--text-muted); margin-top:8px;">
@@ -512,7 +631,7 @@
         }
 
         let etaText = '';
-        if (record.status === 'flying') {
+        if (visualStatus === 'flying') {
             const etaDate = new Date(String(record.estimated_arrival).replace(' ', 'T'));
             const remaining = etaDate.getTime() - Date.now();
 
@@ -548,6 +667,7 @@
                         <span style="font-size:0.8rem;font-weight:normal;">${statusHTML}</span>
                     </div>
                     <div style="font-size:0.75rem;color:var(--text-muted)"><i class="fa-solid ${dirIcon}"></i> ${escapeHtml(directionStr)}${etaText}</div>
+                    ${rescueHTML}
                 </div>
                 <span class="aviary-status-badge aviary-status-${visualStatus}">${badgeText}</span>
             </div>
@@ -584,7 +704,7 @@
                     window.aviaryLogEvent('${record.id}', 'opened_sender').then(() => {
                         switchAviaryTab('collection');
                     });
-                " class="btn" style="background:var(--bg-accent);color:var(--text-main);border:1px solid var(--glass-border);padding:8px 16px;border-radius:20px;font-size:0.85rem;cursor:pointer;">
+                " class="btn btn-primary" style="border-radius:50px; padding:8px 24px; font-weight:600; font-size:0.9rem; margin-top:10px;">
                     <i class="fa-solid fa-book-open"></i> View in Collection
                 </button>
             </div>`;
@@ -599,23 +719,41 @@
             }
         }
         const letterText = record.status === 'rescued' ? (record.letter_smudged || record.letter_original) : record.letter_original;
+        
+        const isRescued = record.status === 'rescued';
+        const viewContext = isRescued ? 'receiver_spoiled' : 'receiver_intact';
+        const escRecord = encodeURIComponent(JSON.stringify(record)).replace(/'/g, "%27");
+        
         return `
             <div class="aviary-letter-content">
-                <div class="aviary-wax-seal" onclick="
+                <div class="aviary-wax-seal" style="margin: 0 auto; cursor: pointer; display: flex; flex-direction: column; align-items: center; max-width: 120px;" onclick="
                     const seal = this;
                     seal.style.pointerEvents = 'none';
-                    seal.innerHTML = '<i class=\\'fa-solid fa-spinner fa-spin\\'></i> Breaking...';
                     window.aviaryLogEvent('${record.id}', 'opened_recipient').then(() => {
-                        seal.style.display='none';
-                        seal.nextElementSibling.style.display='block';
-                        setTimeout(() => { switchAviaryTab('collection'); }, 2500);
+                        window.openLetterReader(decodeURIComponent('${escRecord}'), '${viewContext}');
                     });
                 ">
-                    <i class="fa-solid fa-stamp"></i> Break the Wax Seal
+                    <div style="width: 60px; height: 60px;">
+                        <svg viewBox="0 0 120 120" width="100%" height="100%" style="overflow:visible;">
+                          <g filter="url(#vintageShadow)">
+                            <path d="M 58 12 C 78 8, 98 22, 105 40 C 112 60, 95 88, 75 98 C 50 110, 22 95, 12 75 C 2 55, 18 25, 35 18 C 45 14, 50 14, 58 12 Z" fill="url(#classicWax)" />
+                            <circle cx="58" cy="55" r="32" fill="url(#classicIndent)" />
+                            <circle cx="58" cy="55" r="30" fill="url(#classicWax)" />
+                            <circle cx="58" cy="55" r="26" fill="none" stroke="#2b0308" stroke-width="1.5" opacity="0.8" />
+                            <circle cx="58" cy="55" r="25" fill="none" stroke="#5e0b15" stroke-width="0.5" opacity="0.5" />
+                            <g transform="translate(58, 55) rotate(-25) scale(0.48) translate(-50, -50)">
+                              <path d="M35 45 C 15 25, 5 35, 10 45 C 5 50, 10 60, 20 55 C 15 65, 25 70, 35 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                              <path d="M65 45 C 85 25, 95 35, 90 45 C 95 50, 90 60, 80 55 C 85 65, 75 70, 65 60 Z" fill="transparent" stroke="#2b0308" stroke-width="6" stroke-linejoin="round" />
+                              <path d="M50 80 C 50 80, 25 55, 25 35 C 25 20, 40 15, 50 25 C 60 15, 75 20, 75 35 C 75 55, 50 80, 50 80 Z" fill="#2b0308" stroke="#2b0308" stroke-width="4" stroke-linejoin="round" />
+                            </g>
+                          </g>
+                          <path d="M 70 95 C 80 98, 75 118, 65 120 C 55 122, 58 100, 70 95 Z" fill="url(#classicWax)" filter="url(#vintageShadow)" />
+                        </svg>
+                    </div>
+                    <div style="font-size: 0.8rem; margin-top: 8px; color: var(--text-muted); white-space: nowrap;">Break Seal</div>
                 </div>
                 <div class="aviary-letter-text" style="display:none">
-                    <div style="margin-bottom:15px; color:var(--brand-brown); font-weight:600;"><i class="fa-solid fa-envelope-open-text"></i> Letter Opened! Moving to your Collection...</div>
-                    ${escapeHtml(letterText).replace(/\\n/g, '<br>')}
+                    <div style="margin-bottom:15px; color:var(--brand-brown); font-weight:600;"><i class="fa-solid fa-envelope-open-text"></i> Letter Opened!</div>
                 </div>
             </div>`;
     }
@@ -637,9 +775,31 @@
                 fill.style.background = state.isWarningNow ? '#ff9800' : '';
             }
 
+            if (!window.aviaryAlertedWarnings) window.aviaryAlertedWarnings = new Set();
+            if (state.isWarningNow) {
+                const warnKey = `warn_${record.id}_${state.statusText}`;
+                if (!window.aviaryAlertedWarnings.has(warnKey)) {
+                    window.aviaryAlertedWarnings.add(warnKey);
+                    if (window.showAviaryToast) window.showAviaryToast(`⚠️ Bird Issue: ${state.statusText}`, 'error');
+                    if (window.fetchAndRenderNotifications) window.fetchAndRenderNotifications();
+                }
+            }
+            if (state.isCrashedNow) {
+                const crashKey = `crash_${record.id}`;
+                if (!window.aviaryAlertedWarnings.has(crashKey)) {
+                    window.aviaryAlertedWarnings.add(crashKey);
+                    if (window.showAviaryToast) window.showAviaryToast(`🚨 Bird Crashed!`, 'error');
+                    if (window.fetchAndRenderNotifications) window.fetchAndRenderNotifications();
+                }
+            }
+
 
             const headerDiv = card.querySelector('.aviary-perch-card-header > div > div:nth-child(2)');
-            if (headerDiv && record.status === 'flying') {
+            let visualStatus = record.status;
+            if (record.status === 'crashed' && !state.isCrashedNow) {
+                visualStatus = 'flying';
+            }
+            if (headerDiv && visualStatus === 'flying') {
                 const etaDate = new Date(String(record.estimated_arrival).replace(' ', 'T'));
                 const remaining = etaDate.getTime() - Date.now();
                 const extraStats = ` • ${state.currentSpeed} km/h • ${state.percent}%`;
@@ -669,6 +829,7 @@
     let aviaryMarkersLayer = null;
     window.aviaryMarkerRegistry = window.aviaryMarkerRegistry || {};
     window.aviaryPathRegistry = window.aviaryPathRegistry || {};
+    window.getBirdSVG = getBirdSVG;
     function getBirdSVG(type, status, isFacingLeft, isBurned = false) {
         let transform = isFacingLeft ? "scaleX(-1)" : "none";
         let svgContent = '';
@@ -783,7 +944,7 @@
 
 
             const scrollSVG = `
-                <svg viewBox="0 0 120 120" width="30" height="30" style="overflow:visible; filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5)); transform: translateY(-5px);">
+                <svg viewBox="0 0 120 120" width="20" height="20" style="overflow:visible; filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5)); transform: translateY(-5px);">
                     <ellipse cx="60" cy="95" rx="45" ry="12" fill="#000" opacity="0.4" />
                     <path d="M 20 85 L 85 45 Q 95 40 100 55 L 35 95 Q 25 100 20 85 Z" fill="#FFF3E0" stroke="#BCAAA4" stroke-width="1" />
                     <path d="M 20 85 Q 12 90 15 95 Q 25 100 35 95 L 20 85 Z" fill="#FFCC80" stroke="#BCAAA4" stroke-width="1" />
@@ -801,7 +962,7 @@
             if (type === 'raven') {
                 crashedBirdSVG = `
                     <div style="animation: struggle 3s infinite;">
-                        <svg viewBox="0 0 120 120" width="50" height="50">
+                        <svg viewBox="0 0 120 120" width="35" height="35">
                             <ellipse cx="60" cy="80" rx="50" ry="25" fill="#000" opacity="0.4" filter="blur(3px)" />
                             <g style="animation: flapGroundLeft 0.5s infinite; transform-origin: 50px 55px;">
                                 <path d="M 50 55 Q 20 20 5 45 Q 20 70 45 70 Z" fill="#27272b" stroke="#1a1a1d" stroke-width="1" />
@@ -823,7 +984,7 @@
             } else if (type === 'owl') {
                 crashedBirdSVG = `
                     <div style="animation: struggle 3s infinite; animation-delay: 1s;">
-                        <svg viewBox="0 0 120 120" width="50" height="50">
+                        <svg viewBox="0 0 120 120" width="35" height="35">
                             <ellipse cx="60" cy="80" rx="55" ry="25" fill="#000" opacity="0.4" filter="blur(3px)" />
                             <g style="animation: flapGroundLeft 0.7s infinite; transform-origin: 45px 55px;">
                                 <path d="M 45 55 Q 15 25 5 55 Q 25 80 45 75 Z" fill="#784a28" stroke="#5c381c" stroke-width="2" />
@@ -847,7 +1008,7 @@
             } else if (type === 'albatross') {
                 crashedBirdSVG = `
                     <div style="animation: struggle 3s infinite; animation-delay: 2s;">
-                        <svg viewBox="0 0 180 120" width="70" height="50" style="overflow:visible;">
+                        <svg viewBox="0 0 180 120" width="50" height="35" style="overflow:visible;">
                             <ellipse cx="90" cy="80" rx="75" ry="20" fill="#000" opacity="0.4" filter="blur(3px)" />
                             <g style="animation: flapGroundLeft 1s infinite; transform-origin: 75px 50px;">
                                 <path d="M 75 50 Q 20 20 -10 40 Q 30 70 70 65 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" />
@@ -868,7 +1029,7 @@
             } else {
                 crashedBirdSVG = `
                     <div style="animation: struggle 3s infinite;">
-                        <svg viewBox="0 0 120 120" width="50" height="50">
+                        <svg viewBox="0 0 120 120" width="35" height="35">
                             <ellipse cx="60" cy="80" rx="50" ry="25" fill="#000" opacity="0.4" filter="blur(3px)" />
                             <g style="animation: flapGroundLeft 0.5s infinite; transform-origin: 50px 55px;">
                                 <path d="M 50 55 Q 20 20 5 45 Q 20 70 45 70 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
@@ -1063,26 +1224,7 @@
         `;
     }
 
-    function getInterpolatedPoint(pathData, progress) {
-        if (progress <= 0) return pathData.path[0];
-        if (progress >= 1) return pathData.path[pathData.path.length - 1];
 
-        const targetDist = progress * pathData.totalDist;
-        for (let i = 0; i < pathData.path.length - 1; i++) {
-            const curr = pathData.path[i];
-            const next = pathData.path[i + 1];
-            if (targetDist >= curr.distFromStart && targetDist <= next.distFromStart) {
-                const segDist = next.distFromStart - curr.distFromStart;
-                if (segDist === 0) return curr;
-                const ratio = (targetDist - curr.distFromStart) / segDist;
-                return {
-                    lat: curr.lat + (next.lat - curr.lat) * ratio,
-                    lng: curr.lng + (next.lng - curr.lng) * ratio
-                };
-            }
-        }
-        return pathData.path[pathData.path.length - 1];
-    }
 
     async function loadWorldMap() {
         const container = document.getElementById('aviary-map-container');
@@ -1093,15 +1235,16 @@
             container.style.minHeight = '500px';
 
             let initialCenter = [20, 0];
-            let initialZoom = 2;
+            let initialZoom = 3;
             if (currentUser && currentUser.city_lat && currentUser.city_lng) {
                 initialCenter = [parseFloat(currentUser.city_lat), parseFloat(currentUser.city_lng)];
+                initialZoom = window.innerWidth <= 768 ? 3 : 4;
             }
 
             aviaryLeafletMap = L.map('aviary-map-container', {
                 center: initialCenter,
                 zoom: initialZoom,
-                minZoom: 2,
+                minZoom: 3,
                 maxBounds: [[-90, -180], [90, 180]]
             });
             const tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -1121,7 +1264,7 @@
                 div.onclick = function (e) {
                     e.preventDefault();
                     if (currentUser && currentUser.city_lat && currentUser.city_lng) {
-                        map.setView([parseFloat(currentUser.city_lat), parseFloat(currentUser.city_lng)], 2);
+                        map.setView([parseFloat(currentUser.city_lat), parseFloat(currentUser.city_lng)], window.innerWidth <= 768 ? 12 : 10);
                     }
                 };
                 return div;
@@ -1169,8 +1312,8 @@
                 const { origin: mOrigin, dest: mDest } = AE.getMirroredCoords(origin, dest);
                 const isParticipant = record.isParticipant;
 
-                const pathData = AE.generateBirdPath(record.id, mOrigin, mDest, record.bird_type);
-
+                const pathDataEvent = record.flight_events ? record.flight_events.find(e => e.type === 'path_data') : null;
+                
                 let currentLat = mOrigin.lat;
                 let currentLng = mOrigin.lng;
                 let state = null;
@@ -1178,27 +1321,25 @@
                 if (record.status === 'flying' || record.status === 'crashed') {
                     state = AE.evaluateLiveFlightState(
                         record, record.departed_at, record.estimated_arrival,
-                        origin, dest, isParticipant ? record.flight_events : null, record.bird_type
+                        origin, dest, record.flight_events, record.bird_type
                     );
-
-                    if (record.status === 'crashed' && state.isCrashedNow) {
-                        const pt = getInterpolatedPoint(pathData, record.crash_progress || 0.5);
-                        currentLat = pt.lat;
-                        currentLng = pt.lng;
-                    } else {
-                        const t = state.geoProgress;
-                        const pt = getInterpolatedPoint(pathData, t);
-                        currentLat = pt.lat;
-                        currentLng = pt.lng;
+                    
+                    if (state && state.currentCoords) {
+                        currentLat = state.currentCoords.lat;
+                        currentLng = state.currentCoords.lng;
                     }
                 } else {
                     currentLat = mDest.lat;
                     currentLng = mDest.lng;
                 }
 
-
                 if (isParticipant) {
-                    const pathCoords = pathData.path.map(p => [p.lat, p.lng]);
+                    let pathCoords = [];
+                    if (pathDataEvent && pathDataEvent.waypoints) {
+                        pathCoords = pathDataEvent.waypoints.map(p => [p.lat, p.lng]);
+                    } else {
+                        pathCoords = [[mOrigin.lat, mOrigin.lng], [mDest.lat, mDest.lng]];
+                    }
 
                     let lineColor = '#38bdf8';
                     if (record.bird_type === 'albatross') lineColor = '#0284c7';
@@ -1238,7 +1379,7 @@
                 let speedText = 'Speed: 0 km/h';
                 if (state && typeof state.currentSpeed !== 'undefined') {
                     speedText = `Speed: ${Math.round(state.currentSpeed)} km/h`;
-                } else if (record.status === 'flying') {
+                } else if (visualStatus === 'flying') {
                     if (record.bird_type === 'raven') speedText = 'Speed: ~40 km/h';
                     if (record.bird_type === 'owl') speedText = 'Speed: ~32 km/h';
                     if (record.bird_type === 'albatross') speedText = 'Speed: ~50 km/h';
@@ -1248,33 +1389,36 @@
                 popupHtml += `<strong style="font-size:1rem;display:block;margin-bottom:2px;text-transform:capitalize;">${escapeHtml(record.bird_type)}</strong>`;
                 popupHtml += `<div style="font-size:0.8rem;opacity:0.8;margin-bottom:6px;">${speedText}</div>`;
 
-                if (record.status === 'crashed') {
-                    popupHtml += `<span style="color:#ef4444;font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-triangle-exclamation"></i> Crashed!</span>`;
+                if (visualStatus === 'crashed') {
+                    popupHtml += `<span style="color:var(--status-error, #d32f2f);font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-triangle-exclamation"></i> Crashed!</span>`;
                     popupHtml += `<div style="font-size:0.75rem;margin-top:2px;">${escapeHtml(record.crash_reason || '')}</div>`;
 
                     if (!record.burn_on_crash) {
-                        const smudgedSnippet = (record.letter_smudged || record.letter_original || '').substring(0, 100) + '...';
-                        popupHtml += `<div style="font-size:0.75rem;color:var(--text-muted);font-style:italic;margin-top:6px;background:rgba(0,0,0,0.1);padding:6px;border-radius:4px;border:1px solid rgba(255,255,255,0.05);">"${escapeHtml(smudgedSnippet)}"</div>`;
+                        const escRecord = encodeURIComponent(JSON.stringify(record)).replace(/'/g, "%27");
+                        popupHtml += `<button onclick="window.openLetterReader(decodeURIComponent('${escRecord}'), 'rescuer')" style="width:100%; margin-top:6px; padding:6px; background:var(--brand-brown); color:var(--bg-main); border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; display:flex; justify-content:center; align-items:center; gap:6px; font-weight:600;"><i class="fa-solid fa-book-open"></i> Read Spilled Letter</button>`;
                     }
 
                     if (record.burn_on_crash) {
-                        popupHtml += `<div style="margin-top:6px;font-size:0.75rem;color:var(--text-muted);"><i class="fa-solid fa-tombstone"></i> A burned out delivery. Cannot be rescued.</div>`;
+                        popupHtml += `<div style="margin-top:6px;font-size:0.75rem;color:var(--text-muted); text-align:center;"><i class="fa-solid fa-tombstone"></i> A burned out delivery. Cannot be rescued.</div>`;
                     } else if (isParticipant) {
-                        popupHtml += `<div style="margin-top:6px;font-size:0.75rem;color:#ef4444;background:rgba(244,67,54,0.1);padding:4px;border-radius:4px;">Cannot rescue your own bird.</div>`;
+                        popupHtml += `<div style="margin-top:6px;font-size:0.75rem;color:var(--status-error, #ef4444); text-align:center;">Cannot rescue your own bird</div>`;
                     } else {
                         const alreadyRescued = record.rescued_by && record.rescued_by.includes(currentUser?.id);
                         if (alreadyRescued) {
-                            popupHtml += `<div style="margin-top:6px;"><button class="aviary-rescue-btn" disabled style="padding:4px 8px;background:#4caf50;color:white;border:none;border-radius:4px;font-size:0.8rem;"><i class="fa-solid fa-check"></i> Rescued (${record.rescue_count || 0}/2)</button></div>`;
+                            popupHtml += `<div style="margin-top:6px; display:flex; gap:6px;"><button class="aviary-rescue-btn" disabled style="width:100%; padding:6px 8px;background:#4caf50;color:white;border:none;border-radius:4px;font-size:0.8rem;"><i class="fa-solid fa-check"></i> Rescued (${record.rescue_count || 0}/2)</button></div>`;
                         } else {
-                            popupHtml += `<div style="margin-top:6px;"><button class="aviary-rescue-btn" data-delivery-id="${record.id}" onclick="window.aviaryRescue('${record.id}')" style="padding:4px 8px;background:#3b82f6;color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">Rescue Satchel</button></div>`;
+                            popupHtml += `<div style="margin-top:6px; display:flex; gap:6px;"><button class="aviary-rescue-btn" data-delivery-id="${record.id}" onclick="window.aviaryRescue('${record.id}')" style="width:100%; padding:6px 8px;background:#3b82f6;color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-life-ring"></i> Rescue Bird</button></div>`;
                         }
                     }
-                } else if (record.status === 'flying') {
-                    if (state && state.isResting) {
+                } else if (visualStatus === 'flying' || visualStatus === 'resting') {
+                    if (state && state.isWarningNow) {
+                        popupHtml += `<span style="color:#ff9800;font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-triangle-exclamation"></i> Warning</span>`;
+                        popupHtml += `<div style="font-size:0.75rem;margin-top:2px;">${escapeHtml(state.statusText)}</div>`;
+                    } else if (state && state.isResting) {
                         popupHtml += `<span style="color:#ff9800;font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-tree"></i> Resting</span>`;
                         popupHtml += `<div style="font-size:0.75rem;margin-top:2px;">${escapeHtml(state.statusText)}</div>`;
                     } else {
-                        popupHtml += `<span style="color:#10b981;font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-wind"></i> Flying</span>`;
+                        popupHtml += `<span style="color:var(--grass-2);font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-wind"></i> Flying</span>`;
                     }
                 } else {
                     popupHtml += `<span style="color:#8b5cf6;font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-check-circle"></i> <span style="text-transform:capitalize;">${escapeHtml(record.status)}</span></span>`;
@@ -1319,7 +1463,7 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
         }
         try {
-            const res = await fetch(`https://api.yatramore.com/api/aviary/rescue/${deliveryId}`, {
+            const res = await fetch(`${pb.baseUrl}/api/aviary/rescue/${deliveryId}`, {
                 method: 'POST',
                 headers: { 'Authorization': pb.authStore.token }
             });

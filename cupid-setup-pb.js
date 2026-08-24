@@ -305,7 +305,7 @@ async function createSchema() {
                         type: 'view',
                         listRule: "@request.auth.id != ''",
                         viewRule: "@request.auth.id != ''",
-                        viewQuery: "SELECT id, bird_type, status, crash_progress, crash_coords, origin_coords, dest_coords, departed_at, estimated_arrival, rescue_count, rescue_target, rescued_by, crash_reason, burn_on_crash, (CASE WHEN burn_on_crash=true THEN '' ELSE SUBSTR(letter_smudged, 1, 80) END) AS letter_smudged, updated FROM bird_deliveries WHERE status='flying' OR (status='crashed' AND julianday('now') - julianday(updated) <= 3)"
+                        viewQuery: "SELECT id, bird_type, status, crash_progress, crash_coords, origin_coords, dest_coords, departed_at, estimated_arrival, rescue_count, rescue_target, rescued_by, crash_reason, burn_on_crash, flight_events, (CASE WHEN burn_on_crash=true THEN '' ELSE SUBSTR(letter_smudged, 1, 80) END) AS letter_smudged, updated FROM bird_deliveries WHERE status='flying' OR (status='crashed' AND julianday('now') - julianday(updated) <= 3)"
                     });
                     console.log("-> 'public_bird_map' view created successfully.");
                 } catch (viewErr) {
@@ -316,7 +316,7 @@ async function createSchema() {
                             await pb.collections.update(existingView.id, {
                                 listRule: "@request.auth.id != ''",
                                 viewRule: "@request.auth.id != ''",
-                                viewQuery: "SELECT id, bird_type, status, crash_progress, crash_coords, origin_coords, dest_coords, departed_at, estimated_arrival, rescue_count, rescue_target, rescued_by, crash_reason, burn_on_crash, (CASE WHEN burn_on_crash=true THEN '' ELSE SUBSTR(letter_smudged, 1, 80) END) AS letter_smudged, updated FROM bird_deliveries WHERE status='flying' OR (status='crashed' AND julianday('now') - julianday(updated) <= 3)"
+                                viewQuery: "SELECT id, bird_type, status, crash_progress, crash_coords, origin_coords, dest_coords, departed_at, estimated_arrival, rescue_count, rescue_target, rescued_by, crash_reason, burn_on_crash, flight_events, (CASE WHEN burn_on_crash=true THEN '' ELSE SUBSTR(letter_smudged, 1, 80) END) AS letter_smudged, updated FROM bird_deliveries WHERE status='flying' OR (status='crashed' AND julianday('now') - julianday(updated) <= 3)"
                             });
                             console.log("-> 'public_bird_map' view updated successfully.");
                         } catch (updateErr) {

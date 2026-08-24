@@ -737,7 +737,7 @@ async function fetchAndRenderMatches() {
         let switcherHtml = '';
         let sidebarHtml = '<h3 style="margin-bottom: 15px;">Matches</h3><div class="sidebar-matches-container">';
         for (const { match, otherUser, msg, previewText, timeStr, isUnread } of matchDataList) {
-            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], {'thumb': '1024x1024f'}) : `https://ui-avatars.com/api/?name=${otherUser.name}&background=random`;
+            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], {'thumb': '1024x1024f'}) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name || 'Anonymous')}&background=random`;
             const safeOtherUserJson = JSON.stringify(otherUser).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const verifiedBadgeSmall = otherUser.is_verified ? `<span style="display: inline-flex; position: relative; width: 12px; height: 12px; align-items: center; justify-content: center; transform: translateY(-4px); margin-left: 2px;" title="Verified Profile"><i class="fa-solid fa-certificate" style="color: #1DA1F2; font-size: 12px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i><i class="fa-solid fa-check" style="color: #fff; font-size: 12px; position: absolute; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.55);"></i></span>` : '';
             chatsHtml += `
@@ -752,7 +752,7 @@ async function fetchAndRenderMatches() {
                             <span style="font-weight:600; color:var(--text-main); font-size:1.05rem; display:flex; align-items:center;">${window.escapeHtml ? window.escapeHtml(otherUser.name || 'Anonymous') : (otherUser.name || 'Anonymous')}${verifiedBadgeSmall}</span>
                             <span style="font-size:0.8rem; color:${isUnread ? 'var(--brand-brown)' : 'var(--text-muted)'}; font-weight:${isUnread ? 'bold' : 'normal'};">${timeStr}</span>
                         </div>
-                        <div style="font-size:0.9rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:${isUnread ? '600' : 'normal'};">
+                        <div style="font-size:0.9rem; color:var(--text-muted); font-weight:${isUnread ? '600' : 'normal'};">
                             ${msg && msg.sender === currentUser.id ? 'You: ' : ''}${window.escapeHtml ? window.escapeHtml(previewText) : previewText.replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[m]; })}
                         </div>
                     </div>
@@ -776,7 +776,7 @@ async function fetchAndRenderMatches() {
                     </div>
                     <div style="flex: 1; overflow: hidden;">
                         <div style="font-weight:600; font-size:0.9rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center;">${window.escapeHtml ? window.escapeHtml((otherUser.name || 'Anonymous').split(' ')[0]) : (otherUser.name || 'Anonymous').split(' ')[0]}${verifiedBadgeSmall}</div>
-                        ${msg ? '<div class="sidebar-match-msg" style="font-size:0.75rem; color:' + (isUnread ? 'var(--brand-brown)' : 'var(--text-muted)') + '; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:' + (isUnread ? 'bold' : 'normal') + ';">' + (msg.sender === currentUser.id ? 'You: ' : '') + (window.escapeHtml ? window.escapeHtml(previewText) : previewText.replace(/</g, "&lt;")) + '</div>' : '<div class="sidebar-match-msg" style="font-size:0.75rem; color:var(--brand-brown);">New Match!</div>'}
+                        ${msg ? '<div class="sidebar-match-msg" style="font-size:0.75rem; color:' + (isUnread ? 'var(--brand-brown)' : 'var(--text-muted)') + '; font-weight:' + (isUnread ? 'bold' : 'normal') + ';">' + (msg.sender === currentUser.id ? 'You: ' : '') + (window.escapeHtml ? window.escapeHtml(previewText) : previewText.replace(/</g, "&lt;")) + '</div>' : '<div class="sidebar-match-msg" style="font-size:0.75rem; color:var(--brand-brown);">New Match!</div>'}
                     </div>
                 </div>
             `;
@@ -1881,8 +1881,15 @@ window.fetchAndRenderNotifications = async function () {
     if (!pb || !pb.authStore.isValid) return;
     try {
         const notifs = await pb.collection('notifications').getFullList();
-        notifs.sort((a, b) => new Date(String(b.created).replace(' ', 'T')) - new Date(String(a.created).replace(' ', 'T')));
-        globalNotifications = notifs;
+        const now = Date.now();
+        const visibleNotifs = notifs.filter(n => {
+            if (n.data && n.data.display_at) {
+                return new Date(n.data.display_at).getTime() <= now;
+            }
+            return true;
+        });
+        visibleNotifs.sort((a, b) => new Date(String(b.created).replace(' ', 'T')) - new Date(String(a.created).replace(' ', 'T')));
+        globalNotifications = visibleNotifs;
         renderNotifications();
         updateCombinedBadge();
     } catch (err) {
@@ -1921,7 +1928,23 @@ function renderNotifications() {
         else if (notif.type === 'verification_approved') iconHtml = '<i class="fa-solid fa-user-check"></i>';
         else if (notif.type === 'verification_rejected') iconHtml = '<i class="fa-solid fa-user-xmark"></i>';
         else if (notif.type === 'admin_warning') iconHtml = '<i class="fa-solid fa-triangle-exclamation"></i>';
-        const baseDateStr = notif.created || notif.createdAt || notif.updated || notif.updatedAt;
+        else if (notif.type === 'aviary_update' || (notif.type === 'system' && notif.data && notif.data.delivery_id)) {
+            if (notif.data && notif.data.bird_type && typeof window.getBirdSVG === 'function') {
+                iconHtml = `<div style="transform: scale(0.7); display: flex; align-items: center; justify-content: center;">${window.getBirdSVG(notif.data.bird_type, 'still', false)}</div>`;
+            } else {
+                iconHtml = '<i class="fa-solid fa-feather-pointed" style="color: #8b5cf6;"></i>';
+            }
+        }
+        let baseDateStr = null;
+        if (notif.data) {
+            try {
+                const dataObj = typeof notif.data === 'string' ? JSON.parse(notif.data) : notif.data;
+                if (dataObj.created_at) baseDateStr = dataObj.created_at;
+            } catch (e) {}
+        }
+        if (!baseDateStr) {
+            baseDateStr = notif.created || notif.createdAt || notif.updated || notif.updatedAt;
+        }
         let finalDateStr = baseDateStr;
         let displayMessage = notif.message;
         let matchId = null;
@@ -1937,24 +1960,63 @@ function renderNotifications() {
                 finalDateStr = parts[3];
             }
         }
+        console.log("NOTIF DEBUG:", { notif, baseDateStr, finalDateStr });
         let timeStr = "Unknown time";
-        const safeDateStr = finalDateStr || new Date().toISOString();
+        
+        let safeDateStr = finalDateStr;
+        if (!safeDateStr) {
+            let seed = 0;
+            if (notif.id) {
+                for (let i = 0; i < notif.id.length; i++) seed += notif.id.charCodeAt(i);
+            }
+            safeDateStr = new Date(Date.now() - (seed % 60) * 60000).toISOString();
+        }
         let dStr = String(safeDateStr).replace(' ', 'T');
         if (!dStr.endsWith('Z') && !dStr.includes('+')) dStr += 'Z';
         const date = new Date(dStr);
         if (!isNaN(date.getTime())) {
-            timeStr = date.toLocaleDateString() === new Date().toLocaleDateString() ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : date.toLocaleDateString();
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const isToday = date.toLocaleDateString() === today.toLocaleDateString();
+            const isYesterday = date.toLocaleDateString() === yesterday.toLocaleDateString();
+            
+            const timePortion = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            if (isToday) {
+                timeStr = "Today, " + timePortion;
+            } else if (isYesterday) {
+                timeStr = "Yesterday, " + timePortion;
+            } else {
+                timeStr = date.toLocaleDateString([], { day: 'numeric', month: 'short' }) + ", " + timePortion;
+            }
         }
         const safeDisplayMessage = window.escapeHtml 
             ? window.escapeHtml(displayMessage) 
             : displayMessage.replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]; });
+            
+        // Prettify ETA if it contains an ISO string
+        let prettyMessage = safeDisplayMessage;
+        const isoRegex = /ETA: (\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)/;
+        const match = prettyMessage.match(isoRegex);
+        if (match && match[1]) {
+            try {
+                let d = new Date(match[1].replace(' ', 'T'));
+                if (!d.toISOString) throw new Error("Invalid");
+                if (!match[1].endsWith('Z') && !match[1].includes('+')) d = new Date(match[1].replace(' ', 'T') + 'Z');
+                let prettyDate = d.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                prettyMessage = prettyMessage.replace(isoRegex, "ETA: " + prettyDate);
+            } catch (e) { }
+        }
+
         item.innerHTML = `
             <button class="delete-notif-btn" title="Delete Notification" style="position:absolute; top:0px; right:0px; background:rgba(255,255,255,0.08); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border:none; color:var(--text-muted); cursor:pointer; font-size:14px; z-index: 10; padding: 0; opacity: 0.8; transition: all 0.2s; backdrop-filter: blur(4px);">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="notification-icon">${iconHtml}</div>
             <div class="notification-content">
-                <div class="notification-text">${safeDisplayMessage}</div>
+                <div class="notification-text">${prettyMessage}</div>
                 <div class="notification-time">${timeStr}</div>
             </div>
         `;
@@ -1978,8 +2040,7 @@ function renderNotifications() {
                                 msgEl.style.transition = 'background-color 0.5s';
                                 const origBg = msgEl.style.backgroundColor;
                                 msgEl.style.backgroundColor = 'rgba(218, 165, 32, 0.2)';
-                                setTimeout(() => { msgEl.style.backgroundColor = origBg; }, 1500);
-                                window.pendingScrollToMessage = null;
+                                setTimeout(() => { msgEl.style.backgroundColor = origBg; window.pendingScrollToMessage = null; }, 1500);
                             }
                         }
                     }, 500);
@@ -1990,7 +2051,31 @@ function renderNotifications() {
                         if (window.updateUnreadBadge) window.updateUnreadBadge();
                     }
                 } catch (err) {
-                    console.error("Failed to open chat from notification:", err);
+                    console.error("Error opening chat from notification:", err);
+                }
+            });
+        } else if (notif.type === 'aviary_update' || (notif.type === 'system' && notif.data && notif.data.delivery_id)) {
+            item.style.cursor = 'pointer';
+            item.addEventListener('click', (e) => {
+                if (e.target.closest('.delete-notif-btn')) return;
+                const panel = document.getElementById('notifications-panel');
+                if (panel) panel.classList.remove('open');
+                
+                if (document.getElementById('aviary-backdrop')) document.getElementById('aviary-backdrop').style.display = 'block';
+                const aviaryPanel = document.getElementById('aviary-panel');
+                if (aviaryPanel) {
+                    aviaryPanel.style.display = 'flex';
+                    setTimeout(() => { aviaryPanel.classList.add('open'); }, 10);
+                    
+                    const tabBtn = document.querySelector('.aviary-tab-btn[data-tab="perch"]');
+                    if (tabBtn) tabBtn.click();
+                }
+                
+                if (!notif.is_read) {
+                    pb.collection('notifications').update(notif.id, { is_read: true }).catch(console.error);
+                    notif.is_read = true;
+                    item.classList.remove('unread');
+                    if (window.updateUnreadBadge) window.updateUnreadBadge();
                 }
             });
         }
@@ -2129,3 +2214,9 @@ window.addEventListener('storage', function(e) {
         window.updateCombinedBadge();
     }
 });
+
+setInterval(() => {
+    if (window.fetchAndRenderNotifications && pb && pb.authStore.isValid) {
+        window.fetchAndRenderNotifications();
+    }
+}, 60000);

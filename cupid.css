@@ -592,9 +592,6 @@ body.cupid-page.match-grid-active {
 .inbox-preview {
     font-size: 0.85rem;
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 @keyframes messageSlideUp {
@@ -904,6 +901,20 @@ body.cupid-page.match-grid-active {
     border-bottom: 3px solid transparent;
 }
 
+.aviary-tab-btn.active {
+    color: var(--text-main);
+    border-bottom: 2px solid #3b82f6;
+}
+
+.aviary-tab-btn:focus,
+.aviary-tab-btn:focus-visible,
+#aviary-letter-input:focus,
+#aviary-recipient-select:focus,
+.aviary-modal button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 .chat-tab.active {
     color: var(--brand-brown);
     border-bottom: 3px solid var(--brand-brown);
@@ -1039,8 +1050,8 @@ body.keyboard-open .chat-input-area {
     align-items: flex-start;
 }
 
-.chat-message-wrapper.is-sent + .chat-message-wrapper.is-received,
-.chat-message-wrapper.is-received + .chat-message-wrapper.is-sent {
+.chat-message-wrapper.is-sent+.chat-message-wrapper.is-received,
+.chat-message-wrapper.is-received+.chat-message-wrapper.is-sent {
     margin-top: 8px;
 }
 
@@ -1064,6 +1075,7 @@ body.keyboard-open .chat-input-area {
 
 .chat-text {
     display: inline;
+    white-space: pre-wrap;
 }
 
 .chat-meta {
@@ -1979,7 +1991,7 @@ body.show-footer-override .chat-panel {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.95);
-    width: min(460px, 95vw);
+    width: min(500px, 95vw);
     max-height: 85vh;
     background: var(--glass-bg);
     backdrop-filter: blur(15px);
@@ -2364,9 +2376,6 @@ body.show-footer-override .chat-panel {
     font-weight: 600;
     font-size: 0.8rem;
     color: var(--text-main);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .chat-perch-detail {
@@ -2389,7 +2398,7 @@ body.show-footer-override .chat-panel {
     font-family: var(--font-primary), sans-serif;
     font-size: 0.9rem;
     font-weight: 500;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     z-index: 20000;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2505,6 +2514,40 @@ body.show-footer-override .chat-panel {
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+}
+
+.quick-tick-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--text-muted);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bird-select-card.active + .quick-tick-circle {
+    background: var(--brand-brown);
+    border-color: var(--brand-brown);
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.bird-active-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    color: #888;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 5;
+    font-weight: 600;
 }
 
 .bird-select-card:hover {
@@ -3193,4 +3236,210 @@ body.show-footer-override .chat-panel {
         width: min(900px, 95vw);
         max-height: 90vh;
     }
+}
+
+/* --- Aviary Parchment Letter UI --- */
+.letter-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    min-height: 750px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* The Spoiled/Pristine Paper Background */
+.paper-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.paper-background.pristine-bg {
+    background-color: #f2e2c5;
+    box-shadow:
+        inset 0 0 80px rgba(160, 90, 40, 0.5),
+        inset 0 0 30px rgba(110, 50, 10, 0.7),
+        inset 0 0 10px rgba(60, 20, 0, 0.9);
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 5%, rgba(110, 50, 10, 0.25) 0%, transparent 25%),
+        radial-gradient(circle at 50% 95%, rgba(110, 50, 10, 0.25) 0%, transparent 25%);
+    filter: url(#pristine-edges);
+}
+
+.paper-background.pristine-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.25;
+    mix-blend-mode: multiply;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="1"/></svg>');
+    pointer-events: none;
+}
+
+.paper-background.spoiled-bg {
+    background-color: #baa88c;
+    box-shadow:
+        inset 0 0 120px rgba(80, 40, 10, 0.6),
+        inset 0 0 60px rgba(50, 20, 5, 0.7),
+        inset 0 0 20px rgba(20, 5, 0, 0.85);
+    background-image:
+        radial-gradient(circle at 15% 15%, rgba(30, 10, 0, 0.5) 0%, transparent 10%),
+        radial-gradient(circle at 85% 65%, rgba(40, 15, 0, 0.6) 0%, transparent 15%),
+        radial-gradient(circle at 45% 85%, rgba(20, 5, 0, 0.6) 0%, transparent 12%),
+        radial-gradient(circle at 75% 10%, rgba(50, 20, 0, 0.4) 0%, transparent 8%),
+        radial-gradient(circle at 20% 50%, rgba(60, 30, 10, 0.3) 0%, transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(70, 35, 10, 0.4) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(50, 20, 5, 0.5) 0%, transparent 50%);
+    filter: url(#spoiled-edges);
+}
+
+.paper-background.spoiled-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="5" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="1"/></svg>');
+    pointer-events: none;
+}
+
+.content-area {
+    position: relative;
+    padding: 40px 50px 90px 50px;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.vintage-text {
+    font-family: 'Tangerine', cursive;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.5px;
+    text-align: left;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.vintage-text.pristine {
+    color: #2b1a10;
+    opacity: 0.85;
+    filter: url(#ink-smudge-light);
+}
+
+.vintage-text.spoiled {
+    color: rgba(26, 15, 9, 0.85);
+    opacity: 0.75;
+    filter: url(#ink-smudge-heavy);
+    -webkit-mask-image: linear-gradient(to bottom, black 15%, transparent 28%);
+    mask-image: linear-gradient(to bottom, black 15%, transparent 28%);
+}
+
+.vintage-text p {
+    font-family: 'Tangerine', cursive;
+    margin: 0 0 12px 0;
+}
+
+.cursive-title,
+.cursive-signature,
+.letter-date {
+    font-family: 'Tangerine', cursive;
+    text-align: left;
+}
+
+.cursive-title {
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.cursive-signature {
+    font-size: 2.1rem;
+    font-weight: 700;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.letter-date {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.pristine .cursive-title,
+.pristine .cursive-signature,
+.pristine .letter-date {
+    color: #2b1a10;
+    opacity: 0.85;
+    filter: url(#ink-smudge-light);
+}
+
+.spoiled .cursive-title,
+.spoiled .cursive-signature,
+.spoiled .letter-date {
+    color: rgba(26, 15, 9, 0.85);
+    opacity: 0.75;
+    filter: url(#ink-smudge-heavy);
+}
+
+.seal-wrapper {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+    z-index: 5;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.8)) brightness(0.6) contrast(1.2);
+    opacity: 0.9;
+}
+
+.seal-wrapper.pristine-seal {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+    opacity: 1;
+}
+
+/* Specific utility classes to simulate missing/washed out letters */
+.washed-out {
+    opacity: 0.1;
+    filter: blur(2px);
+}
+
+.missing {
+    opacity: 0;
+}
+
+.smudged-heavy {
+    opacity: 0.4;
+    filter: blur(1.5px);
+}
+
+.rescuer-note {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    text-align: center;
+    font-family: 'Tangerine', cursive;
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #3b170b;
+    z-index: 10;
+    filter: url(#ink-smudge-light);
+    opacity: 0.95;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }

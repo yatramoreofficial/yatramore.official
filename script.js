@@ -294,6 +294,14 @@ function initializeYatrAmore() {
                     top: targetPosition - navHeight,
                     behavior: "smooth"
                 });
+                if (navLinks && navLinks.classList.contains("active")) {
+                    navLinks.classList.remove("active");
+                    const icon = hamburger.querySelector("i");
+                    if (icon) {
+                        icon.classList.remove("fa-times");
+                        icon.classList.add("fa-bars");
+                    }
+                }
             }
         });
     });
@@ -1317,6 +1325,22 @@ function initializeYatrAmore() {
 
 
     loadCollaborators();
+
+    if (window.location.hash) {
+        setTimeout(() => {
+            try {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    const navHeight = navbar ? navbar.offsetHeight : 80;
+                    const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                    window.scrollTo({
+                        top: targetPosition - navHeight,
+                        behavior: "smooth"
+                    });
+                }
+            } catch(e) {}
+        }, 400);
+    }
 
     function initPolicyPage() {
         const policyContent = document.querySelector('.policy-content');

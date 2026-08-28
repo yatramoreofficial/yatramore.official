@@ -126,7 +126,7 @@ const YatrAmore = {
         ];
 
         if (!isCupidPage) {
-            iconLinks.push({ href: 'javascript:void(0)', label: 'Matches', id: 'nav-cupid-icon', icon: cupidIconContent });
+            iconLinks.push({ href: '/cupid', label: 'Matches', id: 'nav-cupid-icon', icon: cupidIconContent });
         }
 
         const isIndex = activePage === 'index';

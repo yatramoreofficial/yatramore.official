@@ -36,6 +36,15 @@ window.playChatSound = (type) => {
             gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
             osc.start(ctx.currentTime);
             osc.stop(ctx.currentTime + 0.3);
+        } else if (type === 'pop') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.05);
+            gainNode.gain.setValueAtTime(0, ctx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.05);
         }
     } catch (e) {
         console.warn("Web Audio API not supported", e);
@@ -55,8 +64,8 @@ window.initChatSystem = async function () {
             pb.collection('users').update(currentUser.id, { last_active: new Date().toISOString() }, { requestKey: null }).catch(() => { });
         }
     };
-    pingLastActive(); 
-    setInterval(pingLastActive, 60 * 1000); 
+    pingLastActive();
+    setInterval(pingLastActive, 60 * 1000);
     if (pb && pb.authStore.isValid) {
         pb.collection('users').subscribe('*', function (e) {
             let needsRerender = false;
@@ -153,7 +162,7 @@ window.initChatSystem = async function () {
                         const domStarred = existingWrap.dataset.starredByString || "[]";
                         let parsedNewReactions = msg.reactions;
                         if (typeof parsedNewReactions === 'string') {
-                            try { parsedNewReactions = JSON.parse(parsedNewReactions); } catch(e) { parsedNewReactions = {}; }
+                            try { parsedNewReactions = JSON.parse(parsedNewReactions); } catch (e) { parsedNewReactions = {}; }
                         }
                         const newReactionsString = JSON.stringify(parsedNewReactions || {});
                         const newStarredString = JSON.stringify(msg.starredBy || []);
@@ -300,6 +309,7 @@ function setupChatUIListeners() {
             if (currentPanel) {
                 currentPanel.style.display = 'flex';
                 currentPanel.classList.remove('minimized');
+                document.getElementById('tab-inbox')?.click();
             }
             setTimeout(() => {
                 if (currentPanel) currentPanel.classList.add('open');
@@ -434,7 +444,7 @@ function setupChatUIListeners() {
         const content = document.getElementById('chat-profile-modal-content');
         if (!modal || !content) return;
         const p = currentChatOtherUser;
-        const avatarUrl = (p.photos && p.photos.length > 0) ? pb.files.getUrl(p, p.photos[0], {'thumb': '1024x1024f'}) : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&size=400`;
+        const avatarUrl = (p.photos && p.photos.length > 0) ? pb.files.getUrl(p, p.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&size=400`;
         const safeName = window.escapeHtml ? window.escapeHtml(p.name) : p.name;
         let hobbiesHTML = '';
         if (p.hobbies && Array.isArray(p.hobbies) && p.hobbies.length > 0) {
@@ -519,7 +529,7 @@ function setupChatUIListeners() {
                 if (content) content.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     modal.style.display = 'none';
-                }, 200); 
+                }, 200);
                 confirmBtn.onclick = null;
                 cancelBtn.onclick = null;
                 closeBtn.onclick = null;
@@ -607,7 +617,7 @@ function setupChatUIListeners() {
     }
     if (chatInput) {
         const autoResizeInput = () => {
-            chatInput.style.height = 'auto'; 
+            chatInput.style.height = 'auto';
             chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
         };
         chatInput.addEventListener('input', autoResizeInput);
@@ -630,7 +640,7 @@ async function listenForMatches() {
                 try {
                     const otherUser = await pb.collection('users').getOne(e.record.user1);
                     const otherUserAvatar = (otherUser.photos && otherUser.photos.length > 0)
-                        ? pb.files.getUrl(otherUser, otherUser.photos[0], {'thumb': '1024x1024f'})
+                        ? pb.files.getUrl(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' })
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name)}&background=random`;
                     if (typeof window.showToast === 'function') {
                         setTimeout(() => {
@@ -649,7 +659,7 @@ async function fetchAndRenderMatches() {
         const matches = await pb.collection('matches').getFullList({
             filter: `user1 = "${currentUser.id}" || user2 = "${currentUser.id}"`,
             expand: 'user1,user2',
-            sort: '' 
+            sort: ''
         });
         const chatsList = document.getElementById('chats-list');
         const fastSwitcher = document.getElementById('fast-switcher-bar');
@@ -670,12 +680,12 @@ async function fetchAndRenderMatches() {
                 otherUser.is_premium = false;
                 otherUser.is_verified = false;
                 otherUser.bio = "";
-                otherUser.isBlocked = true; 
+                otherUser.isBlocked = true;
             }
             renderedUsers.add(otherUser.id);
             let msg = null;
             let unreadForMatch = 0;
-            let latestMsgTime = 0; 
+            let latestMsgTime = 0;
             try {
                 const latestResult = await pb.collection('messages').getList(1, 1, {
                     filter: `match_id = "${match.id}"`,
@@ -688,7 +698,7 @@ async function fetchAndRenderMatches() {
                 }
                 const unreadResult = await pb.collection('messages').getFullList({
                     filter: `match_id = "${match.id}" && sender != "${currentUser.id}" && read = false`,
-                    fields: 'id', 
+                    fields: 'id',
                     sort: '',
                     $autoCancel: false
                 });
@@ -737,7 +747,7 @@ async function fetchAndRenderMatches() {
         let switcherHtml = '';
         let sidebarHtml = '<h3 style="margin-bottom: 15px;">Matches</h3><div class="sidebar-matches-container">';
         for (const { match, otherUser, msg, previewText, timeStr, isUnread } of matchDataList) {
-            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], {'thumb': '1024x1024f'}) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name || 'Anonymous')}&background=random`;
+            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name || 'Anonymous')}&background=random`;
             const safeOtherUserJson = JSON.stringify(otherUser).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const verifiedBadgeSmall = otherUser.is_verified ? `<span style="display: inline-flex; position: relative; width: 12px; height: 12px; align-items: center; justify-content: center; transform: translateY(-4px); margin-left: 2px;" title="Verified Profile"><i class="fa-solid fa-certificate" style="color: #1DA1F2; font-size: 12px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i><i class="fa-solid fa-check" style="color: #fff; font-size: 12px; position: absolute; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.55);"></i></span>` : '';
             chatsHtml += `
@@ -808,7 +818,7 @@ async function fetchAndRenderMatches() {
                 }
                 pressTimer = setTimeout(() => {
                     triggerModal();
-                }, 600); 
+                }, 600);
             };
             const cancelPress = () => {
                 clearTimeout(pressTimer);
@@ -851,7 +861,7 @@ window.updateActiveChatStatus = function (otherUser) {
     }
     statusEl.style.display = 'block';
     let statusText = 'Offline';
-    let statusColor = ''; 
+    let statusColor = '';
     if (!otherUser.ghost_status && currentUser && !currentUser.ghost_status) {
         let diffMins = 999999;
         if (otherUser.last_active) {
@@ -879,7 +889,7 @@ window.updateActiveChatStatus = function (otherUser) {
         if (statusColor) {
             statusEl.style.color = statusColor;
         } else {
-            statusEl.style.removeProperty('color'); 
+            statusEl.style.removeProperty('color');
         }
     }
 };
@@ -975,7 +985,7 @@ window.openPocketBaseChat = async function (matchId, otherUser, isRestore = fals
     const chatInputWrapper = document.querySelector('.chat-input-area');
     const sendBtn = document.getElementById('chat-send-btn');
     const blockBanner = document.getElementById('read-only-block-banner');
-    if (blockBanner) blockBanner.style.display = 'none'; 
+    if (blockBanner) blockBanner.style.display = 'none';
     if (otherUser.isBlocked) {
         if (chatInputWrapper) chatInputWrapper.style.display = 'flex';
         if (chatInput) {
@@ -1027,11 +1037,11 @@ window.openPocketBaseChat = async function (matchId, otherUser, isRestore = fals
 }
 async function loadChatHistory(matchId) {
     const container = document.getElementById('chat-messages');
-    container.innerHTML = ''; 
+    container.innerHTML = '';
     try {
         const messagesRaw = await pb.collection('messages').getFullList({
             filter: `match_id = "${matchId}"`,
-            sort: '', 
+            sort: '',
             $autoCancel: false
         });
         let messages = messagesRaw || [];
@@ -1049,7 +1059,7 @@ async function loadChatHistory(matchId) {
         messages.sort((a, b) => {
             const aTime = new Date(String(a.created || a.sent_at || a.createdAt || a.timestamp || '').replace(' ', 'T')).getTime() || 0;
             const bTime = new Date(String(b.created || b.sent_at || b.createdAt || b.timestamp || '').replace(' ', 'T')).getTime() || 0;
-            return aTime - bTime; 
+            return aTime - bTime;
         });
         if (messages.length > 200) {
             messages = messages.slice(-200);
@@ -1206,7 +1216,7 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
     if (msg.hiddenFor && Array.isArray(msg.hiddenFor) && msg.hiddenFor.includes(currentUser.id)) {
         const existingWrap = document.querySelector(`.chat-message-wrapper[data-msg-id="${msg.id}"]`);
         if (existingWrap) existingWrap.remove();
-        return; 
+        return;
     }
     let wrap = document.querySelector(`.chat-message-wrapper[data-msg-id="${msg.id}"]`);
     let isUpdating = !!wrap;
@@ -1223,7 +1233,7 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
     wrap.dataset.isStarred = msg.starredBy && msg.starredBy.includes(currentUser.id) ? 'true' : 'false';
     let parsedReactions = msg.reactions;
     if (typeof parsedReactions === 'string') {
-        try { parsedReactions = JSON.parse(parsedReactions); } catch(e) { parsedReactions = {}; }
+        try { parsedReactions = JSON.parse(parsedReactions); } catch (e) { parsedReactions = {}; }
     }
     wrap.dataset.reactionsString = JSON.stringify(parsedReactions || {});
     wrap.dataset.starredByString = JSON.stringify(msg.starredBy || []);
@@ -1313,7 +1323,7 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
         try {
             const targetLang = currentUser.preferredLanguage || 'en';
             let chatTranslationCache = {};
-            try { chatTranslationCache = JSON.parse(localStorage.getItem('chatTranslationCache') || '{}'); } catch(e) { console.warn("Non-critical error:", e); }
+            try { chatTranslationCache = JSON.parse(localStorage.getItem('chatTranslationCache') || '{}'); } catch (e) { console.warn("Non-critical error:", e); }
             const cacheKey = msg.id + '_' + targetLang;
             let translatedText = '';
             if (chatTranslationCache[cacheKey] && chatTranslationCache[cacheKey].original === msg.text) {
@@ -1345,7 +1355,7 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
                 translatedText = data[0].map(item => item[0]).join('');
                 chatTranslationCache[cacheKey] = { original: msg.text, translated: translatedText };
                 const cacheKeys = Object.keys(chatTranslationCache);
-                if (cacheKeys.length > 100) { 
+                if (cacheKeys.length > 100) {
                     const keysToRemove = cacheKeys.slice(0, cacheKeys.length - 100);
                     keysToRemove.forEach(k => delete chatTranslationCache[k]);
                 }
@@ -1467,7 +1477,7 @@ let isSwiping = false;
 let replyToMsgId = null;
 let replyToText = null;
 let replyToSender = null;
-window.setReplyContext = function(msgId, text, senderName) {
+window.setReplyContext = function (msgId, text, senderName) {
     replyToMsgId = msgId;
     replyToText = text;
     replyToSender = senderName;
@@ -1480,7 +1490,7 @@ window.setReplyContext = function(msgId, text, senderName) {
     const chatInput = document.getElementById('chat-input');
     if (chatInput) chatInput.focus();
 };
-window.cancelReply = function() {
+window.cancelReply = function () {
     replyToMsgId = null;
     replyToText = null;
     replyToSender = null;
@@ -1494,6 +1504,23 @@ if (chatMessagesContainer) {
     chatMessagesContainer.addEventListener('mouseup', handleTouchEnd);
     chatMessagesContainer.addEventListener('mouseleave', handleTouchEnd);
     chatMessagesContainer.addEventListener('touchmove', handleTouchMove, { passive: true });
+    chatMessagesContainer.addEventListener('click', function (e) {
+        const quoteEl = e.target.closest('.reply-quote');
+        if (!quoteEl) return;
+        const rid = quoteEl.getAttribute('data-reply-id');
+        if (!rid) return;
+        const targetEl = document.querySelector('[data-msg-id="' + rid + '"]');
+        if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            targetEl.style.background = 'rgba(107,66,38,0.15)';
+            setTimeout(function () { targetEl.style.background = ''; }, 1500);
+        }
+    });
+    chatMessagesContainer.addEventListener('animationend', function (e) {
+        if (e.target.classList.contains('chat-message-wrapper')) {
+            e.target.classList.add('anim-done');
+        }
+    });
 }
 function handleTouchStart(e) {
     const msgElement = e.target.closest('.chat-message-wrapper');
@@ -1508,6 +1535,9 @@ function handleTouchStart(e) {
         }
     }, 500);
 }
+
+let swipeHasTriggeredHaptic = false;
+
 function handleTouchMove(e) {
     if (!touchStartX) return;
     const currentX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1521,7 +1551,7 @@ function handleTouchMove(e) {
         }
         return;
     }
-    if (deltaX > 15) { 
+    if (deltaX > 15) {
         isSwiping = true;
         if (pressTimer) {
             clearTimeout(pressTimer);
@@ -1529,13 +1559,37 @@ function handleTouchMove(e) {
         }
         const msgElement = e.target.closest('.chat-message-wrapper');
         if (msgElement) {
-            const maxSwipe = 60;
-            const swipeDist = Math.min(deltaX, maxSwipe);
+            const maxSwipe = 80;
+            const dampFactor = 120;
+            const swipeDist = maxSwipe * (1 - Math.exp(-deltaX / dampFactor));
+            const thresholdReached = swipeDist >= 35;
+
             msgElement.style.transition = 'none';
             msgElement.style.transform = `translateX(${swipeDist}px)`;
+
+            let indicator = msgElement.querySelector('.swipe-reply-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.className = 'swipe-reply-indicator';
+                indicator.innerHTML = '<i class="fa-solid fa-reply"></i>';
+                msgElement.style.position = 'relative';
+                msgElement.appendChild(indicator);
+            }
+            indicator.style.opacity = Math.min(swipeDist / 35, 1);
+            indicator.style.transform = `scale(${thresholdReached ? 1.2 : 0.8})`;
+
+            if (thresholdReached && !swipeHasTriggeredHaptic) {
+                swipeHasTriggeredHaptic = true;
+                indicator.classList.add('active');
+                if (navigator.vibrate) navigator.vibrate(25);
+            } else if (!thresholdReached) {
+                swipeHasTriggeredHaptic = false;
+                indicator.classList.remove('active');
+            }
         }
     }
 }
+
 function handleTouchEnd(e) {
     if (pressTimer) {
         clearTimeout(pressTimer);
@@ -1546,19 +1600,41 @@ function handleTouchEnd(e) {
     const deltaX = currentX - touchStartX;
     const msgElement = e.target.closest('.chat-message-wrapper');
     if (isSwiping && msgElement) {
-        msgElement.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        msgElement.style.transform = 'translateX(0)';
-        if (deltaX > 40 && msgElement.dataset.isDeleted !== 'true') {
+        const indicator = msgElement.querySelector('.swipe-reply-indicator');
+        const maxSwipe = 80;
+        const dampFactor = 120;
+        const finalDist = maxSwipe * (1 - Math.exp(-deltaX / dampFactor));
+        const thresholdReached = finalDist >= 35;
+
+        if (thresholdReached && msgElement.dataset.isDeleted !== 'true') {
+            msgElement.style.transition = 'transform 0.1s ease-out';
+            msgElement.style.transform = 'translateX(40px)';
             if (navigator.vibrate) navigator.vibrate(30);
+            setTimeout(function () {
+                msgElement.style.transition = 'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                msgElement.style.transform = 'translateX(0)';
+            }, 80);
             const rawText = decodeURIComponent(msgElement.dataset.rawText || '');
             const isMe = msgElement.classList.contains('is-sent');
             const senderName = isMe ? (currentUser.name || 'You') : (currentChatOtherUser ? currentChatOtherUser.name : 'Them');
             window.setReplyContext(msgElement.dataset.msgId, rawText, senderName);
+        } else {
+            // Smooth spring back
+            msgElement.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            msgElement.style.transform = 'translateX(0)';
+        }
+
+        // Fade out and remove indicator
+        if (indicator) {
+            indicator.style.transition = 'opacity 0.2s ease-out';
+            indicator.style.opacity = '0';
+            setTimeout(function () { if (indicator.parentNode) indicator.remove(); }, 250);
         }
     }
     touchStartX = 0;
     touchStartY = 0;
     isSwiping = false;
+    swipeHasTriggeredHaptic = false;
 }
 function showContextMenu(msgElement, event) {
     currentTargetMsgElement = msgElement;
@@ -1668,6 +1744,7 @@ function showContextMenu(msgElement, event) {
     });
     document.querySelectorAll('.ctx-emoji-btn').forEach(btn => {
         btn.onclick = () => {
+            if (window.playChatSound) window.playChatSound('pop');
             hideContextMenu();
             if (currentTargetMsgId) window.reactToMessage(currentTargetMsgId, btn.dataset.emoji);
         };
@@ -1676,6 +1753,7 @@ function showContextMenu(msgElement, event) {
         const el = document.getElementById(id);
         if (el) {
             el.onclick = () => {
+                if (window.playChatSound) window.playChatSound('pop');
                 hideContextMenu();
                 if (currentTargetMsgId) callback();
             };
@@ -1745,7 +1823,7 @@ if (emojiPlusBtn) {
                 picker.id = 'custom-emoji-picker-overlay';
                 picker.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10001; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);';
                 const pickerElement = document.createElement('emoji-picker');
-                pickerElement.classList.add('light'); 
+                pickerElement.classList.add('light');
                 picker.appendChild(pickerElement);
                 picker.onclick = (ev) => {
                     if (ev.target === picker) picker.style.display = 'none';
@@ -1815,7 +1893,7 @@ window.reactToMessage = async (msgId, emoji) => {
         const msg = await pb.collection('messages').getOne(msgId);
         let reactions = msg.reactions || {};
         if (typeof reactions === 'string') {
-            try { reactions = JSON.parse(reactions); } catch(e) { reactions = {}; }
+            try { reactions = JSON.parse(reactions); } catch (e) { reactions = {}; }
         }
         let hadThisEmoji = false;
         if (reactions[emoji] && reactions[emoji].includes(currentUser.id)) {
@@ -1872,7 +1950,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pb && pb.authStore && pb.authStore.isValid && window.initChatSystem) {
             window.initChatSystem();
         }
-    }, 500); 
+    }, 500);
 });
 let globalNotifications = [];
 window.fetchAndRenderNotifications = async function () {
@@ -1938,7 +2016,7 @@ function renderNotifications() {
             try {
                 const dataObj = typeof notif.data === 'string' ? JSON.parse(notif.data) : notif.data;
                 if (dataObj.created_at) baseDateStr = dataObj.created_at;
-            } catch (e) {}
+            } catch (e) { }
         }
         if (!baseDateStr) {
             baseDateStr = notif.created || notif.createdAt || notif.updated || notif.updatedAt;
@@ -1960,7 +2038,7 @@ function renderNotifications() {
         }
         console.log("NOTIF DEBUG:", { notif, baseDateStr, finalDateStr });
         let timeStr = "Unknown time";
-        
+
         let safeDateStr = finalDateStr;
         if (!safeDateStr) {
             let seed = 0;
@@ -1976,12 +2054,12 @@ function renderNotifications() {
             const today = new Date();
             const yesterday = new Date(today);
             yesterday.setDate(yesterday.getDate() - 1);
-            
+
             const isToday = date.toLocaleDateString() === today.toLocaleDateString();
             const isYesterday = date.toLocaleDateString() === yesterday.toLocaleDateString();
-            
+
             const timePortion = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
+
             if (isToday) {
                 timeStr = "Today, " + timePortion;
             } else if (isYesterday) {
@@ -1990,10 +2068,10 @@ function renderNotifications() {
                 timeStr = date.toLocaleDateString([], { day: 'numeric', month: 'short' }) + ", " + timePortion;
             }
         }
-        const safeDisplayMessage = window.escapeHtml 
-            ? window.escapeHtml(displayMessage) 
+        const safeDisplayMessage = window.escapeHtml
+            ? window.escapeHtml(displayMessage)
             : displayMessage.replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]; });
-            
+
         // Prettify ETA if it contains an ISO string
         let prettyMessage = safeDisplayMessage;
         const isoRegex = /ETA: (\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)/;
@@ -2058,17 +2136,17 @@ function renderNotifications() {
                 if (e.target.closest('.delete-notif-btn')) return;
                 const panel = document.getElementById('notifications-panel');
                 if (panel) panel.classList.remove('open');
-                
+
                 if (document.getElementById('aviary-backdrop')) document.getElementById('aviary-backdrop').style.display = 'block';
                 const aviaryPanel = document.getElementById('aviary-panel');
                 if (aviaryPanel) {
                     aviaryPanel.style.display = 'flex';
                     setTimeout(() => { aviaryPanel.classList.add('open'); }, 10);
-                    
+
                     const tabBtn = document.querySelector('.aviary-tab-btn[data-tab="perch"]');
                     if (tabBtn) tabBtn.click();
                 }
-                
+
                 if (!notif.is_read) {
                     pb.collection('notifications').update(notif.id, { is_read: true }).catch(console.error);
                     notif.is_read = true;
@@ -2207,7 +2285,7 @@ window.updateCombinedBadge = function () {
         }
     }
 };
-window.addEventListener('storage', function(e) {
+window.addEventListener('storage', function (e) {
     if (e.key === 'globalUnreadCount') {
         window.updateCombinedBadge();
     }

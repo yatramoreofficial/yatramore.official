@@ -177,8 +177,8 @@ pb.authStore.onChange((token, model) => {
                 verifyBtn.style.color = '#f39c12';
             } else {
                 verifyBtn.innerHTML = '<i class="fa-solid fa-user-check" style="color: #1DA1F2;"></i><span class="btn-text"> Get Verified</span>';
-                verifyBtn.style.borderColor = 'var(--brand-brown)';
-                verifyBtn.style.color = 'var(--brand-brown)';
+                verifyBtn.style.borderColor = '#1DA1F2';
+                verifyBtn.style.color = '#1DA1F2';
             }
         }
         const premiumBtn = document.getElementById('nav-premium-btn');
@@ -1094,7 +1094,7 @@ window.generateTinderCardHTML = function (p, isModal = false) {
             <div class="tinder-card-image-wrapper" data-photos="${safePhotosJson}" data-current-index="0">
                 ${dotsHTML}
                 ${onlineHTML}
-                ${p.isSuperLiker ? '<div class="super-like-badge"><i class="fas fa-star"></i> Super Liked You</div>' : ''}
+                ${p.isSuperLiker ? '<div class="super-like-badge"><i class="fas fa-thumbs-up"></i> Super Liked You</div>' : ''}
                 <img src="${photoUrls[0]}" class="tinder-card-image" alt="Profile Photo">
                 ${photoUrls.length > 1 ? `
                 <div class="tap-zone left" onclick="event.stopPropagation(); window.cycleCardPhoto(this, -1)" style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; z-index: 12; ${isModal ? 'cursor: pointer;' : ''}"></div>

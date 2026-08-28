@@ -249,6 +249,10 @@ body.cupid-page.match-grid-active {
     display: none !important;
 }
 
+.mobile-nav-wrapper {
+    display: contents;
+}
+
 .auth-controls-container {
     position: fixed;
     top: 95px;
@@ -373,24 +377,43 @@ body.cupid-page.match-grid-active {
 
     }
 
-    .auth-controls-container {
+    .mobile-nav-wrapper {
+        display: flex !important;
         position: fixed !important;
         top: 82px !important;
-        right: 10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 5px !important;
+        z-index: 150 !important;
+        pointer-events: none; /* Let clicks pass through empty areas */
+    }
+
+    .mobile-nav-wrapper > * {
+        pointer-events: auto;
+    }
+
+    .auth-controls-container {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
         gap: 5px !important;
         margin: 0 !important;
         padding: 0 !important;
         align-items: center !important;
+        justify-content: center !important;
     }
 
     body.is-logged-in .accessibility-container {
-        position: fixed !important;
-        top: 82px !important;
+        position: relative !important;
+        top: auto !important;
         bottom: auto !important;
-        left: 10px !important;
+        left: auto !important;
         flex-direction: row !important;
         gap: 5px !important;
-        z-index: 150;
+        z-index: auto !important;
         margin: 0 !important;
         padding: 0 !important;
         align-items: center !important;
@@ -1030,16 +1053,57 @@ body.keyboard-open .chat-input-area {
     flex-direction: column;
     margin-bottom: 2px;
     width: 100%;
-    animation: premiumSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
-    transform: translateY(15px);
-    opacity: 0;
+    animation: premiumSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1) both;
 }
 
 @keyframes premiumSlideUp {
+    from {
+        transform: translateY(15px);
+        opacity: 0;
+    }
+
     to {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+.chat-message-wrapper.anim-done {
+    animation: none;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.swipe-reply-indicator {
+    position: absolute;
+    left: -32px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.8);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-accent, rgba(0, 0, 0, 0.06));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.1s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.swipe-reply-indicator i {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: color 0.15s ease;
+}
+
+.swipe-reply-indicator.active {
+    background: var(--brand-brown);
+}
+
+.swipe-reply-indicator.active i {
+    color: #fff;
 }
 
 .chat-message-wrapper.is-sent {
@@ -2038,10 +2102,16 @@ body.show-footer-override .chat-panel {
     z-index: 10000;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    overflow-y: auto;
+    padding: 40px 15px;
     opacity: 0;
     transition: opacity 0.2s;
+}
+
+.aviary-modal-overlay > .glass-card {
+    margin: auto;
 }
 
 [data-theme="dark"] .aviary-modal-overlay {
@@ -2067,6 +2137,15 @@ body.show-footer-override .chat-panel {
     align-items: center;
     padding: 1rem 1.2rem;
     border-bottom: 1px solid var(--glass-border);
+}
+
+.aviary-panel-header h2 {
+    flex: 1;
+}
+
+.aviary-panel-header #how-it-works-btn {
+    margin-left: auto !important;
+    margin-right: 15px !important;
 }
 
 .aviary-tabs {
@@ -2495,16 +2574,23 @@ body.show-footer-override .chat-panel {
         width: 100%;
         height: auto;
     }
-    
+
     .aviary-panel {
         overflow-x: hidden;
     }
 
+    .aviary-modal-overlay {
+        padding-bottom: 40px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
     .aviary-modal-overlay .glass-card {
-        padding: 20px 20px 12px 20px !important;
+        padding: 20px 20px 60px 20px !important;
+        margin-bottom: 60px !important;
         width: 100% !important;
-        max-height: 90vh !important;
+        max-height: none !important;
         border-radius: 12px !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 }
 

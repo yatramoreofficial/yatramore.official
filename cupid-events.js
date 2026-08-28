@@ -101,4 +101,75 @@ document.addEventListener("DOMContentLoaded", function() {
     if (el_chat_profile_modal) el_chat_profile_modal.addEventListener("click", function(event) { if(event.target === this) this.classList.remove('active') });
     const el_dynamic_btn_36 = document.getElementById("dynamic-btn-36");
     if (el_dynamic_btn_36) el_dynamic_btn_36.addEventListener("click", function(event) { document.getElementById('chat-profile-modal').classList.remove('active') });
+    const el_how_it_works_btn = document.getElementById("how-it-works-btn");
+    if (el_how_it_works_btn) el_how_it_works_btn.addEventListener("click", function(event) { event.preventDefault(); document.getElementById('aviary-how-it-works-modal').style.display='flex'; setTimeout(() => { document.getElementById('aviary-how-it-works-modal').style.opacity='1'; }, 10); });
+
+    const el_night_lock_backdrop = document.getElementById('aviary-night-lock-backdrop');
+    if (el_night_lock_backdrop) el_night_lock_backdrop.addEventListener('click', function(event) { document.getElementById('aviary-night-lock-modal').style.display='none' });
+    const el_reply_cancel_btn = document.getElementById('reply-cancel-btn');
+    if (el_reply_cancel_btn) el_reply_cancel_btn.addEventListener('click', function(event) { window.cancelReply() });
+    document.querySelectorAll('.quick-tick-circle').forEach(function(el) {
+        el.addEventListener('click', function(event) {
+            event.stopPropagation();
+            document.querySelectorAll('.bird-select-card').forEach(c => c.classList.remove('active'));
+            this.previousElementSibling.classList.add('active');
+            window.currentlyViewingBird = this.previousElementSibling;
+        });
+    });
+    const el_delete_modal_close = document.getElementById('aviary-delete-modal-close');
+    if (el_delete_modal_close) el_delete_modal_close.addEventListener('click', function(event) { document.getElementById('aviary-delete-modal').style.display='none' });
+    const el_delete_modal_cancel = document.getElementById('aviary-delete-modal-cancel');
+    if (el_delete_modal_cancel) el_delete_modal_cancel.addEventListener('click', function(event) { document.getElementById('aviary-delete-modal').style.display='none' });
+    const el_how_it_works_close = document.getElementById('aviary-how-it-works-close');
+    if (el_how_it_works_close) el_how_it_works_close.addEventListener('click', function(event) { document.getElementById('aviary-how-it-works-modal').style.opacity='0'; setTimeout(()=>document.getElementById('aviary-how-it-works-modal').style.display='none', 300); });
+    const el_rescue_info_close = document.getElementById('aviary-rescue-info-close');
+    if (el_rescue_info_close) el_rescue_info_close.addEventListener('click', function(event) { document.getElementById('aviary-rescue-info-modal').style.opacity='0'; setTimeout(()=>document.getElementById('aviary-rescue-info-modal').style.display='none', 300); });
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.aviary-letter-reader-close')) {
+            const modal = document.getElementById('aviary-letter-reader-modal');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+    });
+    const el_bird_details_close = document.getElementById('aviary-bird-details-close');
+    if (el_bird_details_close) el_bird_details_close.addEventListener('click', function(event) { document.getElementById('aviary-bird-details-modal').style.opacity='0'; setTimeout(()=>document.getElementById('aviary-bird-details-modal').style.display='none', 300); });
+
+    const el_night_lock_close2 = document.getElementById('aviary-night-lock-close2');
+    if (el_night_lock_close2) el_night_lock_close2.addEventListener('click', function(event) { document.getElementById('aviary-night-lock-modal').style.display='none' });
+    const el_night_lock_got_it2 = document.getElementById('aviary-night-lock-got-it2');
+    if (el_night_lock_got_it2) el_night_lock_got_it2.addEventListener('click', function(event) { document.getElementById('aviary-night-lock-modal').style.display='none' });
+    const el_rescue_info_icon2 = document.getElementById('aviary-rescue-info-icon2');
+    if (el_rescue_info_icon2) el_rescue_info_icon2.addEventListener('click', function(event) { event.preventDefault(); document.getElementById('aviary-rescue-info-modal').style.display='flex'; setTimeout(() => { document.getElementById('aviary-rescue-info-modal').style.opacity='1'; }, 10); });
+    const el_delete_modal_confirm = document.getElementById('aviary-delete-modal-confirm');
+    if (el_delete_modal_confirm) el_delete_modal_confirm.addEventListener('click', function(event) { 
+        if (window.playChatSound) window.playChatSound('pop');
+        document.getElementById('aviary-delete-modal').style.display='none'; 
+        document.getElementById('aviary-delete-success-modal').style.display='flex'; 
+        setTimeout(() => { document.getElementById('aviary-delete-success-modal').style.opacity='1'; }, 10); 
+    });
+    const el_how_it_works_close2 = document.getElementById('aviary-how-it-works-close2');
+    if (el_how_it_works_close2) el_how_it_works_close2.addEventListener('click', function(event) { document.getElementById('aviary-how-it-works-modal').style.opacity='0'; setTimeout(()=>document.getElementById('aviary-how-it-works-modal').style.display='none',300); });
+    const el_rescue_info_close2 = document.getElementById('aviary-rescue-info-close2');
+    if (el_rescue_info_close2) el_rescue_info_close2.addEventListener('click', function(event) { document.getElementById('aviary-rescue-info-modal').style.opacity='0'; setTimeout(()=>document.getElementById('aviary-rescue-info-modal').style.display='none',300); });
+    const el_delete_modal_confirm3 = document.getElementById('aviary-delete-modal-confirm-2');
+    if (el_delete_modal_confirm3) el_delete_modal_confirm3.addEventListener('click', function(event) {
+        if (window.playChatSound) window.playChatSound('pop');
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class=\'fa-solid fa-spinner fa-spin\'></i> Deleting...';
+        if(window.aviaryDeleteTarget) {
+            window.aviaryLogEvent(window.aviaryDeleteTarget.id, window.aviaryDeleteTarget.isSender ? 'hide_sender' : 'hide_recipient').then(() => {
+                window.aviaryDeleteTarget.el.remove();
+                document.getElementById('aviary-delete-modal').style.display='none';
+                if(document.getElementById('aviary-collection-list').children.length === 0) {
+                    if(window.loadLetterCollection) window.loadLetterCollection();
+                }
+                btn.disabled = false;
+                btn.innerHTML = 'Delete';
+            });
+        }
+    });
+
 });

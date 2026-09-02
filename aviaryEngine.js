@@ -753,7 +753,15 @@
         let endX = lngToX(mDest.lng);
         let endY = latToY(mDest.lat);
 
+        let dx = Math.abs(startX - endX);
+        if (dx > w / 2) dx = w - dx;
+        const maxSafeWaterCost = Math.floor((w - dx) / Math.max(1, dx));
+        const owlDynamicWater = Math.min(100, Math.max(2, maxSafeWaterCost));
+        const ravenDynamicWater = Math.min(50, Math.max(2, maxSafeWaterCost));
+
+        let waterCostOverride = null;
         const getCost = (hab) => {
+            if (waterCostOverride !== null && hab === 'water') return waterCostOverride;
             if (birdType === 'albatross') {
                 if (hab === 'water') return 1;
                 if (hab === 'mountain' || hab === 'ice') return 30;
@@ -764,14 +772,14 @@
                 if (hab === 'forest') return 1;
                 if (hab === 'mountain') return 1.5;
                 if (hab === 'ice') return 10;
-                if (hab === 'water') return 100;
+                if (hab === 'water') return owlDynamicWater;
                 return 2;
             }
             if (hab === 'land') return 1;
             if (hab === 'mountain') return 1.5;
             if (hab === 'desert') return 3;
             if (hab === 'ice') return 10;
-            if (hab === 'water') return 100;
+            if (hab === 'water') return birdType === 'raven' ? ravenDynamicWater : 100;
             return 3;
         };
 
@@ -792,18 +800,10 @@
         let rawPath = [];
 
         if (biomeImageLoaded && biomePixelData && (startX !== endX || startY !== endY)) {
-            const gScore = new Map();
-            const parent = new Map();
-            const openSet = new MinHeap();
-
             const toIdx = (x, y) => y * w + x;
             const startIdx = toIdx(startX, startY);
             const endIdx = toIdx(endX, endY);
-
-            gScore.set(startIdx, 0);
-
-            const multiplier = 1.0;
-
+            let multiplier = 1.0;
             const hScore = (x, y) => {
                 let dx = Math.abs(x - endX);
                 if (dx > w / 2) dx = w - dx;
@@ -811,58 +811,73 @@
                 return Math.sqrt(dx * dx + dy * dy) * multiplier;
             };
 
-            openSet.push(startIdx, hScore(startX, startY));
+            for (let attempt = 0; attempt < 2; attempt++) {
+                const gScore = new Map();
+                const parent = new Map();
+                const openSet = new MinHeap();
 
-            const closedSet = new Set();
-            let nodesVisited = 0;
-            const t0 = performance.now();
+                gScore.set(startIdx, 0);
+                openSet.push(startIdx, hScore(startX, startY));
 
-            while (!openSet.isEmpty() && nodesVisited < 500000) {
-                const curr = openSet.pop();
-                if (closedSet.has(curr)) continue;
-                closedSet.add(curr);
+                const closedSet = new Set();
+                let nodesVisited = 0;
+                const t0 = performance.now();
 
-                nodesVisited++;
-                if (curr === endIdx) break;
+                while (!openSet.isEmpty() && nodesVisited < 500000) {
+                    const curr = openSet.pop();
+                    if (closedSet.has(curr)) continue;
+                    closedSet.add(curr);
 
-                const cx = curr % w;
-                const cy = Math.floor(curr / w);
+                    nodesVisited++;
+                    if (curr === endIdx) break;
 
-                const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]];
-                for (let i = 0; i < dirs.length; i++) {
-                    let nx = cx + dirs[i][0];
-                    let ny = cy + dirs[i][1];
+                    const cx = curr % w;
+                    const cy = Math.floor(curr / w);
 
-                    if (nx < 0) nx = w - 1;
-                    if (nx >= w) nx = 0;
+                    const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]];
+                    for (let i = 0; i < dirs.length; i++) {
+                        let nx = cx + dirs[i][0];
+                        let ny = cy + dirs[i][1];
 
-                    if (ny < 0 || ny >= h) continue;
+                        if (nx < 0) nx = w - 1;
+                        if (nx >= w) nx = 0;
 
-                    const nIdx = toIdx(nx, ny);
-                    const isDiag = i >= 4;
+                        if (ny < 0 || ny >= h) continue;
 
-                    const hab = getHabitatAtPixel(nx, ny);
-                    const stepCost = getCost(hab) * (isDiag ? 1.414 : 1);
+                        const nIdx = toIdx(nx, ny);
+                        const isDiag = i >= 4;
 
-                    const tentativeG = gScore.get(curr) + stepCost;
+                        const hab = getHabitatAtPixel(nx, ny);
+                        const stepCost = getCost(hab) * (isDiag ? 1.414 : 1);
 
-                    if (!gScore.has(nIdx) || tentativeG < gScore.get(nIdx)) {
-                        parent.set(nIdx, curr);
-                        gScore.set(nIdx, tentativeG);
-                        openSet.push(nIdx, tentativeG + hScore(nx, ny));
+                        const tentativeG = gScore.get(curr) + stepCost;
+
+                        if (!gScore.has(nIdx) || tentativeG < gScore.get(nIdx)) {
+                            parent.set(nIdx, curr);
+                            gScore.set(nIdx, tentativeG);
+                            openSet.push(nIdx, tentativeG + hScore(nx, ny));
+                        }
                     }
                 }
-            }
 
-            let curr = endIdx;
-            while (curr !== startIdx && parent.has(curr)) {
-                rawPath.push({ x: curr % w, y: Math.floor(curr / w) });
-                curr = parent.get(curr);
+                if (parent.has(endIdx)) {
+                    rawPath = [];
+                    let curr = endIdx;
+                    while (curr !== startIdx && parent.has(curr)) {
+                        rawPath.push({ x: curr % w, y: Math.floor(curr / w) });
+                        curr = parent.get(curr);
+                    }
+                    rawPath.push({ x: startX, y: startY });
+                    rawPath.reverse();
+                    const t1 = performance.now();
+                    console.log(`[A* Engine] Phase ${attempt + 1} finished in ${(t1 - t0).toFixed(2)}ms. Nodes: ${nodesVisited}.`);
+                    break;
+                }
+
+                waterCostOverride = 5;
+                multiplier = 10.0;
+                rawPath = [];
             }
-            rawPath.push({ x: startX, y: startY });
-            rawPath.reverse();
-            const t1 = performance.now();
-            console.log(`[A* Engine] Pathfinding finished in ${(t1 - t0).toFixed(2)}ms. Nodes visited: ${nodesVisited}. IsMobile: ${window.innerWidth <= 768}. Multiplier: ${window.innerWidth <= 768 ? 5.0 : 1.0}`);
         }
 
         if (rawPath.length === 0) {
@@ -886,8 +901,10 @@
                 let lng = xToLng(pt.x);
 
                 let prevLng = path[path.length - 1].lng;
-                if (Math.abs(lng - prevLng) > 180) {
-                    continue;
+                if (lng - prevLng > 180) {
+                    lng -= 360;
+                } else if (lng - prevLng < -180) {
+                    lng += 360;
                 }
                 path.push({ lat, lng, distFromStart: 0 });
             }

@@ -898,6 +898,11 @@ window.updateActiveChatStatus = function (otherUser) {
     }
 };
 window.openPocketBaseChat = async function (matchId, otherUser, isRestore = false) {
+    const chatInput = document.getElementById('chat-input');
+    if (currentChatMatchId && chatInput && !isRestore) {
+        window.chatDrafts = window.chatDrafts || {};
+        window.chatDrafts[currentChatMatchId] = chatInput.value;
+    }
     currentChatMatchId = matchId;
     currentChatOtherUser = otherUser;
     try {
@@ -975,7 +980,6 @@ window.openPocketBaseChat = async function (matchId, otherUser, isRestore = fals
             atBtn.innerHTML = '<i class="fa-solid fa-language"></i> Auto-Translate';
         }
     }
-    const chatInput = document.getElementById('chat-input');
     if (chatInput) {
         if (window.innerWidth > 768) {
             chatInput.focus();
@@ -1023,6 +1027,7 @@ window.openPocketBaseChat = async function (matchId, otherUser, isRestore = fals
         if (chatInput) {
             chatInput.disabled = false;
             chatInput.placeholder = 'Type a message...';
+            chatInput.value = (window.chatDrafts && window.chatDrafts[matchId]) ? window.chatDrafts[matchId] : '';
         }
         if (sendBtn) sendBtn.disabled = false;
         const viewProfileBtn = document.getElementById('view-chat-profile-btn');

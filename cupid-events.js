@@ -146,8 +146,11 @@ document.addEventListener("DOMContentLoaded", function() {
     if (el_delete_modal_confirm) el_delete_modal_confirm.addEventListener('click', function(event) { 
         if (window.playChatSound) window.playChatSound('pop');
         document.getElementById('aviary-delete-modal').style.display='none'; 
-        document.getElementById('aviary-delete-success-modal').style.display='flex'; 
-        setTimeout(() => { document.getElementById('aviary-delete-success-modal').style.opacity='1'; }, 10); 
+        const successModal = document.getElementById('aviary-delete-success-modal');
+        if (successModal) {
+            successModal.style.display='flex'; 
+            setTimeout(() => { successModal.style.opacity='1'; }, 10); 
+        }
     });
     const el_how_it_works_close2 = document.getElementById('aviary-how-it-works-close2');
     if (el_how_it_works_close2) el_how_it_works_close2.addEventListener('click', function(event) { document.getElementById('aviary-how-it-works-modal').style.opacity='0'; setTimeout(()=>document.getElementById('aviary-how-it-works-modal').style.display='none',300); });

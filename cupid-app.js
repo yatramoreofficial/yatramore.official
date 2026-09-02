@@ -88,9 +88,13 @@ function calculateAge(birthdate) {
     if (!birthdate) return '';
     const dob = new Date(String(birthdate).replace(' ', 'T'));
     if (isNaN(dob.getTime())) return '';
-    const diff_ms = Date.now() - dob.getTime();
-    const age_dt = new Date(diff_ms);
-    return Math.abs(age_dt.getUTCFullYear() - 1970);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    return age;
 }
 window.calculateAge = calculateAge;
 async function compressToWebP(file, maxKB = 500) {
@@ -525,7 +529,7 @@ pb.authStore.onChange((token, model) => {
         if (activeChatView) activeChatView.style.display = 'none';
         try {
             if (window.pb && window.pb.realtime) {
-                window.pb.realtime.unsubscribe();
+                window.pb.realtime.unsubscribe('*');
             }
         } catch (e) { console.warn("Non-critical error:", e); }
     }
@@ -990,13 +994,13 @@ async function loadSwipingProfiles() {
             const maxBirthdate = new Date(today.getFullYear() - ageMin, today.getMonth(), today.getDate());
             const y = maxBirthdate.getFullYear();
             const m = maxBirthdate.getMonth() + 1;
-            filterStr += ` && (birth_year < ${y} || (birth_year = ${y} && birth_month <= ${m}))`;
+            filterStr += ` && (birth_year < ${y} || (birth_year = ${y} && birth_month < ${m}))`;
         }
         if (ageMax < 80) {
             const minBirthdate = new Date(today.getFullYear() - ageMax - 1, today.getMonth(), today.getDate());
             const y = minBirthdate.getFullYear();
             const m = minBirthdate.getMonth() + 1;
-            filterStr += ` && (birth_year > ${y} || (birth_year = ${y} && birth_month >= ${m}))`;
+            filterStr += ` && (birth_year > ${y} || (birth_year = ${y} && birth_month > ${m}))`;
         }
         let profilesList;
         profilesList = await pb.collection('users').getList(1, 50, {
@@ -1053,7 +1057,7 @@ window.generateTinderCardHTML = function (p, isModal = false) {
     } else {
         photoUrls = [`https://ui-avatars.com/api/?name=${encodeURIComponent(p.name || 'Unknown')}&background=random`];
     }
-    const safePhotosJson = window.escapeHtml(JSON.stringify(photoUrls));
+    const safePhotosJson = encodeURIComponent(JSON.stringify(photoUrls));
     let dotsHTML = '';
     if (photoUrls.length > 1) {
         dotsHTML = `<div class="tinder-card-dots" style="position: absolute; bottom: 12px; left: 10px; right: 10px; display: flex; gap: 5px; z-index: 15;">` +
@@ -1644,11 +1648,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const ageDisplayMin = document.getElementById('age-display-min');
     const ageDisplayMax = document.getElementById('age-display-max');
     const applyFiltersBtn = document.getElementById('apply-filters');
-    const profileLocation = document.getElementById('profile-location');
+    const filterCountry = document.getElementById('filter-country');
     const prefCountry = document.getElementById('profile-pref-country');
-    if (profileLocation && prefCountry) {
-        Array.from(profileLocation.options).forEach(opt => {
-            if (opt.value && !opt.disabled) {
+    if (filterCountry && prefCountry) {
+        Array.from(filterCountry.options).forEach(opt => {
+            if (opt.value && !opt.disabled && opt.value !== "Any") {
                 const clone = document.createElement('option');
                 clone.value = opt.value;
                 clone.textContent = opt.textContent;
@@ -1995,10 +1999,9 @@ window.cycleCardPhoto = function (element, direction) {
     if (!wrapper) return;
     const rawData = wrapper.getAttribute('data-photos');
     if (!rawData) return;
-    const unescapedData = rawData.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     let photos = [];
     try {
-        photos = JSON.parse(unescapedData);
+        photos = JSON.parse(decodeURIComponent(rawData));
     } catch (e) {
         console.error("Failed to parse photos:", e);
         return;
@@ -2155,5 +2158,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         window.geoapifyGeocoder = geocoder;
+    } else {
+        const fallback = document.getElementById('fallback-city-input');
+        if (fallback) fallback.style.display = '';
     }
 });

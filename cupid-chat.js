@@ -403,7 +403,11 @@ function setupChatUIListeners() {
     };
     window.closeChat = closeDrawer;
     closeInboxBtn?.addEventListener('click', closeDrawer);
-    closeChatBtn?.addEventListener('click', closeDrawer);
+    closeChatBtn?.addEventListener('click', () => {
+        if (window.cancelReply) window.cancelReply();
+        if (window.cancelEditMessage) window.cancelEditMessage();
+        closeDrawer();
+    });
     backBtn?.addEventListener('click', () => {
         if (document.activeElement) document.activeElement.blur();
         document.body.classList.remove('keyboard-open');
@@ -983,7 +987,7 @@ window.openPocketBaseChat = async function (matchId, otherUser, isRestore = fals
     }
     fetchAndRenderMatches();
     const chatInputWrapper = document.querySelector('.chat-input-area');
-    const sendBtn = document.getElementById('chat-send-btn');
+    const sendBtn = document.getElementById('send-msg-btn');
     const blockBanner = document.getElementById('read-only-block-banner');
     if (blockBanner) blockBanner.style.display = 'none';
     if (otherUser.isBlocked) {
@@ -1156,10 +1160,14 @@ async function loadChatHistory(matchId) {
                         if (window.updateCombinedBadge) window.updateCombinedBadge();
                         const sidebarDot = document.querySelector(`.chat-item[data-match-id="${matchId}"] .unread-dot`);
                         if (sidebarDot) sidebarDot.style.display = 'none';
-                        const updatePromises = unreadResult.map(msg =>
-                            pb.collection('messages').update(msg.id, { read: true }).catch(console.error)
-                        );
-                        await Promise.all(updatePromises);
+                        const batchSize = 15;
+                        for (let i = 0; i < unreadResult.length; i += batchSize) {
+                            const chunk = unreadResult.slice(i, i + batchSize);
+                            const updatePromises = chunk.map(msg =>
+                                pb.collection('messages').update(msg.id, { read: true }).catch(console.error)
+                            );
+                            await Promise.all(updatePromises);
+                        }
                         fetchAndRenderMatches();
                     };
                     if (document.visibilityState === 'visible') {
@@ -1388,7 +1396,7 @@ let isSpamCooldown = false;
 async function sendMessage() {
     if (isSpamCooldown) return;
     const input = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('send-chat-btn');
+    const sendBtn = document.getElementById('send-msg-btn');
     const text = input.value.trim();
     if (!text || !currentChatMatchId) return;
     const nowMs = Date.now();
@@ -1418,7 +1426,7 @@ async function sendMessage() {
             window.cancelEditMessage();
             loadChatHistory(currentChatMatchId);
         } else {
-            tempId = 'temp_' + Date.now();
+            tempId = 'temp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
             const tempMsg = {
                 id: tempId,
                 match_id: currentChatMatchId,
@@ -1703,6 +1711,7 @@ function showContextMenu(msgElement, event) {
     if (sandwichTop < 65) msgTop += (65 - sandwichTop);
     const sandwichBottom = msgTop + rect.height + padding + actionHeight;
     if (sandwichBottom > maxBottom) msgTop -= (sandwichBottom - maxBottom);
+    if (msgTop < 65) msgTop = 65;
     if (reactionBar) {
         reactionBar.style.setProperty('position', 'fixed', 'important');
         reactionBar.style.setProperty('top', `${msgTop - emojiHeight - padding}px`, 'important');

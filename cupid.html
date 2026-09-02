@@ -991,7 +991,9 @@
                         <label
                             style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">Location
                             (City, State, Country) *</label>
-                        <div id="autocomplete-container" style="position: relative; width: 100%;"></div>
+                        <div id="autocomplete-container" style="position: relative; width: 100%;">
+                            <input type="text" id="fallback-city-input" class="form-input" placeholder="Enter your city" style="display:none;" onchange="document.getElementById('profile-city').value = this.value; document.getElementById('profile-country').value = 'Unknown';">
+                        </div>
                         <input type="hidden" id="profile-country" required>
                         <input type="hidden" id="profile-state">
                         <input type="hidden" id="profile-city">

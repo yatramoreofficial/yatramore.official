@@ -396,7 +396,10 @@
         let nightLockedHTML = '';
 
         if (record.is_night_locked && record.bird_type === 'owl') {
-            const h = new Date().getHours();
+            let h = new Date().getHours();
+            if (record.dest_coords && typeof record.dest_coords.lng === 'number') {
+                h = Math.floor(new Date().getUTCHours() + (record.dest_coords.lng / 15) + 24) % 24;
+            }
             const isNightNow = h >= 20 || h < 6;
             if (!isNightNow) {
                 onClickAction = `document.getElementById('aviary-night-lock-modal').style.display='flex'`;
@@ -570,7 +573,10 @@
             }
         } else if (record.status === 'delivered') {
             if (record.is_night_locked && record.bird_type === 'owl') {
-                const h = new Date().getHours();
+                let h = new Date().getHours();
+                if (record.dest_coords && typeof record.dest_coords.lng === 'number') {
+                    h = Math.floor(new Date().getUTCHours() + (record.dest_coords.lng / 15) + 24) % 24;
+                }
                 const isNow = h >= 20 || h < 6;
                 if (!isSender && !isNow) {
                     statusHTML = `<span style="color:#7c4dff"><i class="fa-solid fa-lock"></i> 🌙 Midnight Letter — Unlocks at 8:00 PM</span>`;
@@ -712,7 +718,10 @@
 
     function renderLetterContent(record) {
         if (record.is_night_locked && record.bird_type === 'owl') {
-            const h = new Date().getHours();
+            let h = new Date().getHours();
+            if (record.dest_coords && typeof record.dest_coords.lng === 'number') {
+                h = Math.floor(new Date().getUTCHours() + (record.dest_coords.lng / 15) + 24) % 24;
+            }
             const isNightNow = h >= 20 || h < 6;
             if (!isNightNow) {
                 return `<div class="aviary-letter-locked"><i class="fa-solid fa-moon"></i> This letter can only be read under the stars. Come back after 8 PM.</div>`;
@@ -1393,7 +1402,7 @@
                     popupHtml += `<span style="color:var(--status-error, #d32f2f);font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-triangle-exclamation"></i> Crashed!</span>`;
                     popupHtml += `<div style="font-size:0.75rem;margin-top:2px;">${escapeHtml(record.crash_reason || '')}</div>`;
 
-                    if (!record.burn_on_crash) {
+                    if (!record.burn_on_crash || record.sender === currentUser?.id) {
                         const escRecord = encodeURIComponent(JSON.stringify(record)).replace(/'/g, "%27");
                         popupHtml += `<button onclick="window.openLetterReader(decodeURIComponent('${escRecord}'), 'rescuer')" style="width:100%; margin-top:6px; padding:6px; background:var(--brand-brown); color:var(--bg-main); border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; display:flex; justify-content:center; align-items:center; gap:6px; font-weight:600;"><i class="fa-solid fa-book-open"></i> Read Spilled Letter</button>`;
                     }

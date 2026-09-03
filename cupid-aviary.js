@@ -141,6 +141,10 @@
                 letterCounter.style.color = len > 900 ? '#f44336' : 'var(--text-muted)';
             });
         }
+
+        if (window.location.hash === '#aviary') {
+            setTimeout(openAviaryPanel, 300);
+        }
     }
     function openAviaryPanel() {
         if (!aviaryPanel) return;

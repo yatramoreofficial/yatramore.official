@@ -125,10 +125,42 @@
         const lazyEndDistPct = hasLazyPhase ? lazyStartDistPct + 0.2 : -1;
         const lazyItem = hasLazyPhase ? pool.lazy[Math.floor(Math.random() * pool.lazy.length)] : null;
 
-        const hasRestPhase = Math.random() < 0.15;
+        const hasRestPhase = Math.random() < 0.30;
         const restDurationHours = hasRestPhase ? 0.5 + Math.random() * 1.5 : 0;
         const distanceBeforeRestPct = hasRestPhase ? 0.3 + Math.random() * 0.4 : 2.0;
         const restItem = hasRestPhase ? pool.resting[Math.floor(Math.random() * pool.resting.length)] : null;
+
+        let straightLineDuration = 0;
+        if (birdType !== "owl") {
+            let slSpeed = birdType === "albatross" ? (distanceKm > 500 ? 130 : 110) : pool.baseSpeed;
+            straightLineDuration = distanceKm / slSpeed;
+        } else {
+            let distanceRemaining = distanceKm;
+            let currentTime = now.getTime();
+            let destLngNum = destCoords ? Number(destCoords.lng) : NaN;
+            let offsetHours = (!Number.isNaN(destLngNum) && Number.isFinite(destLngNum)) ? Math.round(destLngNum / 15) : 0;
+            let iterations = 0;
+            while (distanceRemaining > 0.01 && iterations < 1000) {
+                iterations++;
+                let date = new Date(currentTime);
+                let utcHour = date.getUTCHours();
+                let localHourDecimal = ((utcHour + offsetHours + 24) % 24) + (date.getUTCMinutes() / 60) + (date.getUTCSeconds() / 3600);
+                let isNight = localHourDecimal >= 20 || localHourDecimal < 6;
+                let speed = isNight ? 110 : 40;
+                let nextBoundaryHour = isNight ? 6 : 20;
+                let hoursUntil = nextBoundaryHour - localHourDecimal;
+                if (hoursUntil <= 0) hoursUntil += 24;
+                let maxDist = speed * hoursUntil;
+                if (distanceRemaining <= maxDist) {
+                    straightLineDuration += (distanceRemaining / speed);
+                    distanceRemaining = 0;
+                } else {
+                    straightLineDuration += hoursUntil;
+                    distanceRemaining -= maxDist;
+                    currentTime += (hoursUntil * 3600 * 1000) + 10;
+                }
+            }
+        }
 
         if (senderCoords && destCoords && typeof window !== 'undefined' && biomeImageLoaded && biomePixelData) {
             const { origin: mSender, dest: mDest } = getMirroredCoords(senderCoords, destCoords);
@@ -164,7 +196,26 @@
                     }
                 }
 
-                let flightDuration = newSegments.reduce((sum, s) => sum + s.duration, 0);
+                let baseFlightDuration = newSegments.reduce((sum, s) => sum + (s.distance / s.speed), 0);
+
+                let flightDuration = 0;
+                if (baseFlightDuration > 0 && straightLineDuration > 0) {
+                    const timeScaleFactor = straightLineDuration / baseFlightDuration;
+
+                    for (let s of newSegments) {
+                        let baseDuration = (s.distance / s.speed) * timeScaleFactor;
+                        if (s.isLazy) {
+                            let penalty = ((s.distance / pool.lazySpeed) - (s.distance / s.speed)) * timeScaleFactor;
+                            s.duration = baseDuration + penalty;
+                        } else {
+                            s.duration = baseDuration;
+                        }
+                        flightDuration += s.duration;
+                    }
+                } else {
+                    flightDuration = newSegments.reduce((sum, s) => sum + s.duration, 0);
+                }
+
                 let totalDurationHours = flightDuration + restDurationHours;
 
                 let currentPct = 0;
@@ -214,19 +265,22 @@
                     currentDistPct += segDistPct;
 
                     if (!restingInjected && currentDistPct > distanceBeforeRestPct) {
-                        let restTimePct = restDurationHours / totalDurationHours;
-                        events.push({
-                            type: "resting",
-                            speed: 0,
-                            start_pct: currentPct,
-                            end_pct: currentPct + restTimePct,
-                            distance_pct_contribution: 0.0,
-                            duration_mins: Math.round(restDurationHours * 60),
-                            status_text: restItem.text,
-                            icon: restItem.icon
-                        });
-                        currentPct += restTimePct;
-                        restingInjected = true;
+                        const canRestHere = (birdType === 'albatross') || (seg.hab !== 'water');
+                        if (canRestHere) {
+                            let restTimePct = restDurationHours / totalDurationHours;
+                            events.push({
+                                type: "resting",
+                                speed: 0,
+                                start_pct: currentPct,
+                                end_pct: currentPct + restTimePct,
+                                distance_pct_contribution: 0.0,
+                                duration_mins: Math.round(restDurationHours * 60),
+                                status_text: restItem.text,
+                                icon: restItem.icon
+                            });
+                            currentPct += restTimePct;
+                            restingInjected = true;
+                        }
                     }
                 }
 
@@ -621,7 +675,6 @@
             return word;
         }).join(" ");
     }
-    // Offline Canvas Biome Reader
     let biomeCanvas = null;
     let biomeCtx = null;
     let biomeImageLoaded = false;
@@ -756,8 +809,8 @@
         let dx = Math.abs(startX - endX);
         if (dx > w / 2) dx = w - dx;
         const maxSafeWaterCost = Math.floor((w - dx) / Math.max(1, dx));
-        const owlDynamicWater = Math.min(100, Math.max(2, maxSafeWaterCost));
-        const ravenDynamicWater = Math.min(50, Math.max(2, maxSafeWaterCost));
+        const owlDynamicWater = Math.min(100, Math.max(1, maxSafeWaterCost));
+        const ravenDynamicWater = Math.min(50, Math.max(1, maxSafeWaterCost) * 1.5);
 
         let waterCostOverride = null;
         const getCost = (hab) => {
@@ -769,17 +822,27 @@
                 return 8; // land, desert
             }
             if (birdType === 'owl') {
-                if (hab === 'forest') return 1;
+                if (hab === 'forest') return 0.8;
+                if (hab === 'land') return 2.0;
                 if (hab === 'mountain') return 1.5;
-                if (hab === 'ice') return 10;
+                if (hab === 'ice') return 10.0;
                 if (hab === 'water') return owlDynamicWater;
-                return 2;
+                return 2.0;
+            }
+            if (birdType === 'raven') {
+                if (hab === 'land') return 0.5;
+                if (hab === 'forest') return 1.2;
+                if (hab === 'mountain') return 2.0;
+                if (hab === 'desert') return 3.0;
+                if (hab === 'ice') return 10.0;
+                if (hab === 'water') return ravenDynamicWater;
+                return 3.0;
             }
             if (hab === 'land') return 1;
             if (hab === 'mountain') return 1.5;
             if (hab === 'desert') return 3;
             if (hab === 'ice') return 10;
-            if (hab === 'water') return birdType === 'raven' ? ravenDynamicWater : 100;
+            if (hab === 'water') return 100;
             return 3;
         };
 
@@ -951,9 +1014,25 @@
         if (path.length > 3 && directDistKm > 150) {
             let smoothed = [path[0]];
             for (let i = 1; i < path.length - 1; i++) {
+                let diff1 = path[i].lng - path[i - 1].lng;
+                if (diff1 > 180) diff1 -= 360;
+                if (diff1 < -180) diff1 += 360;
+
+                let diff2 = path[i + 1].lng - path[i].lng;
+                if (diff2 > 180) diff2 -= 360;
+                if (diff2 < -180) diff2 += 360;
+
+                let lng1 = path[i - 1].lng;
+                let lng2 = lng1 + diff1;
+                let lng3 = lng2 + diff2;
+
+                let avgLng = (lng1 + lng2 + lng3) / 3;
+                if (avgLng > 180) avgLng -= 360;
+                if (avgLng < -180) avgLng += 360;
+
                 smoothed.push({
                     lat: (path[i - 1].lat + path[i].lat + path[i + 1].lat) / 3,
-                    lng: (path[i - 1].lng + path[i].lng + path[i + 1].lng) / 3,
+                    lng: avgLng,
                     distFromStart: 0
                 });
             }

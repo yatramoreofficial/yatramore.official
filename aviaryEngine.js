@@ -867,11 +867,27 @@
             const startIdx = toIdx(startX, startY);
             const endIdx = toIdx(endX, endY);
             let multiplier = 1.0;
+            let tb_dx = startX - endX;
+            if (tb_dx > w / 2) tb_dx -= w;
+            else if (tb_dx < -w / 2) tb_dx += w;
+            let tb_dy = startY - endY;
+            let tb_lineLen = Math.sqrt(tb_dx * tb_dx + tb_dy * tb_dy);
+
             const hScore = (x, y) => {
                 let dx = Math.abs(x - endX);
                 if (dx > w / 2) dx = w - dx;
                 let dy = Math.abs(y - endY);
-                return Math.sqrt(dx * dx + dy * dy) * multiplier;
+                let h_val = Math.sqrt(dx * dx + dy * dy) * multiplier;
+                if (tb_lineLen > 0) {
+                    let dx1 = x - endX;
+                    if (dx1 > w / 2) dx1 -= w;
+                    else if (dx1 < -w / 2) dx1 += w;
+                    let dy1 = y - endY;
+                    let cross = Math.abs(dx1 * tb_dy - tb_dx * dy1);
+                    h_val += (cross / tb_lineLen) * 0.001;
+                }
+
+                return h_val;
             };
 
             for (let attempt = 0; attempt < 2; attempt++) {
@@ -911,7 +927,7 @@
                         const isDiag = i >= 4;
 
                         const hab = getHabitatAtPixel(nx, ny);
-                        const stepCost = getCost(hab) * (isDiag ? 1.414 : 1);
+                        const stepCost = getCost(hab) * (isDiag ? Math.SQRT2 : 1);
 
                         const tentativeG = gScore.get(curr) + stepCost;
 

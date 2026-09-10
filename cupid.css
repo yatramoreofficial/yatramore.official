@@ -1999,6 +1999,11 @@ body.show-footer-override .chat-panel {
     background: rgba(33, 150, 243, 0.1);
 }
 
+.notification-item.type-premium_approved .notification-icon {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.12);
+}
+
 .notification-content {
     flex: 1;
     min-width: 0;

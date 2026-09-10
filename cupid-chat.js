@@ -2018,6 +2018,7 @@ function renderNotifications() {
         else if (notif.type === 'verification_approved') iconHtml = '<i class="fa-solid fa-user-check"></i>';
         else if (notif.type === 'verification_rejected') iconHtml = '<i class="fa-solid fa-user-xmark"></i>';
         else if (notif.type === 'admin_warning') iconHtml = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        else if (notif.type === 'premium_approved') iconHtml = '<i class="fa-solid fa-crown" style="color: #fbbf24;"></i>';
         else if (notif.type === 'aviary_update' || (notif.type === 'system' && notif.data && notif.data.delivery_id)) {
             if (notif.data && notif.data.bird_type && typeof window.getBirdSVG === 'function') {
                 iconHtml = `<div style="transform: scale(0.7); display: flex; align-items: center; justify-content: center;">${window.getBirdSVG(notif.data.bird_type, 'still', false)}</div>`;

@@ -1980,8 +1980,8 @@ body.show-footer-override .chat-panel {
 }
 
 .notification-item.type-verification_approved .notification-icon {
-    color: #4CAF50;
-    background: rgba(76, 175, 80, 0.1);
+    color: #2196F3;
+    background: rgba(33, 150, 243, 0.1);
 }
 
 .notification-item.type-verification_rejected .notification-icon {

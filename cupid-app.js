@@ -1005,7 +1005,7 @@ async function loadSwipingProfiles() {
         let profilesList;
         profilesList = await pb.collection('users').getList(1, 50, {
             filter: filterStr,
-            sort: '-id',
+            sort: '-is_premium,-is_verified,-id',
             requestKey: null
         });
         if (profilesList && profilesList.items) {

@@ -532,7 +532,9 @@
         const isDelivered = record.status === 'delivered' || record.status === 'rescued';
 
         let directionStr = '';
-        if (isSender) {
+        if (record.status === 'crashed') {
+            directionStr = isSender ? `Failed delivery to ${otherUserName}` : `Lost en route from ${otherUserName}`;
+        } else if (isSender) {
             directionStr = isDelivered ? `Delivered to ${otherUserName}` : `Sent to ${otherUserName}`;
         } else {
             directionStr = isDelivered ? `Received from ${otherUserName}` : `Incoming from ${otherUserName}`;
@@ -560,7 +562,7 @@
 
             if (visualStatus === 'crashed') {
                 statusHTML = `<span style="color:#f44336"><i class="fa-solid fa-skull-crossbones"></i> ${escapeHtml(record.crash_reason || 'Crashed')}</span>`;
-                if (record.rescue_target > 0) {
+                if (record.rescue_target > 0 && !record.burn_on_crash) {
                     rescueHTML = `<div style="margin-top:6px;font-size:0.8rem;color:var(--text-muted)">🛟 Rescue: ${record.rescue_count || 0}/${record.rescue_target} pushes</div>`;
                 }
             } else {
@@ -828,7 +830,9 @@
                 const otherUserName = otherUser ? (otherUser.name || 'Unknown User') : 'Unknown User';
                 const isDelivered = record.status === 'delivered' || record.status === 'rescued';
                 let directionStr = '';
-                if (isSender) {
+                if (record.status === 'crashed') {
+                    directionStr = isSender ? `Failed delivery to ${otherUserName}` : `Lost en route from ${otherUserName}`;
+                } else if (isSender) {
                     directionStr = isDelivered ? `Delivered to ${otherUserName}` : `Sent to ${otherUserName}`;
                 } else {
                     directionStr = isDelivered ? `Received from ${otherUserName}` : `Incoming from ${otherUserName}`;
@@ -848,14 +852,16 @@
         let svgContent = '';
 
         if (status === 'crashed') {
+            let floatDelay = `animation-delay: -${Math.random() * 3}s;`;
+            let flapDelay = `animation-delay: -${Math.random() * 1}s;`;
             if (isBurned) {
                 let ghostBird = '';
                 if (type === 'raven') {
                     ghostBird = `
-                    <div style="position:absolute; top: -15px; left: -10px; animation: floatGhost 3s ease-in-out infinite; ${floatDelay}">
-                        <svg viewBox="0 0 140 100" width="100" height="70" style="overflow:visible;">
+                    <div style="position:absolute; top: -12px; left: -8px; animation: floatGhost 3s ease-in-out infinite; ${floatDelay}">
+                        <svg viewBox="0 0 140 100" width="80" height="56" style="overflow:visible;">
                             <g style="transform-origin: center;">
-                                <g style="transform-origin: 48px 40px; animation: ravenFlapBack 1s infinite; ${flapDelay}">
+                                <g style="transform-origin: 48px 40px; animation: ghostRavenFlapBack 1s infinite; ${flapDelay}">
                                     <path d="M 48 40 C 35 15 30 -5 50 -10 C 65 5 62 25 48 40 Z" fill="#27272b" />
                                 </g>
                                 <g fill="#0f0b17">
@@ -865,7 +871,7 @@
                                 <circle cx="76" cy="35" r="12" fill="#1a1a1d" />
                                 <circle cx="80" cy="33" r="3.2" fill="#110d18" />
                                 <path d="M 85 30 C 105 34 112 40 108 44 C 98 46 86 42 85 38 Z" fill="#181322" stroke="#322842" stroke-width="0.8" />
-                                <g style="transform-origin: 52px 44px; animation: ravenFlapFront 1s infinite; ${flapDelay}">
+                                <g style="transform-origin: 52px 44px; animation: ghostRavenFlapFront 1s infinite; ${flapDelay}">
                                     <path d="M 52 44 C 38 15 32 -10 58 -14 C 78 5 72 28 52 44 Z" fill="#393940" stroke="#7b68a3" stroke-width="0.7" />
                                 </g>
                             </g>
@@ -873,10 +879,10 @@
                     </div>`;
                 } else if (type === 'owl') {
                     ghostBird = `
-                    <div style="position:absolute; top: -15px; left: -10px; animation: floatGhost 3.5s ease-in-out infinite; ${floatDelay}">
-                        <svg viewBox="0 0 140 100" width="100" height="70" style="overflow:visible;">
+                    <div style="position:absolute; top: -12px; left: -8px; animation: floatGhost 3.5s ease-in-out infinite; ${floatDelay}">
+                        <svg viewBox="0 0 140 100" width="80" height="56" style="overflow:visible;">
                             <g style="transform-origin: center;">
-                                <g style="transform-origin: 50px 40px; animation: owlSideFlapBack 1.2s infinite; ${flapDelay}">
+                                <g style="transform-origin: 50px 40px; animation: ghostOwlSideFlapBack 1.2s infinite; ${flapDelay}">
                                     <path d="M 50 40 C 35 15 30 -5 50 -10 C 70 5 65 25 50 40 Z" fill="#784a28" />
                                 </g>
                                 <path d="M 28 48 C 15 44 5 38 0 44 C 10 52 20 54 28 50 Z" fill="#663c1f" />
@@ -885,7 +891,7 @@
                                 <circle cx="72" cy="38" r="4" fill="#0b0914" />
                                 <circle cx="68" cy="38" r="4" fill="#0b0914" />
                                 <path d="M 80 40 C 85 42 88 44 85 46 Z" fill="#e2b868" />
-                                <g style="transform-origin: 52px 42px; animation: owlSideFlapFront 1.2s infinite; ${flapDelay}">
+                                <g style="transform-origin: 52px 42px; animation: ghostOwlSideFlapFront 1.2s infinite; ${flapDelay}">
                                     <path d="M 52 42 C 38 15 32 -10 60 -10 C 80 5 72 28 52 42 Z" fill="#8d562f" />
                                 </g>
                             </g>
@@ -893,14 +899,14 @@
                     </div>`;
                 } else {
                     ghostBird = `
-                    <div style="position:absolute; top: -15px; left: -25px; animation: floatGhost 4s ease-in-out infinite; ${floatDelay}">
-                        <svg viewBox="0 0 210 100" width="120" height="60" style="overflow:visible;">
+                    <div style="position:absolute; top: -12px; left: -18px; animation: floatGhost 4s ease-in-out infinite; ${floatDelay}">
+                        <svg viewBox="0 0 210 100" width="95" height="48" style="overflow:visible;">
                             <g style="transform-origin: center;">
-                                <g style="transform-origin: 52px 34px; animation: albatrossFlapGlideLeft 2s infinite; ${flapDelay}">
+                                <g style="transform-origin: 52px 34px; animation: ghostAlbatrossFlapGlideLeft 2s infinite; ${flapDelay}">
                                     <path d="M 52 34 C 18 20 -15 15 -35 22 C -10 32 25 40 46 42 Z" fill="#e2e8f0" />
                                     <polygon points="-35,22 -28,27 -20,26" fill="#020617" />
                                 </g>
-                                <g style="transform-origin: 64px 34px; animation: albatrossFlapGlideRight 2s infinite; ${flapDelay}">
+                                <g style="transform-origin: 64px 34px; animation: ghostAlbatrossFlapGlideRight 2s infinite; ${flapDelay}">
                                     <path d="M 64 34 C 98 10 135 15 155 24 C 130 36 95 42 74 42 Z" fill="#cbd5e1" />
                                     <polygon points="155,24 148,29 140,28" fill="#020617" />
                                 </g>
@@ -928,16 +934,16 @@
                 return `
                     <style>
                         @keyframes floatGhost { 0% { transform: translateY(0px) scale(0.35); filter: drop-shadow(0 0 4px #e0f2fe) brightness(2.5) grayscale(1) opacity(0.7); } 50% { transform: translateY(-8px) scale(0.35); filter: drop-shadow(0 0 8px #e0f2fe) brightness(2.5) grayscale(1) opacity(0.5); } 100% { transform: translateY(0px) scale(0.35); filter: drop-shadow(0 0 4px #e0f2fe) brightness(2.5) grayscale(1) opacity(0.7); } }
-                        @keyframes ravenFlapBack { 0% { transform: rotate(0deg); } 50% { transform: rotate(-30deg); } 100% { transform: rotate(0deg); } }
-                        @keyframes ravenFlapFront { 0% { transform: rotate(0deg); } 50% { transform: rotate(40deg); } 100% { transform: rotate(0deg); } }
-                        @keyframes owlSideFlapBack { 0% { transform: rotate(0deg); } 50% { transform: rotate(-30deg); } 100% { transform: rotate(0deg); } }
-                        @keyframes owlSideFlapFront { 0% { transform: rotate(0deg); } 50% { transform: rotate(40deg); } 100% { transform: rotate(0deg); } }
-                        @keyframes albatrossFlapGlideLeft { 0% { transform: rotate(0deg); } 50% { transform: rotate(-20deg); } 100% { transform: rotate(0deg); } }
-                        @keyframes albatrossFlapGlideRight { 0% { transform: rotate(0deg); } 50% { transform: rotate(20deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes ghostRavenFlapBack { 0% { transform: rotate(0deg); } 50% { transform: rotate(-30deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes ghostRavenFlapFront { 0% { transform: rotate(0deg); } 50% { transform: rotate(40deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes ghostOwlSideFlapBack { 0% { transform: rotate(0deg); } 50% { transform: rotate(-30deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes ghostOwlSideFlapFront { 0% { transform: rotate(0deg); } 50% { transform: rotate(40deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes ghostAlbatrossFlapGlideLeft { 0% { transform: rotate(0deg); } 50% { transform: rotate(-20deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes ghostAlbatrossFlapGlideRight { 0% { transform: rotate(0deg); } 50% { transform: rotate(20deg); } 100% { transform: rotate(0deg); } }
                     </style>
                     <div class="bird-map-marker bird-burned" style="display:flex; justify-content:center; align-items:center; width:100%; height:100%; position:relative; padding-bottom:5px;">
-                        <div style="position:relative; width: 60px; height: 80px; display:flex; justify-content:center; align-items:flex-end;">
-                            <svg viewBox="0 0 100 120" width="60" height="72" style="overflow:visible; filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.6)); position:absolute; bottom:0;">
+                        <div style="position:relative; width: 48px; height: 65px; display:flex; justify-content:center; align-items:flex-end;">
+                            <svg viewBox="0 0 100 120" width="45" height="54" style="overflow:visible; filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.6)); position:absolute; bottom:0;">
                                 <ellipse cx="50" cy="110" rx="40" ry="10" fill="#09090b" opacity="0.7" />
                                 <path d="M 20 110 L 20 50 Q 50 0 80 50 L 80 110 Z" fill="#52525b" stroke="#27272a" stroke-width="2" />
                                 <path d="M 23 108 L 23 50 Q 50 5 77 50 L 77 108 Z" fill="#71717a" />
@@ -1320,6 +1326,7 @@
                     } catch (e) { }
                 }
                 const pool = AE.BIRD_QUIRK_POOLS[record.bird_type] || AE.BIRD_QUIRK_POOLS.raven;
+                try {
                 const origin = record.origin_coords || { lat: 28, lng: 77 };
                 const dest = record.dest_coords || { lat: 28, lng: 77 };
                 const { origin: mOrigin, dest: mDest } = AE.getMirroredCoords(origin, dest);
@@ -1447,6 +1454,19 @@
                     const marker = L.marker([currentLat, currentLng], { icon: icon }).addTo(aviaryMarkersLayer);
                     marker.bindPopup(popupHtml);
                     window.aviaryMarkerRegistry[record.id] = marker;
+                }
+
+                if (isParticipant && visualStatus === 'crashed') {
+                    if (!window._aviaryPannedCrashes) window._aviaryPannedCrashes = {};
+                    if (!window._aviaryPannedCrashes[record.id]) {
+                        window._aviaryPannedCrashes[record.id] = true;
+                        aviaryLeafletMap.flyTo([currentLat, currentLng], 5, { duration: 1.5 });
+                        const targetMarker = window.aviaryMarkerRegistry[record.id];
+                        if (targetMarker) setTimeout(() => targetMarker.openPopup(), 1800);
+                    }
+                }
+                } catch (birdErr) {
+                    console.warn('Skipped rendering bird', record.id, birdErr);
                 }
             }
 

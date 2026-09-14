@@ -1242,14 +1242,12 @@ window.submitVerification = async function () {
         btn.disabled = true;
     }
     try {
-        const compressedId = await compressToWebP(verifyIdFile);
-        const compressedSelfie = await compressToWebP(verifySelfieFile);
         const formData = new FormData();
         formData.append('user', currentUser.id);
         formData.append('name', currentUser.name);
         formData.append('birthdate', currentUser.birthdate);
-        formData.append('verification_id', compressedId);
-        formData.append('verification_selfie', compressedSelfie);
+        formData.append('verification_id', verifyIdFile);
+        formData.append('verification_selfie', verifySelfieFile);
         formData.append('status', 'pending');
         formData.append('submitted_at', new Date().toISOString());
         await pb.collection('verifications').create(formData);
@@ -1315,7 +1313,7 @@ window.openVerificationModal = function () {
     if (!currentUser) return;
     if (currentUser.verification_locked_until) {
         const dateStr = currentUser.verification_locked_until.replace(' ', 'T');
-        const lockDate = new Date(String(dateStr).replace(' ', 'T'));
+        const lockDate = new Date(dateStr);
         const now = new Date();
         if (lockDate > now) {
             const diffTime = Math.abs(lockDate - now);
@@ -1450,6 +1448,7 @@ function renderHobbiesSelection() {
     });
     counter.textContent = `${selectedHobbies.length}/5`;
 }
+let selectedFiles = {};
 document.getElementById('native-profile-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!currentUser) return;
@@ -1487,16 +1486,9 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
             if (selectedFiles[i]) {
                 formData.append('photos', selectedFiles[i]);
                 newlyUploaded++;
-            } else {
-                const photoInput = document.getElementById(`profile-photo-${i}`);
-                if (photoInput && photoInput.files.length > 0) {
-                    const compressed = await compressToWebP(photoInput.files[0]);
-                    formData.append('photos', compressed);
-                    newlyUploaded++;
-                } else if (currentUser.photos && currentUser.photos.length >= i) {
-                    formData.append('photos', currentUser.photos[i - 1]);
-                    retainedPhotos++;
-                }
+            } else if (currentUser.photos && currentUser.photos.length >= i) {
+                formData.append('photos', currentUser.photos[i - 1]);
+                retainedPhotos++;
             }
         }
         if ((retainedPhotos + newlyUploaded) < 2) {
@@ -1520,7 +1512,6 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
 });
 let cropperInstance = null;
 let currentCropTarget = null;
-let selectedFiles = {};
 function openCropModal(imageUrl, targetContext) {
     const cropModal = document.getElementById('cropper-modal');
     const image = document.getElementById('cropper-image');
@@ -1592,17 +1583,20 @@ document.addEventListener('DOMContentLoaded', () => {
             saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...';
             saveBtn.disabled = true;
 
-            cropperInstance.getCroppedCanvas({
+            const canvas = cropperInstance.getCroppedCanvas({
                 maxWidth: 1024,
                 maxHeight: 1024
-            }).toBlob(async (blob) => {
+            });
+            const dataUrl = canvas.toDataURL('image/webp', 0.9);
+
+            canvas.toBlob(async (blob) => {
                 saveBtn.innerHTML = originalSaveText;
                 saveBtn.disabled = false;
 
                 if (nsfwModel && (currentCropTarget.type === 'profile' || currentCropTarget.type === 'verify')) {
                     try {
                         const imgEl = document.createElement('img');
-                        imgEl.src = URL.createObjectURL(blob);
+                        imgEl.src = dataUrl;
                         await new Promise((resolve) => { imgEl.onload = resolve; });
 
                         const predictions = await nsfwModel.classify(imgEl);
@@ -1630,7 +1624,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const input = currentCropTarget.fileInput;
                     const icon = input.parentElement.querySelector('.fa-plus');
                     if (preview) {
-                        preview.src = URL.createObjectURL(blob);
+                        preview.src = dataUrl;
                         preview.style.display = 'block';
                     }
                     if (icon) icon.style.display = 'none';
@@ -1640,7 +1634,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (previewId === 'verify-preview-selfie') verifySelfieFile = file;
                     const img = document.getElementById(previewId);
                     if (img) {
-                        img.src = URL.createObjectURL(blob);
+                        img.src = dataUrl;
                         img.style.display = 'block';
                         const icon = img.parentElement.querySelector('.fa-plus') || img.parentElement.querySelector('i');
                         if (icon) icon.style.display = 'none';
@@ -1650,7 +1644,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cropperInstance.destroy();
                 cropperInstance = null;
                 currentCropTarget = null;
-            }, 'image/webp', 0.8);
+            }, 'image/webp', 0.9);
         });
     }
 });

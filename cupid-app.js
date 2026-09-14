@@ -1,4 +1,6 @@
 const pb = new PocketBase('https://api.yatramore.com');
+const localSwipedIds = new Set();
+let swipeCards = [];
 window.debugLog = window.debugLog || function () { };
 window.secureYatramoreLogout = function () {
     const killList = [
@@ -683,11 +685,14 @@ function setupAuthUIListeners() {
         }
     });
 }
-document.addEventListener('DOMContentLoaded', () => {
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(setupAuthUIListeners, 500);
+    });
+} else {
     setTimeout(setupAuthUIListeners, 500);
-});
-let swipeCards = [];
-const localSwipedIds = new Set();
+}
 tinderContainer = document.getElementById('profiles-grid');
 function initSwipingCards() {
     tinderContainer = document.getElementById('profiles-grid');

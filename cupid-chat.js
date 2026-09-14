@@ -65,8 +65,14 @@ window.initChatSystem = async function () {
         }
     };
     pingLastActive();
-    setInterval(pingLastActive, 60 * 1000);
+    if (window._chatPingInterval) clearInterval(window._chatPingInterval);
+    window._chatPingInterval = setInterval(pingLastActive, 60 * 1000);
     if (pb && pb.authStore.isValid) {
+        try {
+            pb.collection('users').unsubscribe('*');
+            pb.collection('notifications').unsubscribe('*');
+            pb.collection('messages').unsubscribe('*');
+        } catch (e) { }
         pb.collection('users').subscribe('*', function (e) {
             let needsRerender = false;
             if (currentUser && e.record.id === currentUser.id) {
@@ -217,7 +223,8 @@ window.initChatSystem = async function () {
         };
         window.visualViewport.addEventListener('resize', adjustForKeyboard);
         window.visualViewport.addEventListener('scroll', adjustForKeyboard);
-        setInterval(() => {
+        if (window._chatVvInterval) clearInterval(window._chatVvInterval);
+        window._chatVvInterval = setInterval(() => {
             if (window.innerWidth <= 768 && window.visualViewport) {
                 if (window.visualViewport.height !== lastVvHeight) {
                     adjustForKeyboard();
@@ -1092,7 +1099,9 @@ async function loadChatHistory(matchId) {
         }
         for (const msg of messages) {
             const createdStr = msg.created || msg.sent_at || msg.createdAt || msg.timestamp || new Date().toISOString();
-            const msgDate = new Date(String(createdStr).replace(' ', 'T'));
+            let _cIso = String(createdStr).replace(' ', 'T');
+            if (!_cIso.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(_cIso)) _cIso += 'Z';
+            const msgDate = new Date(_cIso);
             let dateLabel = msgDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
             if (msgDate.toDateString() === today.toDateString()) {
                 dateLabel = 'Today';
@@ -1250,7 +1259,9 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
     }
     wrap.dataset.reactionsString = JSON.stringify(parsedReactions || {});
     wrap.dataset.starredByString = JSON.stringify(msg.starredBy || []);
-    const createdDate = new Date(String(createdStr).replace(' ', 'T'));
+    let _isoStr = String(createdStr).replace(' ', 'T');
+    if (!_isoStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(_isoStr)) _isoStr += 'Z';
+    const createdDate = new Date(_isoStr);
     const isWithin5Mins = (new Date() - createdDate) < 5 * 60 * 1000;
     wrap.dataset.isRecent = isWithin5Mins ? 'true' : 'false';
     let ticksHtml = '';

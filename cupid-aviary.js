@@ -1357,7 +1357,7 @@
                     currentLng = origin.lng;
                 }
 
-                if (isParticipant) {
+                if (isParticipant && record.status !== 'crashed') {
                     let pathCoords = [];
                     if (pathDataEvent && pathDataEvent.waypoints) {
                         pathCoords = pathDataEvent.waypoints.map(p => [p.lat, p.lng]);

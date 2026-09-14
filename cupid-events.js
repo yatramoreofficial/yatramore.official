@@ -142,16 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (el_night_lock_got_it2) el_night_lock_got_it2.addEventListener('click', function(event) { document.getElementById('aviary-night-lock-modal').style.display='none' });
     const el_rescue_info_icon2 = document.getElementById('aviary-rescue-info-icon2');
     if (el_rescue_info_icon2) el_rescue_info_icon2.addEventListener('click', function(event) { event.preventDefault(); document.getElementById('aviary-rescue-info-modal').style.display='flex'; setTimeout(() => { document.getElementById('aviary-rescue-info-modal').style.opacity='1'; }, 10); });
-    const el_delete_modal_confirm = document.getElementById('aviary-delete-modal-confirm');
-    if (el_delete_modal_confirm) el_delete_modal_confirm.addEventListener('click', function(event) { 
-        if (window.playChatSound) window.playChatSound('pop');
-        document.getElementById('aviary-delete-modal').style.display='none'; 
-        const successModal = document.getElementById('aviary-delete-success-modal');
-        if (successModal) {
-            successModal.style.display='flex'; 
-            setTimeout(() => { successModal.style.opacity='1'; }, 10); 
-        }
-    });
+
     const el_how_it_works_close2 = document.getElementById('aviary-how-it-works-close2');
     if (el_how_it_works_close2) el_how_it_works_close2.addEventListener('click', function(event) { document.getElementById('aviary-how-it-works-modal').style.opacity='0'; setTimeout(()=>document.getElementById('aviary-how-it-works-modal').style.display='none',300); });
     const el_rescue_info_close2 = document.getElementById('aviary-rescue-info-close2');

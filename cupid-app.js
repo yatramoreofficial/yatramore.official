@@ -521,6 +521,7 @@ pb.authStore.onChange((token, model) => {
         }
     } else {
         document.body.classList.remove('is-logged-in');
+        localSwipedIds.clear();
         loggedInElements.forEach(el => el.style.display = 'none');
         loggedOutElements.forEach(el => el.style.display = el.dataset.displayOriginal || 'block');
         const chatPanel = document.getElementById('chat-inbox-panel');
@@ -686,6 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(setupAuthUIListeners, 500);
 });
 let swipeCards = [];
+const localSwipedIds = new Set();
 tinderContainer = document.getElementById('profiles-grid');
 function initSwipingCards() {
     tinderContainer = document.getElementById('profiles-grid');
@@ -761,12 +763,21 @@ function initCardEvents(el) {
             const rotate = xMulti * yMulti;
             el.style.transform = `translate(${toX}px, ${toY + event.deltaY}px) rotate(${rotate}deg)`;
             el.dataset.swiped = 'true';
-            handleSwipeAction(el.dataset.userid, liked);
-            setTimeout(() => {
+            window._lastSwipedCard = el;
+            handleSwipeAction(el.dataset.userid, liked).then(() => {
                 el.remove();
                 swipeCards.shift();
                 checkIfEmpty();
-            }, 300);
+            }).catch(() => {
+                el.classList.remove('moving');
+                el.dataset.swiped = '';
+                el.style.transform = '';
+                const likeStamp = el.querySelector('.tinder-stamp.like');
+                const nopeStamp = el.querySelector('.tinder-stamp.nope');
+                if (likeStamp) likeStamp.style.opacity = 0;
+                if (nopeStamp) nopeStamp.style.opacity = 0;
+                window._lastSwipedCard = null;
+            });
         }
     });
 }
@@ -801,6 +812,7 @@ async function handleSwipeAction(targetUserId, liked, isSuperLike = false) {
     }
     let swipeAction = liked ? 'like' : 'pass';
     if (isSuperLike) swipeAction = 'super_like';
+    localSwipedIds.add(targetUserId);
     try {
         const payload = {
             swiper: currentUser.id,
@@ -828,6 +840,7 @@ async function handleSwipeAction(targetUserId, liked, isSuperLike = false) {
     } catch (err) {
         console.error("Error saving swipe:", err);
         console.error("PocketBase validation error data:", JSON.stringify(err.data));
+        localSwipedIds.delete(targetUserId);
         if (isSuperLike && window.cupidRemainingSuperLikes !== undefined) {
             window.cupidRemainingSuperLikes++;
         } else if (liked && window.cupidRemainingSwipes !== undefined) {
@@ -836,11 +849,23 @@ async function handleSwipeAction(targetUserId, liked, isSuperLike = false) {
         if (window.cupidRemainingTotal !== undefined) {
             window.cupidRemainingTotal++;
         }
-        if (err.status === 400) {
-            window.cupidRemainingSwipes = 0;
-            const modal = document.getElementById('swipe-limit-modal');
-            if (modal) modal.style.display = 'flex';
+        const errMsg = (err.data && err.data.message) ? err.data.message : (err.message || "");
+        if (err.status === 400 && errMsg.toLowerCase().includes("limit")) {
+            if (isSuperLike) {
+                window.cupidRemainingSuperLikes = 0;
+                if (window.showToast) window.showToast("You are out of Super Likes for today!", false);
+            } else if (liked) {
+                window.cupidRemainingSwipes = 0;
+                const modal = document.getElementById('swipe-limit-modal');
+                if (modal) modal.style.display = 'flex';
+            } else {
+                window.cupidRemainingTotal = 0;
+                if (window.showToast) window.showToast("You have reached your total daily swipe limit.", false);
+            }
+        } else if (err.status === 400 && errMsg.toLowerCase().includes("already swiped")) {
+            window.debugLog("Duplicate swipe ignored.");
         }
+        throw err;
     }
 }
 function checkIfEmpty() {
@@ -863,8 +888,11 @@ window.triggerPass = () => {
     card.dataset.swiped = 'true';
     card.style.transform = `translate(-${window.innerWidth}px, 0px) rotate(-30deg)`;
     card.classList.add('moving');
-    handleSwipeAction(card.dataset.userid, false);
-    setTimeout(() => { card.remove(); swipeCards.shift(); checkIfEmpty(); }, 300);
+    handleSwipeAction(card.dataset.userid, false).then(() => {
+        card.remove(); swipeCards.shift(); checkIfEmpty();
+    }).catch(() => {
+        card.dataset.swiped = ''; card.style.transform = ''; card.classList.remove('moving');
+    });
 }
 window.triggerLike = () => {
     if (swipeCards.length === 0) return;
@@ -878,8 +906,11 @@ window.triggerLike = () => {
     card.dataset.swiped = 'true';
     card.style.transform = `translate(${window.innerWidth}px, 0px) rotate(30deg)`;
     card.classList.add('moving');
-    handleSwipeAction(card.dataset.userid, true);
-    setTimeout(() => { card.remove(); swipeCards.shift(); checkIfEmpty(); }, 300);
+    handleSwipeAction(card.dataset.userid, true).then(() => {
+        card.remove(); swipeCards.shift(); checkIfEmpty();
+    }).catch(() => {
+        card.dataset.swiped = ''; card.style.transform = ''; card.classList.remove('moving');
+    });
 }
 window.triggerSuperLike = () => {
     if (swipeCards.length === 0) return;
@@ -892,8 +923,11 @@ window.triggerSuperLike = () => {
     card.dataset.swiped = 'true';
     card.style.transform = `translate(0px, -${window.innerHeight}px) rotate(0deg)`;
     card.classList.add('moving');
-    handleSwipeAction(card.dataset.userid, true, true);
-    setTimeout(() => { card.remove(); swipeCards.shift(); checkIfEmpty(); }, 300);
+    handleSwipeAction(card.dataset.userid, true, true).then(() => {
+        card.remove(); swipeCards.shift(); checkIfEmpty();
+    }).catch(() => {
+        card.dataset.swiped = ''; card.style.transform = ''; card.classList.remove('moving');
+    });
 }
 async function loadSwipingProfiles() {
     if (!currentUser) return;
@@ -911,7 +945,9 @@ async function loadSwipingProfiles() {
             fields: 'id,swiped_on,action,created',
             requestKey: null
         });
-        const swipedIds = mySwipes.map(s => s.swiped_on);
+        const serverSwipedIds = mySwipes.map(s => s.swiped_on);
+        serverSwipedIds.forEach(id => localSwipedIds.add(id));
+        const swipedIds = [...localSwipedIds];
         const startOfDay = new Date();
         startOfDay.setUTCHours(0, 0, 0, 0);
         const todaysNormalSwipes = mySwipes.filter(s => new Date(String(s.created).replace(' ', 'T')).getTime() >= startOfDay.getTime() && s.action === 'like');
@@ -1010,6 +1046,7 @@ async function loadSwipingProfiles() {
         });
         if (profilesList && profilesList.items) {
             profilesList.items = profilesList.items.filter(p => !(p.blocked_users && p.blocked_users.includes(currentUser.id)));
+            profilesList.items = profilesList.items.filter(p => !localSwipedIds.has(p.id));
         }
         try {
             const superLikerSwipes = await pb.collection('swipes').getFullList({
@@ -1770,6 +1807,7 @@ document.getElementById('report-form')?.addEventListener('submit', async (e) => 
         if (!matchId) {
             try {
                 const reportedUserId = document.getElementById('report-user-id').value;
+                if (!/^[a-zA-Z0-9]{15}$/.test(reportedUserId)) throw new Error("Invalid ID");
                 const matchResult = await pb.collection('matches').getFirstListItem(
                     `(user1 = "${currentUser.id}" && user2 = "${reportedUserId}") || (user1 = "${reportedUserId}" && user2 = "${currentUser.id}")`,
                     { requestKey: null }

@@ -699,9 +699,31 @@ function initSwipingCards() {
     if (!tinderContainer) return;
     const allCards = document.querySelectorAll('.tinder-card');
     swipeCards = Array.from(allCards);
+    swipeCards.forEach((el) => {
+        initCardEvents(el);
+    });
+    updateCardsStack();
+}
+
+function updateCardsStack() {
     swipeCards.forEach((el, index) => {
         el.style.zIndex = swipeCards.length - index;
-        initCardEvents(el);
+        if (index === 0) {
+            el.style.opacity = 1;
+            el.style.pointerEvents = 'auto';
+            el.style.transform = '';
+            el.style.boxShadow = '';
+        } else if (index === 1) {
+            el.style.opacity = 1;
+            el.style.pointerEvents = 'none';
+            el.style.transform = '';
+            el.style.boxShadow = '';
+        } else {
+            el.style.opacity = 0;
+            el.style.pointerEvents = 'none';
+            el.style.transform = '';
+            el.style.boxShadow = '';
+        }
     });
 }
 function initCardEvents(el) {
@@ -772,6 +794,7 @@ function initCardEvents(el) {
             handleSwipeAction(el.dataset.userid, liked).then(() => {
                 el.remove();
                 swipeCards.shift();
+                updateCardsStack();
                 checkIfEmpty();
             }).catch(() => {
                 el.classList.remove('moving');
@@ -894,7 +917,7 @@ window.triggerPass = () => {
     card.style.transform = `translate(-${window.innerWidth}px, 0px) rotate(-30deg)`;
     card.classList.add('moving');
     handleSwipeAction(card.dataset.userid, false).then(() => {
-        card.remove(); swipeCards.shift(); checkIfEmpty();
+        card.remove(); swipeCards.shift(); updateCardsStack(); checkIfEmpty();
     }).catch(() => {
         card.dataset.swiped = ''; card.style.transform = ''; card.classList.remove('moving');
     });
@@ -912,7 +935,7 @@ window.triggerLike = () => {
     card.style.transform = `translate(${window.innerWidth}px, 0px) rotate(30deg)`;
     card.classList.add('moving');
     handleSwipeAction(card.dataset.userid, true).then(() => {
-        card.remove(); swipeCards.shift(); checkIfEmpty();
+        card.remove(); swipeCards.shift(); updateCardsStack(); checkIfEmpty();
     }).catch(() => {
         card.dataset.swiped = ''; card.style.transform = ''; card.classList.remove('moving');
     });
@@ -929,7 +952,7 @@ window.triggerSuperLike = () => {
     card.style.transform = `translate(0px, -${window.innerHeight}px) rotate(0deg)`;
     card.classList.add('moving');
     handleSwipeAction(card.dataset.userid, true, true).then(() => {
-        card.remove(); swipeCards.shift(); checkIfEmpty();
+        card.remove(); swipeCards.shift(); updateCardsStack(); checkIfEmpty();
     }).catch(() => {
         card.dataset.swiped = ''; card.style.transform = ''; card.classList.remove('moving');
     });

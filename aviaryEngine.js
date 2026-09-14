@@ -1126,7 +1126,7 @@
 
         const simplifiedPath = douglasPeucker(path, 0.02);
 
-        const result = { path: simplifiedPath, totalDist, flightDurationHours, segments };
+        const result = { path: simplifiedPath, totalDist: Math.max(0.0001, totalDist), flightDurationHours, segments };
         if (biomeImageLoaded && biomePixelData) {
             window.aviaryGeneratedPaths[cacheKey] = result;
 

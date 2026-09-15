@@ -130,8 +130,7 @@ async function compressToWebP(file, maxKB = 500) {
                         quality -= 0.1;
                         blob = await getBlob(quality);
                     }
-                    const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp', lastModified: Date.now() });
-                    resolve(newFile);
+                    resolve(blob);
                 };
                 compress();
             };
@@ -1246,8 +1245,8 @@ window.submitVerification = async function () {
         formData.append('user', currentUser.id);
         formData.append('name', currentUser.name);
         formData.append('birthdate', currentUser.birthdate);
-        formData.append('verification_id', verifyIdFile);
-        formData.append('verification_selfie', verifySelfieFile);
+        formData.append('verification_id', verifyIdFile, 'verification_id.webp');
+        formData.append('verification_selfie', verifySelfieFile, 'verification_selfie.webp');
         formData.append('status', 'pending');
         formData.append('submitted_at', new Date().toISOString());
         await pb.collection('verifications').create(formData);
@@ -1481,14 +1480,11 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
         formData.append('preferredLanguage', document.getElementById('profile-language').value);
         formData.append('is_profile_completed', 'true');
         let newlyUploaded = 0;
-        let retainedPhotos = 0;
+        let retainedPhotos = (currentUser.photos && Array.isArray(currentUser.photos)) ? currentUser.photos.length : 0;
         for (let i = 1; i <= 4; i++) {
             if (selectedFiles[i]) {
-                formData.append('photos', selectedFiles[i]);
+                formData.append('photos', selectedFiles[i], `photo${i}.webp`);
                 newlyUploaded++;
-            } else if (currentUser.photos && currentUser.photos.length >= i) {
-                formData.append('photos', currentUser.photos[i - 1]);
-                retainedPhotos++;
             }
         }
         if ((retainedPhotos + newlyUploaded) < 2) {
@@ -1616,7 +1612,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                const file = new File([blob], 'cropped.webp', { type: 'image/webp' });
+                const file = blob; // Use blob directly — new File() causes 0-byte uploads on iOS Safari
                 if (currentCropTarget.type === 'profile') {
                     const index = currentCropTarget.index;
                     selectedFiles[index] = file;
@@ -1845,7 +1841,7 @@ document.getElementById('report-form')?.addEventListener('submit', async (e) => 
         if (photosInput && photosInput.files.length > 0) {
             for (let i = 0; i < Math.min(4, photosInput.files.length); i++) {
                 const compressed = await compressToWebP(photosInput.files[i]);
-                formData.append('proof_photos', compressed);
+                formData.append('proof_photos', compressed, `proof_${i}.webp`);
             }
         }
         await pb.collection('reports').create(formData);

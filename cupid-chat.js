@@ -679,6 +679,17 @@ async function fetchAndRenderMatches() {
         let matchCount = 0;
         const renderedUsers = new Set();
         const matchDataList = [];
+        const allUnreadMsgs = await pb.collection('messages').getFullList({
+            filter: `sender != "${currentUser.id}" && read = false`,
+            fields: 'id,match_id',
+            sort: '',
+            $autoCancel: false
+        });
+        const unreadByMatch = {};
+        for (const msg of allUnreadMsgs) {
+            if (!unreadByMatch[msg.match_id]) unreadByMatch[msg.match_id] = [];
+            unreadByMatch[msg.match_id].push(msg);
+        }
         const matchPromises = matches.map(async (match) => {
             const isUser1 = match.user1 === currentUser.id;
             const otherUser = isUser1 ? match.expand?.user2 : match.expand?.user1;
@@ -707,12 +718,7 @@ async function fetchAndRenderMatches() {
                     msg = latestResult.items[0];
                     latestMsgTime = new Date(String(msg.created || msg.sent_at || '').replace(' ', 'T')).getTime() || 0;
                 }
-                const unreadResult = await pb.collection('messages').getFullList({
-                    filter: `match_id = "${match.id}" && sender != "${currentUser.id}" && read = false`,
-                    fields: 'id',
-                    sort: '',
-                    $autoCancel: false
-                });
+                const unreadResult = unreadByMatch[match.id] || [];
                 if (msg) {
                     let ghostRead = JSON.parse(localStorage.getItem('ghostReadMessages') || '[]');
                     if (ghostRead.length > 500) {

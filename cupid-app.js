@@ -128,9 +128,11 @@ async function compressToWebP(file, maxKB = 500) {
                     let blob = await getBlob(quality);
                     while (blob && blob.size > maxKB * 1024 && quality > 0.4) {
                         quality -= 0.1;
-                        blob = await getBlob(quality);
+                        const nextBlob = await getBlob(quality);
+                        if (!nextBlob) break;
+                        blob = nextBlob;
                     }
-                    resolve(blob);
+                    resolve(blob || file);
                 };
                 compress();
             };
@@ -391,6 +393,7 @@ pb.authStore.onChange((token, model) => {
             const verifyGate = document.getElementById('gate-verify-email');
             if (verifyGate) verifyGate.style.display = 'flex';
             document.body.classList.add('show-footer-override');
+            document.body.classList.add('verify-email-active');
             const mainGrid = document.getElementById('gate-approved-grid');
             if (mainGrid) mainGrid.style.display = 'none';
             const navButtons = document.querySelectorAll('.nav-items a');
@@ -409,7 +412,7 @@ pb.authStore.onChange((token, model) => {
                 const fabContainer = document.querySelector('.accessibility-container');
                 if (fabContainer) {
                     fabContainer.style.right = 'auto';
-                    fabContainer.style.left = '20px';
+                    fabContainer.style.left = 'auto';
                 }
             }, 100);
             pb.collection('users').subscribe(currentUser.id, function (e) {
@@ -419,6 +422,7 @@ pb.authStore.onChange((token, model) => {
             });
             if (window.initChatSystem) window.initChatSystem();
         } else {
+            document.body.classList.remove('verify-email-active');
             const mainGrid = document.getElementById('gate-approved-grid');
             if (mainGrid) {
                 mainGrid.style.display = 'flex';
@@ -1028,21 +1032,17 @@ async function loadSwipingProfiles() {
             if (modal) modal.style.display = 'flex';
             return;
         }
-        let excludedIds = [...swipedIds];
+        const excludedSet = new Set(swipedIds);
         if (currentUser.blocked_users && currentUser.blocked_users.length > 0) {
-            excludedIds = [...excludedIds, ...currentUser.blocked_users];
+            currentUser.blocked_users.forEach(id => excludedSet.add(id));
         }
         let filterStr = `id != "${currentUser.id}" && is_profile_completed = true && verified = true && DeletionRequested != true && DeletionApproved != true`;
-        if (excludedIds.length > 0) {
-            const idFilters = excludedIds.map(id => `id != "${id}"`).join(' && ');
-            filterStr += ` && (${idFilters})`;
-        }
         let genderFilter = document.getElementById('filter-gender')?.value;
         const religionFilter = document.getElementById('filter-religion')?.value;
         const countryFilter = document.getElementById('filter-country')?.value;
         const ageMin = parseInt(document.getElementById('filter-age-min')?.value) || currentUser.pref_age_min || 18;
         const ageMax = parseInt(document.getElementById('filter-age-max')?.value) || currentUser.pref_age_max || 80;
-        const sanitize = (val) => val ? val.replace(/["\\'|&~()]/g, '') : '';
+        const sanitize = (val) => val ? val.replace(/["\\'\'|&~()]/g, '') : '';
         if (genderFilter && genderFilter !== 'All' && genderFilter !== 'Any') {
             filterStr += ` && gender = "${sanitize(genderFilter)}"`;
         }
@@ -1065,16 +1065,26 @@ async function loadSwipingProfiles() {
             const m = minBirthdate.getMonth() + 1;
             filterStr += ` && (birth_year > ${y} || (birth_year = ${y} && birth_month > ${m}))`;
         }
-        let profilesList;
-        profilesList = await pb.collection('users').getList(1, 50, {
-            filter: filterStr,
-            sort: '-is_premium,-is_verified,-id',
-            requestKey: null
-        });
-        if (profilesList && profilesList.items) {
-            profilesList.items = profilesList.items.filter(p => !(p.blocked_users && p.blocked_users.includes(currentUser.id)));
-            profilesList.items = profilesList.items.filter(p => !localSwipedIds.has(p.id));
+        let validProfiles = [];
+        let page = 1;
+        const maxPages = 5;
+        while (validProfiles.length < 50 && page <= maxPages) {
+            const result = await pb.collection('users').getList(page, 50, {
+                filter: filterStr,
+                sort: '-is_premium,-is_verified,-id',
+                requestKey: null
+            });
+            if (!result || !result.items || result.items.length === 0) break;
+            const filtered = result.items.filter(p =>
+                !excludedSet.has(p.id) &&
+                !localSwipedIds.has(p.id) &&
+                !(p.blocked_users && p.blocked_users.includes(currentUser.id))
+            );
+            validProfiles = validProfiles.concat(filtered);
+            if (result.items.length < 50) break;
+            page++;
         }
+        const profilesList = { items: validProfiles.slice(0, 50) };
         try {
             const superLikerSwipes = await pb.collection('swipes').getFullList({
                 filter: `swiped_on = "${currentUser.id}" && action = "super_like"`,
@@ -1450,8 +1460,10 @@ function renderHobbiesSelection() {
 let selectedFiles = {};
 document.getElementById('native-profile-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!currentUser) return;
     const submitBtn = document.getElementById('profile-submit-btn');
+    if (submitBtn.disabled) return;
     submitBtn.textContent = 'Saving...';
     submitBtn.disabled = true;
     try {
@@ -1484,6 +1496,7 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
         for (let i = 1; i <= 4; i++) {
             if (selectedFiles[i]) {
                 formData.append('photos', selectedFiles[i], `photo${i}.webp`);
+                selectedFiles[i] = null;
                 newlyUploaded++;
             }
         }
@@ -1497,7 +1510,7 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
         await pb.collection('users').authRefresh();
         window.showToast("Profile saved successfully!", true);
         selectedFiles = {};
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 500);
     } catch (err) {
         console.error("Error saving profile:", err, err.data, err.originalError);
         window.showToast("Failed to save profile. Please try again.", false);

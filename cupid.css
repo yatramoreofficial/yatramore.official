@@ -1528,6 +1528,11 @@ body.show-footer-override .accessibility-container {
     right: auto !important;
 }
 
+body.show-footer-override.verify-email-active .accessibility-container {
+    left: auto !important;
+    right: auto !important;
+}
+
 @media (max-width: 768px) {
     .deletion-gate-container {
         padding: 10px;

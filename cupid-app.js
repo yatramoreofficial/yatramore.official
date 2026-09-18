@@ -1492,19 +1492,34 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
         formData.append('preferredLanguage', document.getElementById('profile-language').value);
         formData.append('is_profile_completed', 'true');
         let newlyUploaded = 0;
-        let retainedPhotos = (currentUser.photos && Array.isArray(currentUser.photos)) ? currentUser.photos.length : 0;
+        let retainedCount = 0;
+        let isUploadingAny = false;
+
         for (let i = 1; i <= 4; i++) {
             if (selectedFiles[i]) {
-                formData.append('photos', selectedFiles[i], `photo${i}.webp`);
-                selectedFiles[i] = null;
+                isUploadingAny = true;
                 newlyUploaded++;
+            } else if (currentUser.photos && currentUser.photos[i - 1]) {
+                retainedCount++;
             }
         }
-        if ((retainedPhotos + newlyUploaded) < 2) {
+
+        if ((retainedCount + newlyUploaded) < 2) {
             window.showToast("Please upload at least 2 images!", false);
             submitBtn.textContent = 'Submit Profile';
             submitBtn.disabled = false;
             return;
+        }
+
+        if (isUploadingAny) {
+            for (let i = 1; i <= 4; i++) {
+                if (selectedFiles[i]) {
+                    formData.append('photos', selectedFiles[i], `photo${i}.webp`);
+                    selectedFiles[i] = null;
+                } else if (currentUser.photos && currentUser.photos[i - 1]) {
+                    formData.append('photos', currentUser.photos[i - 1]);
+                }
+            }
         }
         await pb.collection('users').update(currentUser.id, formData, { requestKey: null });
         await pb.collection('users').authRefresh();

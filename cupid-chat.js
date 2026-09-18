@@ -686,7 +686,27 @@ async function listenForMatches() {
         }
     });
 }
+let isFetchingMatches = false;
+let pendingFetchMatches = false;
+
 async function fetchAndRenderMatches() {
+    if (isFetchingMatches) {
+        pendingFetchMatches = true;
+        return;
+    }
+    isFetchingMatches = true;
+    try {
+        await _internalFetchAndRenderMatches();
+    } finally {
+        isFetchingMatches = false;
+        if (pendingFetchMatches) {
+            pendingFetchMatches = false;
+            fetchAndRenderMatches();
+        }
+    }
+}
+
+async function _internalFetchAndRenderMatches() {
     try {
         const matches = await pb.collection('matches').getFullList({
             filter: `user1 = "${currentUser.id}" || user2 = "${currentUser.id}"`,

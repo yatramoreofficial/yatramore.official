@@ -329,7 +329,7 @@
                 );
                 const isActive = record.status === 'flying' || record.status === 'crashed';
 
-                if (isActive || !isOpened) {
+                if (isActive || (!isOpened && record.status !== 'degraded')) {
                     container.appendChild(renderPerchCard(record));
                     visibleCount++;
                 }
@@ -387,6 +387,9 @@
         const isSender = record.sender === currentUser.id;
         const otherUser = record.expand ? (isSender ? record.expand.recipient : record.expand.sender) : null;
         const otherUserName = otherUser ? (otherUser.name || 'Unknown User') : 'Unknown User';
+        if (otherUserName === 'Unknown User') {
+            console.warn('Unknown User detected in renderCollectionCard!', 'sender:', record.sender, 'recipient:', record.recipient, 'expand:', JSON.stringify(record.expand));
+        }
 
         let directionStr = isSender ? `Sent to ${otherUserName}` : `Received from ${otherUserName}`;
         const dirIcon = isSender ? 'fa-paper-plane' : 'fa-inbox';
@@ -529,6 +532,9 @@
 
         const otherUser = record.expand ? (isSender ? record.expand.recipient : record.expand.sender) : null;
         const otherUserName = otherUser ? (otherUser.name || 'Unknown User') : 'Unknown User';
+        if (otherUserName === 'Unknown User') {
+            console.warn('Unknown User detected in renderPerchCard!', 'sender:', record.sender, 'recipient:', record.recipient, 'expand:', JSON.stringify(record.expand));
+        }
         const isDelivered = record.status === 'delivered' || record.status === 'rescued';
 
         let directionStr = '';
@@ -828,6 +834,9 @@
                 const isSender = record.sender === currentUser?.id;
                 const otherUser = record.expand ? (isSender ? record.expand.recipient : record.expand.sender) : null;
                 const otherUserName = otherUser ? (otherUser.name || 'Unknown User') : 'Unknown User';
+                if (otherUserName === 'Unknown User') {
+                    console.warn('Unknown User detected in map popup!', 'sender:', record.sender, 'recipient:', record.recipient, 'expand:', JSON.stringify(record.expand));
+                }
                 const isDelivered = record.status === 'delivered' || record.status === 'rescued';
                 let directionStr = '';
                 if (record.status === 'crashed') {

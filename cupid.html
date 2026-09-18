@@ -94,7 +94,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
     <script src="https://unpkg.com/@geoapify/geocoder-autocomplete@^1/dist/index.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.21.1/dist/pocketbase.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -992,7 +992,9 @@
                             style="display: block; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">Location
                             (City, State, Country) *</label>
                         <div id="autocomplete-container" style="position: relative; width: 100%;">
-                            <input type="text" id="fallback-city-input" class="form-input" placeholder="Enter your city" style="display:none;" onchange="document.getElementById('profile-city').value = this.value; document.getElementById('profile-country').value = 'Unknown';">
+                            <input type="text" id="fallback-city-input" class="form-input" placeholder="Enter your city"
+                                style="display:none;"
+                                onchange="document.getElementById('profile-city').value = this.value; document.getElementById('profile-country').value = 'Unknown';">
                         </div>
                         <input type="hidden" id="profile-country" required>
                         <input type="hidden" id="profile-state">
@@ -2187,8 +2189,8 @@
     </div>
 
     <script src="components.js?v=30"></script>
-    <script src="cupid-app.js?v=33"></script>
-    <script src="cupid-chat.js?v=22"></script>
+    <script src="cupid-app.js?v=35"></script>
+    <script src="cupid-chat.js?v=36"></script>
 
     <script>
 

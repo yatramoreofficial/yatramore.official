@@ -68,11 +68,7 @@ window.initChatSystem = async function () {
     if (window._chatPingInterval) clearInterval(window._chatPingInterval);
     window._chatPingInterval = setInterval(pingLastActive, 60 * 1000);
     if (pb && pb.authStore.isValid) {
-        try {
-            pb.collection('users').unsubscribe('*');
-            pb.collection('notifications').unsubscribe('*');
-            pb.collection('messages').unsubscribe('*');
-        } catch (e) { }
+
         pb.collection('users').subscribe('*', function (e) {
             let needsRerender = false;
             if (currentUser && e.record.id === currentUser.id) {
@@ -155,33 +151,58 @@ window.initChatSystem = async function () {
                         }
                     }
                 }
-                fetchAndRenderMatches();
+                if (window.fetchMatchesDebounceTimer) clearTimeout(window.fetchMatchesDebounceTimer);
+                window.fetchMatchesDebounceTimer = setTimeout(() => {
+                    fetchAndRenderMatches();
+                }, 300);
             } else if (e.action === 'update') {
                 const msg = e.record;
-                let shouldUpdateUI = true;
-                if (msg.sender !== currentUser.id && msg.read === true) {
-                    const existingWrap = document.querySelector(`.chat-message-wrapper[data-msg-id="${msg.id}"]`);
-                    if (existingWrap) {
-                        const domDeleted = existingWrap.dataset.isDeleted === 'true';
-                        const domText = decodeURIComponent(existingWrap.dataset.rawText || "");
-                        const domReactions = existingWrap.dataset.reactionsString || "{}";
-                        const domStarred = existingWrap.dataset.starredByString || "[]";
-                        let parsedNewReactions = msg.reactions;
-                        if (typeof parsedNewReactions === 'string') {
-                            try { parsedNewReactions = JSON.parse(parsedNewReactions); } catch (e) { parsedNewReactions = {}; }
-                        }
-                        const newReactionsString = JSON.stringify(parsedNewReactions || {});
-                        const newStarredString = JSON.stringify(msg.starredBy || []);
-                        if (msg.isDeleted === domDeleted && msg.text === domText && newReactionsString === domReactions && newStarredString === domStarred) {
-                            shouldUpdateUI = false;
-                        }
+                let shouldUpdateUI = false;
+                const existingWrap = document.querySelector(`.chat-message-wrapper[data-msg-id="${msg.id}"]`);
+                if (existingWrap) {
+                    const domDeleted = existingWrap.dataset.isDeleted === 'true';
+                    const domText = decodeURIComponent(existingWrap.dataset.rawText || "");
+                    const domReactions = existingWrap.dataset.reactionsString || "{}";
+                    const domStarred = existingWrap.dataset.starredByString || "[]";
+                    let parsedNewReactions = msg.reactions;
+                    if (typeof parsedNewReactions === 'string') {
+                        try { parsedNewReactions = JSON.parse(parsedNewReactions); } catch (e) { parsedNewReactions = {}; }
+                    }
+                    const newReactionsString = JSON.stringify(parsedNewReactions || {});
+                    const newStarredString = JSON.stringify(msg.starredBy || []);
+                    if (msg.isDeleted !== domDeleted || msg.text !== domText || newReactionsString !== domReactions || newStarredString !== domStarred) {
+                        shouldUpdateUI = true;
                     }
                 }
-                fetchAndRenderMatches();
+                
                 if (shouldUpdateUI) {
                     if (currentChatMatchId === msg.match_id) {
                         appendMessageToUI(msg);
                     }
+                }
+                
+                if (window.fetchMatchesDebounceTimer) clearTimeout(window.fetchMatchesDebounceTimer);
+                window.fetchMatchesDebounceTimer = setTimeout(() => {
+                    fetchAndRenderMatches();
+                }, 300);
+
+                if (msg.sender === currentUser.id && msg.read === true && currentChatMatchId === msg.match_id) {
+                    const createdStr = msg.created || msg.sent_at || "";
+                    if (createdStr) {
+                        const msgTime = new Date(String(createdStr).replace(' ', 'T')).getTime();
+                        const meWrappers = document.querySelectorAll('.chat-message-wrapper.is-sent');
+                    meWrappers.forEach(wrap => {
+                        const wTimeStr = wrap.dataset.created;
+                        if (!wTimeStr) return;
+                        const wTime = new Date(wTimeStr.replace(' ', 'T')).getTime();
+                        if (wTime <= msgTime) {
+                            const tick = wrap.querySelector('.fa-check-double');
+                            if (tick && tick.parentElement) {
+                                tick.parentElement.style.color = '#4fc3f7';
+                            }
+                        }
+                    });
+                }
                 }
             }
         });
@@ -455,7 +476,7 @@ function setupChatUIListeners() {
         const content = document.getElementById('chat-profile-modal-content');
         if (!modal || !content) return;
         const p = currentChatOtherUser;
-        const avatarUrl = (p.photos && p.photos.length > 0) ? pb.files.getUrl(p, p.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&size=400`;
+        const avatarUrl = (p.photos && p.photos.length > 0) ? pb.files.getURL(p, p.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&size=400`;
         const safeName = window.escapeHtml ? window.escapeHtml(p.name) : p.name;
         let hobbiesHTML = '';
         if (p.hobbies && Array.isArray(p.hobbies) && p.hobbies.length > 0) {
@@ -651,7 +672,7 @@ async function listenForMatches() {
                 try {
                     const otherUser = await pb.collection('users').getOne(e.record.user1);
                     const otherUserAvatar = (otherUser.photos && otherUser.photos.length > 0)
-                        ? pb.files.getUrl(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' })
+                        ? pb.files.getURL(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' })
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name)}&background=random`;
                     if (typeof window.showToast === 'function') {
                         setTimeout(() => {
@@ -764,7 +785,7 @@ async function fetchAndRenderMatches() {
         let switcherHtml = '';
         let sidebarHtml = '<h3 style="margin-bottom: 15px;">Matches</h3><div class="sidebar-matches-container">';
         for (const { match, otherUser, msg, previewText, timeStr, isUnread } of matchDataList) {
-            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name || 'Anonymous')}&background=random`;
+            const avatarUrl = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getURL(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name || 'Anonymous')}&background=random`;
             const safeOtherUserJson = JSON.stringify(otherUser).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const verifiedBadgeSmall = otherUser.is_verified ? `<span style="display: inline-flex; position: relative; width: 12px; height: 12px; align-items: center; justify-content: center; transform: translateY(-4px); margin-left: 2px;" title="Verified Profile"><i class="fa-solid fa-certificate" style="color: #1DA1F2; font-size: 12px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i><i class="fa-solid fa-check" style="color: #fff; font-size: 12px; position: absolute; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.55);"></i></span>` : '';
             chatsHtml += `
@@ -1180,14 +1201,11 @@ async function loadChatHistory(matchId) {
                         if (window.updateCombinedBadge) window.updateCombinedBadge();
                         const sidebarDot = document.querySelector(`.chat-item[data-match-id="${matchId}"] .unread-dot`);
                         if (sidebarDot) sidebarDot.style.display = 'none';
-                        const batchSize = 15;
-                        for (let i = 0; i < unreadResult.length; i += batchSize) {
-                            const chunk = unreadResult.slice(i, i + batchSize);
-                            const updatePromises = chunk.map(msg =>
-                                pb.collection('messages').update(msg.id, { read: true }).catch(console.error)
-                            );
-                            await Promise.all(updatePromises);
-                        }
+                        const messageIds = unreadResult.map(msg => msg.id);
+                        await pb.send('/api/custom/read_messages', {
+                            method: 'POST',
+                            body: { messageIds }
+                        }).catch(console.error);
                         fetchAndRenderMatches();
                     };
                     if (document.visibilityState === 'visible') {
@@ -1256,8 +1274,10 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
     const time = new Date(String(createdStr).replace(' ', 'T')).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     wrap.className = `chat-message-wrapper ${isMe ? 'is-sent' : 'is-received'}`;
     wrap.dataset.msgId = msg.id;
+    wrap.dataset.created = createdStr;
     wrap.dataset.rawText = encodeURIComponent(msg.text);
     wrap.dataset.isDeleted = msg.isDeleted === true ? 'true' : 'false';
+    wrap.dataset.isRead = msg.read === true ? 'true' : 'false';
     wrap.dataset.isStarred = msg.starredBy && msg.starredBy.includes(currentUser.id) ? 'true' : 'false';
     let parsedReactions = msg.reactions;
     if (typeof parsedReactions === 'string') {
@@ -1325,9 +1345,9 @@ async function appendMessageToUI(msg, skipAutoTranslate = false) {
             const safeReplyText = window.escapeHtml ? window.escapeHtml(msg.reply_to_text) : msg.reply_to_text.replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[m]; });
             const safeReplySender = window.escapeHtml ? window.escapeHtml(msg.reply_to_sender || '') : (msg.reply_to_sender || '').replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[m]; });
             const truncatedReply = safeReplyText.length > 100 ? safeReplyText.substring(0, 100) + '…' : safeReplyText;
-            replyQuoteHtml = `<div class="reply-quote" data-reply-id="${safeReplyId}" style="background: rgba(0,0,0,0.08); border-left: 3px solid var(--brand-brown); border-radius: 6px; padding: 6px 10px; margin-bottom: 6px; cursor: pointer; font-size: 0.82rem; max-width: 100%;" onclick="const rid=this.getAttribute('data-reply-id'); const el=document.querySelector('[data-msg-id=&quot;'+rid+'&quot;]'); if(el){el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.background='rgba(107,66,38,0.15)'; setTimeout(()=>el.style.background='',1500);}">
-                <div style="font-weight: 600; color: var(--brand-brown); font-size: 0.78rem; margin-bottom: 2px;">${safeReplySender}</div>
-                <div style="color: var(--text-muted); opacity: 0.85;">${truncatedReply}</div>
+            replyQuoteHtml = `<div class="reply-quote" data-reply-id="${safeReplyId}" style="background: rgba(0,0,0,0.15); border-left: 3px solid currentColor; border-radius: 6px; padding: 6px 10px; margin-bottom: 6px; cursor: pointer; font-size: 0.82rem; max-width: 100%;" onclick="const rid=this.getAttribute('data-reply-id'); const el=document.querySelector('[data-msg-id=&quot;'+rid+'&quot;]'); if(el){el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.background='rgba(107,66,38,0.15)'; setTimeout(()=>el.style.background='',1500);}">
+                <div style="font-weight: 600; color: inherit; opacity: 0.95; font-size: 0.78rem; margin-bottom: 2px;">${safeReplySender}</div>
+                <div style="color: inherit; opacity: 0.85;">${truncatedReply}</div>
             </div>`;
         }
         wrap.innerHTML = `
@@ -1448,7 +1468,7 @@ async function sendMessage() {
             window.cancelEditMessage();
             loadChatHistory(currentChatMatchId);
         } else {
-            tempId = 'temp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+            tempId = (Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)).replace(/[^a-z0-9]/g, '').padEnd(15, 'x').substring(0, 15);
             const tempMsg = {
                 id: tempId,
                 match_id: currentChatMatchId,
@@ -1465,6 +1485,7 @@ async function sendMessage() {
             }
             const themeStr = currentUser.is_premium ? 'theme-premium' : (currentUser.is_verified ? 'theme-verified' : 'theme-basic');
             const createPayload = {
+                id: tempId,
                 match_id: currentChatMatchId,
                 sender: currentUser.id,
                 text: text,
@@ -1478,11 +1499,19 @@ async function sendMessage() {
             }
             window.cancelReply();
             const newMsg = await pb.collection('messages').create(createPayload, { $autoCancel: false });
-            if (tempEl) tempEl.remove();
-            const existing = document.querySelector(`.chat-message-wrapper[data-msg-id="${newMsg.id}"]`);
-            if (!existing) {
-                appendMessageToUI(newMsg);
+            if (tempEl) {
+                tempEl.style.opacity = '1';
+                if (tempEl.dataset.isRead === 'true') {
+                    newMsg.read = true;
+                }
+                if (tempEl.dataset.reactionsString) {
+                    try { newMsg.reactions = JSON.parse(tempEl.dataset.reactionsString); } catch (e) { }
+                }
+                if (tempEl.dataset.starredByString) {
+                    try { newMsg.starredBy = JSON.parse(tempEl.dataset.starredByString); } catch (e) { }
+                }
             }
+            appendMessageToUI(newMsg);
         }
     } catch (err) {
         console.error("Failed to send/edit message:", err);
@@ -1490,7 +1519,42 @@ async function sendMessage() {
             const failedEl = document.querySelector(`.chat-message-wrapper[data-msg-id="${tempId}"]`);
             if (failedEl) failedEl.remove();
         }
-        if (window.showToast) window.showToast("Failed to send message: " + (err.message || err.data?.message || err.toString()), false);
+        const errMsg = err.message || err.data?.message || err.toString();
+        if (errMsg.includes("Spam detected")) {
+            let cdTime = 5000;
+            if (errMsg.includes("short time")) cdTime = 3000;
+            else if (errMsg.includes("wait a moment")) cdTime = 10000;
+            else if (errMsg.includes("cool down")) cdTime = 60000;
+            
+            if (window.showToast) window.showToast(errMsg + ` (${cdTime/1000}s cooldown)`, false);
+            isSpamCooldown = true;
+            const input = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('send-msg-btn');
+            if (input) {
+                input.disabled = true;
+                const origPlaceholder = input.placeholder;
+                let left = Math.ceil(cdTime / 1000);
+                input.placeholder = `Spam limit. Wait ${left}s...`;
+                const iv = setInterval(() => {
+                    left--;
+                    if (left > 0 && input) input.placeholder = `Spam limit. Wait ${left}s...`;
+                    else clearInterval(iv);
+                }, 1000);
+                if (sendBtn) sendBtn.style.opacity = '0.3';
+                setTimeout(() => {
+                    clearInterval(iv);
+                    isSpamCooldown = false;
+                    if (input) {
+                        input.disabled = false;
+                        input.placeholder = 'Type a message...';
+                        input.focus();
+                    }
+                    if (sendBtn) sendBtn.style.opacity = '1';
+                }, cdTime);
+            }
+        } else {
+            if (window.showToast) window.showToast("Failed to send message: " + errMsg, false);
+        }
     }
 }
 let pressTimer = null;

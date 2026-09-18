@@ -49,7 +49,7 @@ window.showMatchPopup = function (otherUserName, otherUserAvatar) {
     subtext.textContent = `You and ${otherUserName} have liked each other.`;
     const avatars = document.createElement('div');
     avatars.style.cssText = 'display: flex; gap: 20px; justify-content: center; margin-bottom: 40px; align-items: center;';
-    const myAvatarUrl = (currentUser.photos && currentUser.photos.length > 0) ? pb.files.getUrl(currentUser, currentUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=random`;
+    const myAvatarUrl = (currentUser.photos && currentUser.photos.length > 0) ? pb.files.getURL(currentUser, currentUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=random`;
     const avatar1 = document.createElement('img');
     avatar1.src = myAvatarUrl;
     avatar1.style.cssText = 'width: 120px; height: 120px; border-radius: 50%; border: 4px solid #fff; object-fit: cover; box-shadow: 0 10px 20px rgba(0,0,0,0.3);';
@@ -862,7 +862,7 @@ async function handleSwipeAction(targetUserId, liked, isSuperLike = false) {
                     user2: targetUserId
                 }, { requestKey: null });
                 const otherUser = await pb.collection('users').getOne(targetUserId);
-                const otherUserAvatar = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getUrl(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name)}&background=random`;
+                const otherUserAvatar = (otherUser.photos && otherUser.photos.length > 0) ? pb.files.getURL(otherUser, otherUser.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.name)}&background=random`;
                 window.showMatchPopup(window.escapeHtml(otherUser.name), otherUserAvatar);
             } catch (err) {
                 window.debugLog("No mutual match yet.");
@@ -1127,7 +1127,7 @@ async function loadSwipingProfiles() {
 window.generateTinderCardHTML = function (p, isModal = false) {
     let photoUrls = [];
     if (p.photos && p.photos.length > 0) {
-        photoUrls = p.photos.map(photoId => pb.files.getUrl(p, photoId, { 'thumb': '1024x1024f' }));
+        photoUrls = p.photos.map(photoId => pb.files.getURL(p, photoId, { 'thumb': '1024x1024f' }));
     } else {
         photoUrls = [`https://ui-avatars.com/api/?name=${encodeURIComponent(p.name || 'Unknown')}&background=random`];
     }
@@ -1416,7 +1416,7 @@ window.openEditProfileModal = async function (isExplicitlyEditing = false) {
         const preview = document.getElementById(`preview-${i}`);
         const icon = document.querySelector(`#profile-photo-${i}`).parentElement.querySelector('.fa-plus');
         if (currentUser.photos && currentUser.photos.length >= i) {
-            preview.src = pb.files.getUrl(currentUser, currentUser.photos[i - 1], { 'thumb': '1024x1024f' });
+            preview.src = pb.files.getURL(currentUser, currentUser.photos[i - 1], { 'thumb': '1024x1024f' });
             preview.style.display = 'block';
             if (icon) icon.style.display = 'none';
         } else {
@@ -1980,7 +1980,7 @@ window.openBlockedUsersModal = async function () {
         }
         let html = '';
         blockedUsers.forEach(u => {
-            const avatarUrl = (u.photos && u.photos.length > 0) ? pb.files.getUrl(u, u.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`;
+            const avatarUrl = (u.photos && u.photos.length > 0) ? pb.files.getURL(u, u.photos[0], { 'thumb': '1024x1024f' }) : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`;
             html += `
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--glass-border);">
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -2151,7 +2151,7 @@ window.openPremiumModal = () => {
             if (desc) desc.textContent = 'As a Premium member, you are actively enjoying these exclusive VIP features:';
             if (headerIcon) {
                 const avatarUrl = (window.pb.authStore.model.photos && window.pb.authStore.model.photos.length > 0)
-                    ? window.pb.files.getUrl(window.pb.authStore.model, window.pb.authStore.model.photos[0], { 'thumb': '1024x1024f' })
+                    ? window.pb.files.getURL(window.pb.authStore.model, window.pb.authStore.model.photos[0], { 'thumb': '1024x1024f' })
                     : `https://ui-avatars.com/api/?name=${encodeURIComponent(window.pb.authStore.model.name)}&background=random`;
                 headerIcon.innerHTML = `
                     <div style="position: relative; width: 100%; height: 100%; border-radius: 50%;">

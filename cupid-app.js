@@ -1514,7 +1514,6 @@ document.getElementById('native-profile-form')?.addEventListener('submit', async
         for (let i = 1; i <= 4; i++) {
             if (selectedFiles[i]) {
                 formData.append('photos', selectedFiles[i], `photo${i}.webp`);
-                selectedFiles[i] = null;
             } else if (currentUser.photos && currentUser.photos[i - 1]) {
                 formData.append('photos', currentUser.photos[i - 1]);
             }

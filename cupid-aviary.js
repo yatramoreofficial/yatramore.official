@@ -501,6 +501,7 @@
             let letterText = record.letter_original || '';
 
             if (viewContext === 'rescuer') {
+                letterText = record.letter_smudged || '[REDACTED]';
                 textEl.innerHTML = '<p>' + escapeHtml(letterText) + '</p>';
             } else if (viewContext === 'receiver_spoiled') {
                 const tokens = letterText.split(/(\s+)/);
@@ -1426,7 +1427,7 @@
                     popupHtml += `<span style="color:var(--status-error, #d32f2f);font-weight:bold;font-size:0.9rem;"><i class="fa-solid fa-triangle-exclamation"></i> Crashed!</span>`;
                     popupHtml += `<div style="font-size:0.75rem;margin-top:2px;">${escapeHtml(record.crash_reason || '')}</div>`;
 
-                    if (!record.burn_on_crash) {
+                    if (!record.burn_on_crash && record.rescued_by && record.rescued_by.includes(currentUser?.id)) {
                         const escRecord = encodeURIComponent(JSON.stringify(record)).replace(/'/g, "%27");
                         popupHtml += `<button onclick="window.openLetterReader(decodeURIComponent('${escRecord}'), 'rescuer')" style="width:100%; margin-top:6px; padding:6px; background:var(--brand-brown); color:var(--bg-main); border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; display:flex; justify-content:center; align-items:center; gap:6px; font-weight:600;"><i class="fa-solid fa-book-open"></i> Read Spilled Letter</button>`;
                     }

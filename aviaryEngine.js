@@ -1012,7 +1012,18 @@
             path.push({ lat: pt2Lat + offset2Lat, lng: pt2Lng + offset2Lng, distFromStart: 0 });
         }
 
-        path.push({ lat: mDest.lat, lng: mDest.lng, distFromStart: 0 });
+        if (path.length > 0) {
+            let finalLng = mDest.lng;
+            let prevLng = path[path.length - 1].lng;
+            if (finalLng - prevLng > 180) {
+                finalLng -= 360;
+            } else if (finalLng - prevLng < -180) {
+                finalLng += 360;
+            }
+            path.push({ lat: mDest.lat, lng: finalLng, distFromStart: 0 });
+        } else {
+            path.push({ lat: mDest.lat, lng: mDest.lng, distFromStart: 0 });
+        }
 
         let totalDist = 0;
         let flightDurationHours = 0;

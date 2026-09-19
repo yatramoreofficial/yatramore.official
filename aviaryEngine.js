@@ -809,7 +809,7 @@
         let dx = Math.abs(startX - endX);
         if (dx > w / 2) dx = w - dx;
         const maxSafeWaterCost = Math.floor((w - dx) / Math.max(1, dx));
-        const owlDynamicWater = Math.min(100, Math.max(1, maxSafeWaterCost));
+        const owlDynamicWater = Math.min(100, Math.max(2.5, maxSafeWaterCost));
         const ravenDynamicWater = Math.min(50, Math.max(1, maxSafeWaterCost) * 1.5);
 
         let waterCostOverride = null;

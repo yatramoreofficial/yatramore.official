@@ -101,11 +101,22 @@ window.initChatSystem = async function () {
             }
         });
         pb.collection('notifications').subscribe('*', function (e) {
-            if (e.action === 'create' || e.action === 'update' || e.action === 'delete') {
+            if (e.action === 'create') {
                 if (window.fetchAndRenderNotifications) window.fetchAndRenderNotifications();
-                if (e.action === 'create') {
-                    window.playChatSound('receive');
+                window.playChatSound('receive');
+            } else if (e.action === 'update') {
+                const item = document.querySelector(`.notification-item[data-id="${e.record.id}"]`);
+                if (item && e.record.is_read) item.classList.remove('unread');
+                const notifIndex = globalNotifications.findIndex(n => n.id === e.record.id);
+                if (notifIndex !== -1) {
+                    globalNotifications[notifIndex] = e.record;
+                    if (window.updateCombinedBadge) window.updateCombinedBadge();
                 }
+            } else if (e.action === 'delete') {
+                const item = document.querySelector(`.notification-item[data-id="${e.record.id}"]`);
+                if (item) item.remove();
+                globalNotifications = globalNotifications.filter(n => n.id !== e.record.id);
+                if (window.updateCombinedBadge) window.updateCombinedBadge();
             }
         });
         pb.collection('messages').subscribe('*', function (e) {
@@ -781,6 +792,16 @@ async function _internalFetchAndRenderMatches() {
             let timeStr = "";
             let isUnread = false;
             if (msg) {
+                if (msg.sender === currentUser.id) {
+                    if (unreadForMatch > 0) {
+                        const staleIds = (unreadByMatch[match.id] || []).map(m => m.id);
+                        if (staleIds.length > 0) {
+                            pb.send('/api/custom/read_messages', { method: 'POST', body: { messageIds: staleIds } }).catch(console.error);
+                        }
+                    }
+                    unreadForMatch = 0;
+                }
+
                 let rawText = msg.text ? msg.text.replace(/<[^>]*>?/gm, '').trim() : '';
                 previewText = rawText;
                 if (!previewText) previewText = 'Sent an attachment';
@@ -1211,40 +1232,44 @@ async function loadChatHistory(matchId) {
         }
         if (!currentUser.ghost_read_receipts) {
             try {
-                const unreadResult = messages.filter(m => m.sender !== currentUser.id && (!m.read || m.read === 0 || m.read === 'false'));
-                if (unreadResult.length > 0) {
-                    const processReadReceipts = async () => {
+                const processReadReceipts = () => {
+                    pb.send('/api/custom/read_messages', {
+                        method: 'POST',
+                        body: { matchId: matchId }
+                    }).then((res) => {
+                        if (res && res.count > 0) {
+                            fetchAndRenderMatches();
+                        }
+                    }).catch(console.error);
+
+                    const unreadResult = messages.filter(m => m.sender !== currentUser.id && (!m.read || m.read === 0 || m.read === 'false'));
+                    if (unreadResult.length > 0) {
                         let currentGlobalUnread = parseInt(localStorage.getItem('globalUnreadCount') || '0');
                         let newGlobalUnread = Math.max(0, currentGlobalUnread - unreadResult.length);
                         localStorage.setItem('globalUnreadCount', newGlobalUnread);
-                        const navCupidBadge = document.getElementById('nav-cupid-notification');
                         if (window.updateCombinedBadge) window.updateCombinedBadge();
                         const sidebarDot = document.querySelector(`.chat-item[data-match-id="${matchId}"] .unread-dot`);
                         if (sidebarDot) sidebarDot.style.display = 'none';
-                        const messageIds = unreadResult.map(msg => msg.id);
-                        await pb.send('/api/custom/read_messages', {
-                            method: 'POST',
-                            body: { messageIds }
-                        }).catch(console.error);
-                        fetchAndRenderMatches();
-                    };
-                    if (document.visibilityState === 'visible') {
-                        processReadReceipts();
-                    } else {
-                        if (window.activeChatVisibilityHandler) {
-                            document.removeEventListener('visibilitychange', window.activeChatVisibilityHandler);
-                        }
-                        window.activeChatVisibilityHandler = () => {
-                            if (document.visibilityState === 'visible') {
-                                if (window.currentChatMatchId === matchId) {
-                                    processReadReceipts();
-                                }
-                                document.removeEventListener('visibilitychange', window.activeChatVisibilityHandler);
-                                window.activeChatVisibilityHandler = null;
-                            }
-                        };
-                        document.addEventListener('visibilitychange', window.activeChatVisibilityHandler);
+                        unreadResult.forEach(m => m.read = true);
                     }
+                };
+
+                if (document.visibilityState === 'visible') {
+                    processReadReceipts();
+                } else {
+                    if (window.activeChatVisibilityHandler) {
+                        document.removeEventListener('visibilitychange', window.activeChatVisibilityHandler);
+                    }
+                    window.activeChatVisibilityHandler = () => {
+                        if (document.visibilityState === 'visible') {
+                            if (window.currentChatMatchId === matchId) {
+                                processReadReceipts();
+                            }
+                            document.removeEventListener('visibilitychange', window.activeChatVisibilityHandler);
+                            window.activeChatVisibilityHandler = null;
+                        }
+                    };
+                    document.addEventListener('visibilitychange', window.activeChatVisibilityHandler);
                 }
             } catch (e) {
                 window.debugLog("Read receipt update failed:", e);
@@ -2113,6 +2138,7 @@ function renderNotifications() {
         const item = document.createElement('div');
         item.className = `notification-item type-${notif.type} ${!notif.is_read ? 'unread' : ''}`;
         item.style.position = 'relative';
+        item.dataset.id = notif.id;
         let iconHtml = '<i class="fa-solid fa-bell"></i>';
         if (notif.type === 'match') iconHtml = '<i class="fa-solid fa-heart"></i>';
         else if (notif.type === 'reaction' || (notif.type === 'system' && notif.message.includes('reacted with'))) iconHtml = '<i class="fa-solid fa-face-smile" style="color: #ff9800;"></i>';
@@ -2240,7 +2266,7 @@ function renderNotifications() {
                         pb.collection('notifications').update(notif.id, { is_read: true }).catch(console.error);
                         notif.is_read = true;
                         item.classList.remove('unread');
-                        if (window.updateUnreadBadge) window.updateUnreadBadge();
+                        if (window.updateCombinedBadge) window.updateCombinedBadge();
                     }
                 } catch (err) {
                     console.error("Error opening chat from notification:", err);
@@ -2267,7 +2293,7 @@ function renderNotifications() {
                     pb.collection('notifications').update(notif.id, { is_read: true }).catch(console.error);
                     notif.is_read = true;
                     item.classList.remove('unread');
-                    if (window.updateUnreadBadge) window.updateUnreadBadge();
+                    if (window.updateCombinedBadge) window.updateCombinedBadge();
                 }
             });
         }
